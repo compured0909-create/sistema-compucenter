@@ -3,10 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMPUCENTER</title>
+    <title>COMPURED | Academia de Mecanografía y Computación</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <h1> BIENVENIDOS A COMPUCENTER </h1>
+
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-microchip"></i>
+            <span class="logo-text">Academia de Mecanografía y Computación<br>COMPURED Y COMPUCENTER</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#cursos">Cursos</a></li>
+            <li><a href="#ubicaciones">Ubicaciones</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sección Hero -->
+    <header id="inicio" class="hero">
+        <div class="hero-content">
+            <h1 class="typing-text">Domina el Futuro Digital</h1>
+            <p>Centro de aprendizaje de tecnologías de la información y la comunicación. Prepárate desde nivel básico hasta experto con nuestra metodología innovadora.</p>
+            <a href="#cursos" class="btn-primary">Ver Cursos</a>
+        </div>
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </header>
+
+    <!-- Sección Cursos -->
+    <section id="cursos" class="courses">
+        <h2 class="section-title">Nuestra Oferta Educativa</h2>
+        
+        <div class="grid-container">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-regular fa-keyboard"></i>
+                </div>
+                <h3>Mecanografía Básico</h3>
+                <p>Programa especializado para estudiantes de <strong>primero, segundo y tercero básico</strong>. Desarrolla velocidad, agilidad y precisión en el teclado con prácticas dinámicas.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <h3>Técnico Operador</h3>
+                <p>Curso libre diseñado para dominar las herramientas ofimáticas, el manejo de sistemas operativos y la gestión eficiente de la computadora en entornos laborales.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-bezier-curve"></i>
+                </div>
+                <h3>Diseño Gráfico Computarizado</h3>
+                <p>Curso libre técnico. Explota tu creatividad y aprende a utilizar las principales herramientas y programas de diseño, edición visual y retoque fotográfico.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <h3>Mantenimiento y Reparación</h3>
+                <p>Curso libre técnico. Aprende a diagnosticar, ensamblar, dar mantenimiento preventivo y reparar equipos informáticos de manera totalmente profesional.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Ubicaciones -->
+    <section id="ubicaciones" class="locations">
+        <h2 class="section-title">Nuestras Sedes</h2>
+        
+        <div class="grid-container locations-grid">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-location-dot location-pulse"></i>
+                </div>
+                <h3>COMPURED</h3>
+                <p class="address-text">
+                    <strong>Aldea La Victoria</strong><br>
+                    San Juan Ostuncalco, Quetzaltenango
+                </p>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-map-location-dot location-pulse"></i>
+                </div>
+                <h3>COMPUCENTER</h3>
+                <p class="address-text">
+                    <strong>Mercado Municipal, Local 27</strong><br>
+                    La Esperanza, Quetzaltenango
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botón de WhatsApp Flotante con el número actualizado -->
+    <a href="https://wa.me/+5023383446" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="tooltip">¡Inscríbete!</span>
+    </a>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2026 COMPURED Y COMPUCENTER. Todos los derechos reservados.</p>
+    </footer>
+
 </body>
 </html>

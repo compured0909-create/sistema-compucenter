@@ -1,0 +1,450 @@
+/* =========================================
+   VARIABLES Y CONFIGURACIÓN BASE
+   ========================================= */
+:root {
+    --primary-color: #00f2fe;
+    --secondary-color: #4facfe;
+    --dark-bg: #0b0f19;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text-light: #f8f9fa;
+    --text-muted: #a0aec0;
+    --neon-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    overflow-x: hidden;
+}
+
+/* =========================================
+   BARRA DE NAVEGACIÓN
+   ========================================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(11, 15, 25, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.logo {
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo i {
+    font-size: 2.2rem;
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    line-height: 1.3;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+    box-shadow: var(--neon-shadow);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* =========================================
+   SECCIÓN HERO
+   ========================================= */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 600px;
+    z-index: 2;
+    animation: fadeUp 1.5s ease-out forwards;
+}
+
+.typing-text {
+    font-size: 4rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    border-right: 4px solid var(--primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    animation: typing 3s steps(30, end), blink-caret 0.75s step-end infinite;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 15px 35px;
+    background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+    color: #fff;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 242, 254, 0.6);
+}
+
+.hero-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    filter: blur(60px);
+    opacity: 0.4;
+    animation: float 10s infinite alternate;
+}
+
+.shape-1 { width: 300px; height: 300px; top: -100px; right: 10%; }
+.shape-2 { width: 400px; height: 400px; bottom: -150px; left: 5%; animation-delay: -5s; }
+.shape-3 { width: 200px; height: 200px; top: 40%; right: 40%; animation-delay: -2s; opacity: 0.2; }
+
+/* =========================================
+   ESTILOS GENERALES DE SECCIONES (Cursos y Ubicaciones)
+   ========================================= */
+.courses, .locations {
+    padding: 80px 10%;
+    position: relative;
+    z-index: 2;
+}
+
+.locations {
+    background: linear-gradient(to bottom, transparent, rgba(0, 242, 254, 0.05));
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    color: #fff;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.locations-grid {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 25px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    transform: scale(0.5);
+}
+
+.card:hover {
+    transform: translateY(-15px) scale(1.02);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+}
+
+.card:hover::before {
+    opacity: 1;
+    transform: scale(1);
+    animation: rotateGlow 10s linear infinite;
+}
+
+.card-icon {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    transition: transform 0.4s ease;
+}
+
+.card:hover .card-icon {
+    transform: scale(1.2) rotate(5deg);
+    text-shadow: var(--neon-shadow);
+}
+
+.location-pulse {
+    animation: heartbeat 1.5s infinite;
+}
+
+.card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #fff;
+    line-height: 1.3;
+}
+
+.card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.address-text {
+    font-size: 1.1rem !important;
+    color: #fff !important;
+}
+.address-text strong {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+/* =========================================
+   BOTÓN DE WHATSAPP
+   ========================================= */
+.whatsapp-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    animation: pulse-wa 2s infinite;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128C7E;
+    transform: scale(1.1) rotate(-10deg);
+}
+
+.whatsapp-btn .tooltip {
+    position: absolute;
+    right: 75px;
+    background-color: #333;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(20px);
+    white-space: nowrap;
+}
+
+.whatsapp-btn .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent #333;
+}
+
+.whatsapp-btn:hover .tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.3);
+}
+
+/* =========================================
+   KEYFRAMES
+   ========================================= */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary-color); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0) translateX(0) scale(1); }
+    100% { transform: translateY(-50px) translateX(50px) scale(1.1); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-wa {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.15); }
+    40% { transform: scale(1); }
+    60% { transform: scale(1.15); }
+    80%, 100% { transform: scale(1); }
+}
+
+/* =========================================
+   DISEÑO PARA PANTALLAS PEQUEÑAS (MÓVILES)
+   ========================================= */
+@media (max-width: 768px) {
+    .typing-text { 
+        font-size: 2.2rem; 
+        border-right: none; 
+        white-space: normal; 
+        animation: fadeUp 1s forwards; 
+    }
+    
+    .hero-content { 
+        text-align: center; 
+        margin-top: 80px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        justify-content: center;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .logo {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .logo i {
+        font-size: 2.5rem;
+    }
+
+    .logo-text {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+    }
+    
+    .nav-links a {
+        font-size: 1rem;
+    }
+}
