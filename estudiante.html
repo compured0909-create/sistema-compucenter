@@ -13,61 +13,98 @@
             color: var(--primary-color);
             border-left: 4px solid var(--primary-color);
         }
-        .estado-pago {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
+        .estado-pago { padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; }
         .pagado { background: rgba(56,239,125,0.2); color: #38ef7d; }
         .pendiente { background: rgba(255,71,87,0.2); color: #ff4757; }
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .login-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body class="dashboard-body">
 
+    <!-- LOGIN DIRECTO EN ESTUDIANTE.HTML -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2 style="color: var(--primary-color); margin-bottom: 10px;">Portal Alumnos</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Ingrese su código y contraseña</p>
+            <form id="formLoginAlumno">
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Código de Estudiante</label>
+                    <input type="text" id="logUsuario" required placeholder="Ej: COMP-2026-001" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff;">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Contraseña</label>
+                    <input type="password" id="logPassword" required placeholder="********" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff;">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer;">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MENÚ LATERAL -->
     <aside class="sidebar">
         <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
             <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
             <span>COMPURED</span>
         </div>
         <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p id="lblNombreEstudiante" style="color: #fff; font-weight: bold;">Estudiante</p>
-            <span id="lblCursoEstudiante" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Alumno</span>
+            <p id="lblNombreEstudiante" style="color: #fff; font-weight: bold;">Cargando...</p>
+            <span id="lblCursoEstudiante" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Estudiante</span>
         </div>
         <nav class="sidebar-nav">
             <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link active"><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</a>
-            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Mis Pagos y Extras</a>
-            <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Mis Pagos y Manuales</a>
+            <a href="#" onclick="mostrarSeccion('configuracion', event)" class="nav-link"><i class="fa-solid fa-key"></i> Cambiar Contraseña</a>
+            <a href="login.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </nav>
     </aside>
 
+    <!-- CONTENIDO -->
     <main class="dashboard-content">
-        <!-- CALIFICACIONES -->
         <section id="calificaciones" class="panel-section active">
             <h2><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones Académicas</h2>
             <div class="card-table">
                 <table class="data-table">
-                    <thead><tr><th>Curso</th><th>1ra Unidad</th><th>2da Unidad</th><th>3ra Unidad</th><th>4ta Unidad</th><th>Promedio</th></tr></thead>
+                    <thead>
+                        <tr><th>Curso</th><th>1ra Unidad</th><th>2da Unidad</th><th>3ra Unidad</th><th>4ta Unidad</th><th>Promedio</th></tr>
+                    </thead>
                     <tbody id="bodyMisNotas"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- PAGOS -->
         <section id="pagos" class="panel-section">
-            <h2><i class="fa-solid fa-money-bill-wave"></i> Estado de Cuenta y Manuales Asignados</h2>
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Estado de Cuenta y Cobros Asignados</h2>
             <div class="card-table">
                 <table class="data-table">
-                    <thead><tr><th>Concepto / Mes</th><th>Monto (Q)</th><th>Estado</th></tr></thead>
+                    <thead><tr><th>Concepto / Mes</th><th>Monto Registrado (Q)</th><th>Estado</th></tr></thead>
                     <tbody id="bodyMisPagos"><tr><td colspan="3" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN CAMBIAR CONTRASEÑA -->
+        <section id="configuracion" class="panel-section">
+            <h2><i class="fa-solid fa-key"></i> Seguridad y Contraseña</h2>
+            <div class="card-form" style="max-width: 500px;">
+                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">Actualizar Contraseña de Acceso</h3>
+                <form id="formCambiarPass">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>Nueva Contraseña</label>
+                        <input type="text" id="nuevaPass" required placeholder="Escriba su nueva contraseña" style="width:100%; padding:10px; border-radius:5px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                    </div>
+                    <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Nueva Contraseña</button>
+                </form>
             </div>
         </section>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
@@ -80,76 +117,90 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const mesesNombres = { inscripcion: 'Inscripción', enero: 'Enero', feb: 'Febrero', marzo: 'Marzo', abril: 'Abril', mayo: 'Mayo', junio: 'Junio', julio: 'Julio', agosto: 'Agosto', septiembre: 'Septiembre', octubre: 'Octubre', noviembre: 'Noviembre', diciembre: 'Diciembre' };
 
-        const mesesNombres = {
-            inscripcion: 'Inscripción', enero: 'Enero', feb: 'Febrero', marzo: 'Marzo',
-            abril: 'Abril', mayo: 'Mayo', junio: 'Junio', julio: 'Julio',
-            agosto: 'Agosto', septiembre: 'Septiembre', octubre: 'Octubre',
-            noviembre: 'Noviembre', diciembre: 'Diciembre'
-        };
+        let alumnoActualId = null;
 
-        window.cargarDatosAlumnoPortal = async function() {
-            // Aquí puedes conectar el ID del alumno logueado (ej. guardado en localStorage al iniciar sesión)
-            // Para demostración tomaremos el primer alumno o buscaremos por sesión
-            let codigoSesion = localStorage.getItem('codigoEstudianteLogueado') || "";
-            
-            try {
-                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : Object.keys(mesesNombres);
+        const formLogin = document.getElementById('formLoginAlumno');
+        if(formLogin) {
+            formLogin.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const user = document.getElementById('logUsuario').value.trim();
+                const pass = document.getElementById('logPassword').value.trim();
+                
+                try {
+                    const snap = await getDocs(collection(db, "alumnos"));
+                    let enc = false;
+                    snap.forEach(d => {
+                        let a = d.data();
+                        let codDB = (a.codigo || "").trim();
+                        let usuDB = (a.usuarioAcceso || "").trim();
+                        let passDB = (a.passwordAcceso || "").trim();
 
-                const querySnapshot = await getDocs(collection(db, "alumnos"));
-                let alumnoEncontrado = null;
-
-                querySnapshot.forEach(d => {
-                    let a = d.data();
-                    if(!codigoSesion || a.codigo === codigoSesion) {
-                        alumnoEncontrado = a;
+                        if((codDB === user || usuDB === user) && passDB === pass) {
+                            enc = true;
+                            alumnoActualId = d.id;
+                            localStorage.setItem('sesionAlumnoId', d.id);
+                            document.getElementById('loginOverlay').style.display = 'none';
+                            cargarPortal(a);
+                        }
+                    });
+                    if(!enc) {
+                        alert("Código de estudiante o contraseña incorrectos.");
                     }
-                });
-
-                if(!alumnoEncontrado && !querySnapshot.empty) {
-                    alumnoEncontrado = querySnapshot.docs[0].data(); // fallback
+                } catch(err) {
+                    alert("Error al iniciar sesión: " + err.message);
                 }
+            });
+        }
 
-                if(!alumnoEncontrado) return;
+        window.cargarPortal = async function(a) {
+            document.getElementById('lblNombreEstudiante').innerText = `${a.primerNombre} ${a.primerApellido}`;
+            document.getElementById('lblCursoEstudiante').innerText = a.curso;
+            let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
+            let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+            document.getElementById('bodyMisNotas').innerHTML = `<tr><td>${a.curso}</td><td>${notas.u1}</td><td>${notas.u2}</td><td>${notas.u3}</td><td>${notas.u4}</td><td><strong>${prom}</strong></td></tr>`;
 
-                document.getElementById('lblNombreEstudiante').innerText = `${alumnoEncontrado.primerNombre} ${alumnoEncontrado.primerApellido}`;
-                document.getElementById('lblCursoEstudiante').innerText = alumnoEncontrado.curso;
-
-                let notas = alumnoEncontrado.notas || {u1:0,u2:0,u3:0,u4:0};
-                let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
-
-                document.getElementById('bodyMisNotas').innerHTML = `
-                    <tr>
-                        <td>${alumnoEncontrado.curso}</td>
-                        <td>${notas.u1}</td><td>${notas.u2}</td><td>${notas.u3}</td><td>${notas.u4}</td>
-                        <td><strong>${prom}</strong></td>
-                    </tr>`;
-
-                let p = alumnoEncontrado.pagos || {};
-                let extras = alumnoEncontrado.cargosExtras || {};
-                let htmlPagos = "";
-
-                mesesActivos.forEach(mId => {
-                    let monto = p[mId];
-                    let pagado = monto && Number(monto) > 0;
-                    let estadoHtml = pagado ? `<span class="estado-pago pagado">Pagado (Q. ${monto})</span>` : `<span class="estado-pago pendiente">Pendiente</span>`;
-                    htmlPagos += `<tr><td>${mesesNombres[mId] || mId}</td><td>${monto || '0.00'}</td><td>${estadoHtml}</td></tr>`;
-                });
-
-                for(let key in extras) {
-                    let montoExt = extras[key];
-                    let pagadoExt = montoExt && Number(montoExt) > 0;
-                    let estadoExt = pagadoExt ? `<span class="estado-pago pagado">Pagado (Q. ${montoExt})</span>` : `<span class="estado-pago pendiente">Pendiente</span>`;
-                    htmlPagos += `<tr><td>${key} (Extra)</td><td>${montoExt || '0.00'}</td><td>${estadoExt}</td></tr>`;
-                }
-
-                document.getElementById('bodyMisPagos').innerHTML = htmlPagos;
-
-            } catch(e) { console.error(e); }
+            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : Object.keys(mesesNombres);
+            let p = a.pagos || {}, extras = a.cargosExtras || {}, hP = "";
+            mesesActivos.forEach(mId => {
+                let monto = p[mId], pagado = monto && Number(monto) > 0;
+                hP += `<tr><td>${mesesNombres[mId]}</td><td>${monto || '0.00'}</td><td><span class="estado-pago ${pagado?'pagado':'pendiente'}">${pagado?'Pagado':'Pendiente'}</span></td></tr>`;
+            });
+            for(let key in extras) {
+                let mExt = extras[key], pagExt = mExt && Number(mExt) > 0;
+                hP += `<tr><td>${key} (Extra)</td><td>${mExt || '0.00'}</td><td><span class="estado-pago ${pagExt?'pagado':'pendiente'}">${pagExt?'Pagado':'Pendiente'}</span></td></tr>`;
+            }
+            document.getElementById('bodyMisPagos').innerHTML = hP;
         };
 
-        window.addEventListener('DOMContentLoaded', () => { cargarDatosAlumnoPortal(); });
+        // Cambiar Contraseña
+        const formPass = document.getElementById('formCambiarPass');
+        if(formPass) {
+            formPass.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                let nueva = document.getElementById('nuevaPass').value.trim();
+                if(!alumnoActualId) return;
+                try {
+                    await updateDoc(doc(db, "alumnos", alumnoActualId), { passwordAcceso: nueva });
+                    alert("¡Contraseña actualizada con éxito!");
+                    formPass.reset();
+                } catch(err) { alert("Error: " + err.message); }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            let idSesion = localStorage.getItem('sesionAlumnoId');
+            if(idSesion) {
+                let dSnap = await getDoc(doc(db, "alumnos", idSesion));
+                if(dSnap.exists()) {
+                    alumnoActualId = dSnap.id;
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    cargarPortal(dSnap.data());
+                }
+            }
+        });
     </script>
     <script>
         function mostrarSeccion(id, evt) {

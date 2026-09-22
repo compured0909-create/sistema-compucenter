@@ -5,44 +5,118 @@
     <title>Iniciar Sesión | COMPURED</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #0f172a;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .login-card img { width: 60px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+        .form-group input:focus { border-color: #00f2fe; }
+    </style>
 </head>
-<body class="login-body">
-    <div class="login-container">
-        <div class="login-box">
-            <img src="logo.png" alt="Logo COMPURED" class="login-logo">
-            <h2>Acceso al Sistema</h2>
-            
-            <div class="input-group">
-                <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="login-email" placeholder="Correo o Usuario" required>
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="login-pass" placeholder="Contraseña" required>
-            </div>
+<body>
 
-            <!-- Botones de prueba según el rol -->
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                <button onclick="iniciarSesion('Director')" class="btn-primary" style="border:none; cursor:pointer; width:100%;">Entrar como Director</button>
-                <button onclick="iniciarSesion('Docente')" class="btn-primary" style="border:none; cursor:pointer; width:100%; background: linear-gradient(45deg, #11998e, #38ef7d);">Entrar como Docente</button>
-                <button onclick="iniciarSesion('Estudiante')" class="btn-primary" style="border:none; cursor:pointer; width:100%; background: linear-gradient(45deg, #f2994a, #f2c94c);">Entrar como Estudiante</button>
+    <div class="login-card">
+        <img src="logo.png" alt="Logo COMPURED">
+        <h2 style="color: #fff; margin-bottom: 5px;">COMPURED</h2>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Plataforma Educativa Institucional</p>
+        
+        <form id="formLoginGeneral">
+            <div class="form-group">
+                <label>Correo Electrónico o Código de Estudiante</label>
+                <input type="text" id="userInput" required placeholder="Correo o código">
             </div>
-
-            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver a la web</a>
-        </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="passInput" required placeholder="********">
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 8px; font-weight: bold;">Iniciar Sesión</button>
+        </form>
     </div>
 
-    <script>
-        function iniciarSesion(rol) {
-            localStorage.setItem('rolUsuario', rol);
-            if(rol === 'Estudiante') {
-                window.location.href = 'estudiante.html';
-            } else if(rol === 'Docente') {
-                window.location.href = 'docente.html';
-            } else {
-                window.location.href = 'director.html';
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('formLoginGeneral').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const user = document.getElementById('userInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
+
+            // 1. Validar si es el Director General
+            if (user === "compured0909@gmail.com" && pass === "CompuRed123") {
+                localStorage.setItem('rolUsuario', 'director');
+                window.location.href = "director.html";
+                return;
             }
-        }
+
+            try {
+                // 2. Validar si es un Docente registrado en la colección "docentes"
+                const docentesSnapshot = await getDocs(collection(db, "docentes"));
+                let docenteEncontrado = false;
+                docentesSnapshot.forEach(docSnap => {
+                    let d = docSnap.data();
+                    if (d.correo === user && d.password === pass) {
+                        docenteEncontrado = true;
+                        localStorage.setItem('rolUsuario', 'docente');
+                        window.location.href = "docente.html";
+                    }
+                });
+
+                if (docenteEncontrado) return;
+
+                // 3. Validar si es un Alumno registrado en la colección "alumnos"
+                const alumnosSnapshot = await getDocs(collection(db, "alumnos"));
+                let alumnoEncontrado = false;
+                alumnosSnapshot.forEach(docSnap => {
+                    let a = docSnap.data();
+                    if (a.usuarioAcceso === user && a.passwordAcceso === pass) {
+                        alumnoEncontrado = true;
+                        localStorage.setItem('sesionAlumnoId', docSnap.id);
+                        localStorage.setItem('rolUsuario', 'alumno');
+                        window.location.href = "estudiante.html";
+                    }
+                });
+
+                if (alumnoEncontrado) return;
+
+                alert("Credenciales incorrectas o usuario no registrado en el sistema.");
+
+            } catch (err) {
+                console.error("Error en el login:", err);
+                alert("Error de conexión con la base de datos.");
+            }
+        });
     </script>
 </body>
 </html>

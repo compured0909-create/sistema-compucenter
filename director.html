@@ -67,7 +67,7 @@
             <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Configurar Meses / Cargos</a>
             <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
             <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
-            <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            <a href="login.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </nav>
     </aside>
 
@@ -102,10 +102,10 @@
                 </form>
             </div>
             <div class="card-table">
-                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Listado General</h3>
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Listado General y Credenciales</h3>
                 <table class="data-table">
                     <thead>
-                        <tr><th>Código</th><th>Nombre Completo</th><th>Curso</th><th>Credenciales</th><th>Acciones</th></tr>
+                        <tr><th>Código</th><th>Nombre Completo</th><th>Curso</th><th>Credenciales (Usuario / Contraseña)</th><th>Acciones</th></tr>
                     </thead>
                     <tbody id="bodyListaAlumnosDir"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
@@ -137,7 +137,7 @@
             <div id="contenedorPagosDir"><p style="text-align: center; color: var(--text-muted);">Cargando...</p></div>
         </section>
 
-        <!-- CONFIGURAR MESES Y CARGOS EXTRAS (NUEVO) -->
+        <!-- CONFIGURAR MESES Y CARGOS EXTRAS -->
         <section id="configMeses" class="panel-section">
             <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Asignación de Manuales/Extras</h2>
             <div class="card-form" style="margin-bottom: 30px;">
@@ -173,19 +173,29 @@
         <!-- GESTIÓN DE DOCENTES -->
         <section id="docentes" class="panel-section">
             <h2><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</h2>
-            <div class="card-form">
-                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">Registrar Docente</h3>
-                <form class="grid-form" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="form-group"><label>Nombre</label><input type="text" required></div>
-                    <div class="form-group"><label>Correo</label><input type="email" required></div>
-                    <div class="form-group"><label>Teléfono</label><input type="tel" required></div>
-                    <div class="form-group"><label>Contraseña</label><input type="password" required></div>
-                    <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar</button></div>
+            <div class="card-form" style="margin-bottom: 30px;">
+                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">Registrar Nuevo Docente</h3>
+                <form class="grid-form" id="formRegistroDocente" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="form-group"><label>Nombre Completo</label><input type="text" id="docNombre" required></div>
+                    <div class="form-group"><label>Correo Electrónico (Acceso)</label><input type="email" id="docCorreo" required></div>
+                    <div class="form-group"><label>Teléfono</label><input type="tel" id="docTel" required></div>
+                    <div class="form-group"><label>Contraseña de Acceso</label><input type="password" id="docPass" required></div>
+                    <div class="form-actions" style="grid-column: span 2;">
+                        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Docente</button>
+                    </div>
                 </form>
+            </div>
+
+            <div class="card-table">
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Plantilla de Docentes Registrados</h3>
+                <table class="data-table">
+                    <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaDocentes"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
             </div>
         </section>
 
-        <!-- FINANZAS LIMPIAS (NUEVO) -->
+        <!-- FINANZAS LIMPIAS -->
         <section id="finanzas" class="panel-section">
             <h2><i class="fa-solid fa-chart-line"></i> Control Financiero Limpio</h2>
             <div class="grid-container" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
@@ -249,6 +259,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Seguridad de Rol
+        window.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('rolUsuario') !== 'director') {
+                alert("Acceso no autorizado. Debe iniciar sesión como Director.");
+                window.location.href = "login.html";
+                return;
+            }
+            cargarDatosDirector();
+        });
+
         const mesesDisponibles = [
             { id: 'inscripcion', label: 'Inscripción' },
             { id: 'enero', label: 'Enero' },
@@ -270,7 +290,7 @@
             if(!grid) return;
             const docRef = doc(db, "configuracion", "cicloPagos");
             const snap = await getDoc(docRef);
-            let activos = snap.exists() ? snap.data().mesesActivos : ['inscripcion', 'enero', 'feb', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            let activos = snap.exists() ? snap.data().mesesActivos : mesesDisponibles.map(m => m.id);
 
             let html = "";
             mesesDisponibles.forEach(m => {
@@ -321,6 +341,36 @@
             });
         }
 
+        // Registrar Docente
+        const formDocente = document.getElementById('formRegistroDocente');
+        if(formDocente) {
+            formDocente.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const nombre = document.getElementById('docNombre').value.trim();
+                const correo = document.getElementById('docCorreo').value.trim();
+                const telefono = document.getElementById('docTel').value.trim();
+                const password = document.getElementById('docPass').value.trim();
+
+                try {
+                    await addDoc(collection(db, "docentes"), {
+                        nombre, correo, telefono, password, fechaRegistro: new Date().toISOString()
+                    });
+                    alert("¡Docente registrado exitosamente!");
+                    formDocente.reset();
+                    cargarDatosDirector();
+                } catch(err) {
+                    alert("Error: " + err.message);
+                }
+            });
+        }
+
+        window.eliminarDocente = async function(id) {
+            if(confirm("¿Seguro de eliminar este docente?")) {
+                await deleteDoc(doc(db, "docentes", id));
+                cargarDatosDirector();
+            }
+        };
+
         window.cargarDatosDirector = async function() {
             await cargarConfiguracionMeses();
             const bodyLista = document.getElementById('bodyListaAlumnosDir');
@@ -328,10 +378,24 @@
             const contenedorPagos = document.getElementById('contenedorPagosDir');
             const selectAlumnoExtra = document.getElementById('selectAlumnoExtra');
             const bodyMovimientos = document.getElementById('bodyMovimientos');
+            const bodyDocentes = document.getElementById('bodyListaDocentes');
 
             try {
                 const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
                 let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+
+                // Cargar Docentes
+                const docSnapshots = await getDocs(collection(db, "docentes"));
+                let hDoc = "";
+                if(docSnapshots.empty) {
+                    hDoc = `<tr><td colspan="4" style="text-align: center;">No hay docentes registrados.</td></tr>`;
+                } else {
+                    docSnapshots.forEach(d => {
+                        let dt = d.data();
+                        hDoc += `<tr><td>${dt.nombre}</td><td>${dt.correo}</td><td>${dt.telefono}</td><td><button class="btn-icon btn-delete" onclick="eliminarDocente('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    });
+                }
+                if(bodyDocentes) bodyDocentes.innerHTML = hDoc;
 
                 const querySnapshot = await getDocs(collection(db, "alumnos"));
                 if (querySnapshot.empty) {
@@ -358,7 +422,7 @@
                     htmlLista += `
                         <tr>
                             <td>${a.codigo}</td><td>${a.primerNombre} ${a.primerApellido}</td><td>${a.curso}</td>
-                            <td>U: ${a.usuarioAcceso} / P: ${a.passwordAcceso}</td>
+                            <td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:var(--primary-color);">${a.passwordAcceso}</span></td>
                             <td><button class="btn-icon btn-delete" onclick="eliminarAlumno('${id}')"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>`;
 
@@ -455,7 +519,7 @@
                         await updateDoc(doc(db, "alumnos", d.id), { cargosExtras: extras });
                     }
                 });
-                alert("¡Cargo extra aplicado correctamente a los alumnos seleccionados!");
+                alert("¡Cargo extra aplicado correctamente!");
                 document.getElementById('formCargoExtra').reset();
                 cargarDatosDirector();
             } catch(err) { alert("Error: " + err.message); }
@@ -512,8 +576,6 @@
         document.getElementById('destinoCargo').addEventListener('change', function() {
             document.getElementById('divAlumnoEspecifico').style.display = this.value === 'especifico' ? 'block' : 'none';
         });
-
-        window.addEventListener('DOMContentLoaded', () => { cargarDatosDirector(); });
     </script>
     <script>
         function mostrarSeccion(id, evt) {
