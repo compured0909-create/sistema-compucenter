@@ -457,3 +457,151 @@ footer {
         font-size: 1rem;
     }
 }
+/* =========================================
+   ESTILOS PARA EL SISTEMA (AGREGAR AL FINAL)
+   ========================================= */
+
+/* Botón Iniciar Sesión en Menú */
+.btn-login {
+    background: rgba(0, 242, 254, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--primary-color);
+}
+.btn-login:hover { background: var(--primary-color) !important; color: #000 !important; }
+
+/* --- LOGIN SCREEN --- */
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+}
+.login-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+.login-logo { width: 80px; margin-bottom: 20px; }
+.login-box h2 { margin-bottom: 30px; font-weight: 400; }
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+}
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 30px;
+    color: #fff;
+    outline: none;
+    transition: border 0.3s;
+}
+.input-group input:focus { border-color: var(--primary-color); }
+.back-link {
+    display: block;
+    margin-top: 25px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.back-link:hover { color: var(--primary-color); }
+
+/* --- DASHBOARD Y PANELES --- */
+.dashboard-body { display: flex; height: 100vh; overflow: hidden; background: #080c14; }
+.sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.03);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-logo {
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-nav { display: flex; flex-direction: column; padding: 20px 0; }
+.sidebar-nav a {
+    padding: 15px 25px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    transition: 0.3s;
+}
+.sidebar-nav a:hover { background: rgba(0,242,254,0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); }
+.logout { margin-top: auto; color: #ff4757 !important; }
+.logout:hover { background: rgba(255,71,87,0.1) !important; border-color: #ff4757 !important; }
+
+/* Contenido Principal */
+.dashboard-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+
+/* Truco de CSS para Pestañas sin JS */
+.panel-section { display: none; animation: fadeUp 0.5s ease; }
+/* Por defecto muestra la primera si no hay nada en el enlace, o la seleccionada */
+.panel-section:target, #registro:target ~ .panel-section { display: block; }
+/* Muestra el registro por defecto al entrar */
+#registro { display: block; }
+:target ~ #registro { display: none; }
+#registro:target { display: block !important; }
+
+.panel-section h2 { margin-bottom: 30px; color: var(--primary-color); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+
+/* Formularios del Sistema */
+.card-form, .card-table {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.grid-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 0.9rem; color: var(--text-muted); }
+.form-group input, .form-group select {
+    padding: 10px 15px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: #fff;
+    outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--primary-color); }
+.form-group select option { background: #0b0f19; color: #fff; }
+
+/* Tablas */
+.overflow-x { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; text-align: left; }
+.data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.data-table th { color: var(--secondary-color); font-weight: 600; background: rgba(0,0,0,0.2); }
+.data-table tr:hover { background: rgba(255,255,255,0.02); }
+.grade-input { width: 60px; padding: 5px; background: rgba(0,0,0,0.4); border: 1px solid #444; color: #fff; text-align: center; border-radius: 5px; }
+.average { font-weight: bold; color: var(--primary-color); }
+
+/* Botones de acción en tabla */
+.btn-icon { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 5px; transition: 0.3s; }
+.btn-edit { color: var(--primary-color); }
+.btn-delete { color: #ff4757; }
+.btn-icon:hover { transform: scale(1.2); }
+
+/* Checkboxes para pagos */
+.payments-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }

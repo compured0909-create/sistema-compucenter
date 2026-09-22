@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Docente | COMPURED</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .panel-section { display: none !important; }
+        .panel-section.active { display: block !important; }
+        .sidebar-nav a.active {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <!-- Menú Lateral Docente -->
+    <aside class="sidebar">
+        <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
+            <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
+            <span>COMPURED</span>
+        </div>
+        <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <p style="color: #fff; font-weight: bold;">Prof. Docente</p>
+            <span style="font-size: 0.75rem; background: rgba(56,239,125,0.2); color: #38ef7d; padding: 2px 8px; border-radius: 10px;">Docente</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
+            <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
+            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Gestión de Pagos</a>
+            <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+        </nav>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="dashboard-content">
+
+        <!-- GESTIÓN DE ALUMNOS -->
+        <section id="registro" class="panel-section active">
+            <h2><i class="fa-solid fa-user-plus"></i> Inscripción y Control de Alumnos</h2>
+            
+            <div class="card-form" style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso</h3>
+                <form class="grid-form" id="formInscripcion">
+                    <div class="form-group"><label>Primer Nombre</label><input type="text" id="pNombre" required></div>
+                    <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
+                    <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
+                    
+                    <div class="form-group"><label>Código de Estudiante</label><input type="text" id="codigoEstudiante" required></div>
+                    <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="fechaNac" required></div>
+                    <div class="form-group">
+                        <label>Grado que Cursa</label>
+                        <select id="gradoCursa">
+                            <option>Primero Básico</option>
+                            <option>Segundo Básico</option>
+                            <option>Tercero Básico</option>
+                            <option>Bachillerato / Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Curso de Interés</label>
+                        <select id="cursoInteres">
+                            <option>Mecanografía Básico</option>
+                            <option>Técnico Operador</option>
+                            <option>Diseño Gráfico Computarizado</option>
+                            <option>Mantenimiento y Reparación</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sede de Inscripción</label>
+                        <select id="sedeInscripcion">
+                            <option>Aldea La Victoria (COMPURED)</option>
+                            <option>La Esperanza (COMPUCENTER)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Día y Horario de Estudio</label>
+                        <input type="text" id="horarioEstudio" placeholder="Ej: Sábados 8:00 a 10:00 AM">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 3;"><label>Dirección de Residencia</label><input type="text" id="direccion" required></div>
+                    <div class="form-group"><label>Nombre del Encargado</label><input type="text" id="nombreEncargado" required></div>
+                    <div class="form-group"><label>Teléfono Estudiante</label><input type="tel" id="telEstudiante"></div>
+                    <div class="form-group"><label>Teléfono Encargado</label><input type="tel" id="telEncargado" required></div>
+
+                    <div class="form-actions" style="grid-column: span 3;">
+                        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Alumno</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-table">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="font-size: 1.1rem; margin: 0;">Alumnos Inscritos</h3>
+                    <input type="text" id="buscarAlumno" placeholder="🔍 Buscar por nombre o código..." onkeyup="filtrarTabla('tablaAlumnos', 'buscarAlumno')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
+                </div>
+                <table class="data-table" id="tablaAlumnos">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre Completo</th>
+                            <th>Curso</th>
+                            <th>Sede / Horario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>COMP-001</td>
+                            <td>Juan Pérez López</td>
+                            <td>Mecanografía Básico</td>
+                            <td>Aldea La Victoria (Sábados)</td>
+                            <td>
+                                <button class="btn-icon btn-delete" title="Eliminar Alumno"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CALIFICACIONES -->
+        <section id="calificaciones" class="panel-section">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Control y Registro de Calificaciones</h2>
+            <div class="card-table">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="font-size: 1.1rem; margin: 0;">Notas por Estudiante</h3>
+                    <input type="text" id="buscarNotas" placeholder="🔍 Buscar estudiante..." onkeyup="filtrarTabla('tablaNotas', 'buscarNotas')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
+                </div>
+                <table class="data-table" id="tablaNotas">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Curso / Módulo</th>
+                            <th>1ra Unidad</th>
+                            <th>2da Unidad</th>
+                            <th>3ra Unidad</th>
+                            <th>4ta Unidad</th>
+                            <th>Promedio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Juan Pérez</td>
+                            <td>Prácticas en RapidTyping</td>
+                            <td><input type="number" value="85" class="grade-input"></td>
+                            <td><input type="number" value="90" class="grade-input"></td>
+                            <td><input type="number" placeholder="-" class="grade-input"></td>
+                            <td><input type="number" placeholder="-" class="grade-input"></td>
+                            <td class="average">87.5</td>
+                            <td>
+                                <button class="btn-icon btn-edit" title="Guardar Nota"><i class="fa-solid fa-floppy-disk"></i></button>
+                                <button class="btn-icon btn-delete" title="Borrar Nota"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PAGOS -->
+        <section id="pagos" class="panel-section">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos de Alumnos</h2>
+            <div class="card-table overflow-x">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="font-size: 1.1rem; margin: 0;">Historial de Mensualidades</h3>
+                    <input type="text" id="buscarPagos" placeholder="🔍 Buscar estudiante..." onkeyup="filtrarTabla('tablaPagos', 'buscarPagos')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
+                </div>
+                <table class="data-table payments-table" id="tablaPagos">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Inscripción</th>
+                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
+                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>María López</td>
+                            <td><input type="checkbox" checked></td>
+                            <td><input type="checkbox" checked></td>
+                            <td><input type="checkbox" checked></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <button class="btn-icon btn-edit" title="Modificar Meses"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-icon btn-delete" title="Borrar Pagos"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Script de Firebase y Conexión del Formulario -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const formulario = document.getElementById('formInscripcion');
+        
+        if (formulario) {
+            formulario.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const alumnoData = {
+                    primerNombre: document.getElementById('pNombre').value,
+                    segundoNombre: document.getElementById('sNombre').value,
+                    tercerNombre: document.getElementById('tNombre').value,
+                    codigo: document.getElementById('codigoEstudiante').value,
+                    fechaNacimiento: document.getElementById('fechaNac').value,
+                    grado: document.getElementById('gradoCursa').value,
+                    curso: document.getElementById('cursoInteres').value,
+                    sede: document.getElementById('sedeInscripcion').value,
+                    horario: document.getElementById('horarioEstudio').value,
+                    direccion: document.getElementById('direccion').value,
+                    encargado: document.getElementById('nombreEncargado').value,
+                    telEstudiante: document.getElementById('telEstudiante').value,
+                    telEncargado: document.getElementById('telEncargado').value,
+                    fechaRegistro: new Date()
+                };
+
+                try {
+                    await addDoc(collection(db, "alumnos"), alumnoData);
+                    alert("¡Alumno guardado exitosamente en la nube de Firebase!");
+                    formulario.reset();
+                } catch (error) {
+                    console.error("Error al guardar el alumno: ", error);
+                    alert("Hubo un error al guardar. Revisa la consola.");
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function mostrarSeccion(idSeccion, evento) {
+            evento.preventDefault();
+            const secciones = document.querySelectorAll('.panel-section');
+            secciones.forEach(sec => sec.classList.remove('active'));
+            
+            const seccionActiva = document.getElementById(idSeccion);
+            if (seccionActiva) {
+                seccionActiva.classList.add('active');
+            }
+            
+            const enlaces = document.querySelectorAll('.sidebar-nav a');
+            enlaces.forEach(link => link.classList.remove('active'));
+            evento.currentTarget.classList.add('active');
+        }
+
+        function filtrarTabla(idTabla, idInput) {
+            const input = document.getElementById(idInput);
+            const filtro = input.value.toLowerCase();
+            const tabla = document.getElementById(idTabla);
+            const filas = tabla.getElementsByTagName('tr');
+
+            for (let i = 1; i < filas.length; i++) {
+                let fila = filas[i];
+                let textoFila = fila.textContent || fila.innerText;
+                if (textoFila.toLowerCase().indexOf(filtro) > -1) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

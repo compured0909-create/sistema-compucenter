@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión | COMPURED</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <img src="logo.png" alt="Logo COMPURED" class="login-logo">
+            <h2>Acceso al Sistema</h2>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="login-email" placeholder="Correo o Usuario" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="login-pass" placeholder="Contraseña" required>
+            </div>
+
+            <!-- Botones de prueba según el rol -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button onclick="iniciarSesion('Director')" class="btn-primary" style="border:none; cursor:pointer; width:100%;">Entrar como Director</button>
+                <button onclick="iniciarSesion('Docente')" class="btn-primary" style="border:none; cursor:pointer; width:100%; background: linear-gradient(45deg, #11998e, #38ef7d);">Entrar como Docente</button>
+                <button onclick="iniciarSesion('Estudiante')" class="btn-primary" style="border:none; cursor:pointer; width:100%; background: linear-gradient(45deg, #f2994a, #f2c94c);">Entrar como Estudiante</button>
+            </div>
+
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver a la web</a>
+        </div>
+    </div>
+
+    <script>
+        function iniciarSesion(rol) {
+            localStorage.setItem('rolUsuario', rol);
+            if(rol === 'Estudiante') {
+                window.location.href = 'estudiante.html';
+            } else if(rol === 'Docente') {
+                window.location.href = 'docente.html';
+            } else {
+                window.location.href = 'director.html';
+            }
+        }
+    </script>
+</body>
+</html>
