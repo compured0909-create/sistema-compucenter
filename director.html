@@ -189,8 +189,8 @@
             <div class="card-table">
                 <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Plantilla de Docentes Registrados</h3>
                 <table class="data-table">
-                    <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Acciones</th></tr></thead>
-                    <tbody id="bodyListaDocentes"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Contraseña</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaDocentes"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
@@ -319,8 +319,11 @@
                 const pApellido = document.getElementById('pApellido').value.trim();
                 const codigo = document.getElementById('codigoEstudiante').value.trim();
                 const alumnoData = {
-                    primerNombre: pNombre, segundoNombre: document.getElementById('sNombre').value.trim(),
-                    primerApellido: pApellido, segundoApellido: document.getElementById('sApellido').value.trim(),
+                    primerNombre: pNombre, 
+                    segundoNombre: document.getElementById('sNombre').value.trim(),
+                    tercerNombre: document.getElementById('tNombre').value.trim(),
+                    primerApellido: pApellido, 
+                    segundoApellido: document.getElementById('sApellido').value.trim(),
                     codigo, fechaNacimiento: document.getElementById('fechaNac').value,
                     grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
                     sede: document.getElementById('sedeInscripcion').value, diaEstudio: document.getElementById('diaEstudio').value,
@@ -388,11 +391,18 @@
                 const docSnapshots = await getDocs(collection(db, "docentes"));
                 let hDoc = "";
                 if(docSnapshots.empty) {
-                    hDoc = `<tr><td colspan="4" style="text-align: center;">No hay docentes registrados.</td></tr>`;
+                    hDoc = `<tr><td colspan="5" style="text-align: center;">No hay docentes registrados.</td></tr>`;
                 } else {
                     docSnapshots.forEach(d => {
                         let dt = d.data();
-                        hDoc += `<tr><td>${dt.nombre}</td><td>${dt.correo}</td><td>${dt.telefono}</td><td><button class="btn-icon btn-delete" onclick="eliminarDocente('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        hDoc += `
+                            <tr>
+                                <td>${dt.nombre}</td>
+                                <td>${dt.correo}</td>
+                                <td>${dt.telefono}</td>
+                                <td><span style="color:var(--primary-color); font-weight:bold;">${dt.password}</span></td>
+                                <td><button class="btn-icon btn-delete" onclick="eliminarDocente('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                            </tr>`;
                     });
                 }
                 if(bodyDocentes) bodyDocentes.innerHTML = hDoc;
@@ -411,24 +421,31 @@
                 querySnapshot.forEach((docSnap) => {
                     const a = docSnap.data();
                     const id = docSnap.id;
-                    const nombreCompleto = `${a.codigo} - ${a.primerNombre} ${a.primerApellido}`;
+                    
+                    // Unir todos los nombres y apellidos disponibles
+                    let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                    let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                    const nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
                     const notas = a.notas || { u1: 0, u2: 0, u3: 0, u4: 0 };
                     const p = a.pagos || {};
                     const extras = a.cargosExtras || {};
                     const promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
 
-                    htmlSelect += `<option value="${id}">${nombreCompleto}</option>`;
+                    htmlSelect += `<option value="${id}">${nombreParaMostrar}</option>`;
 
                     htmlLista += `
                         <tr>
-                            <td>${a.codigo}</td><td>${a.primerNombre} ${a.primerApellido}</td><td>${a.curso}</td>
+                            <td>${a.codigo}</td>
+                            <td>${nombreCompletoTexto}</td>
+                            <td>${a.curso}</td>
                             <td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:var(--primary-color);">${a.passwordAcceso}</span></td>
                             <td><button class="btn-icon btn-delete" onclick="eliminarAlumno('${id}')"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>`;
 
                     htmlCalif += `
                         <tr>
-                            <td><strong>${nombreCompleto}</strong></td><td>${a.curso}</td>
+                            <td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td>
                             <td><input type="number" id="u1_dir_${id}" value="${notas.u1}" style="width:50px;"></td>
                             <td><input type="number" id="u2_dir_${id}" value="${notas.u2}" style="width:50px;"></td>
                             <td><input type="number" id="u3_dir_${id}" value="${notas.u3}" style="width:50px;"></td>
@@ -438,9 +455,9 @@
                         </tr>`;
 
                     htmlPagos += `
-                        <div class="pago-card" data-nombre="${nombreCompleto.toLowerCase()}">
+                        <div class="pago-card" data-nombre="${nombreCompletoTexto.toLowerCase()}">
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom:15px;">
-                                <h4 style="color: var(--primary-color); margin:0;">${nombreCompleto}</h4>
+                                <h4 style="color: var(--primary-color); margin:0;">${nombreParaMostrar}</h4>
                                 <button class="btn-primary" style="padding: 6px 15px; font-size: 0.85rem; border:none; cursor:pointer;" onclick="guardarPagos('${id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button>
                             </div>
                             <div class="pago-grid">`;
@@ -589,7 +606,7 @@
             const f = document.getElementById(idI).value.toLowerCase();
             const filas = document.getElementById(idT).getElementsByTagName('tr');
             for(let i=1; i<filas.length; i++) {
-                let td = filas[i].getElementsByTagName('td')[0];
+                let td = filas[i].getElementsByTagName('td')[1]; // Columna de nombre completo
                 if(td) filas[i].style.display = td.textContent.toLowerCase().includes(f) ? "" : "none";
             }
         }
