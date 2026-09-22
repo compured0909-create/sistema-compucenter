@@ -5,95 +5,160 @@
     <title>Portal del Estudiante | COMPURED</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .panel-section { display: none !important; }
+        .panel-section.active { display: block !important; }
+        .sidebar-nav a.active {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+        .estado-pago {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .pagado { background: rgba(56,239,125,0.2); color: #38ef7d; }
+        .pendiente { background: rgba(255,71,87,0.2); color: #ff4757; }
+    </style>
 </head>
 <body class="dashboard-body">
 
-    <!-- Menú Lateral del Estudiante -->
     <aside class="sidebar">
         <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
             <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
             <span>COMPURED</span>
         </div>
         <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p id="nombre-usuario" style="color: #fff; font-weight: bold;">Juan Pérez</p>
-            <span id="rol-badge" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Estudiante</span>
+            <p id="lblNombreEstudiante" style="color: #fff; font-weight: bold;">Estudiante</p>
+            <span id="lblCursoEstudiante" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Alumno</span>
         </div>
         <nav class="sidebar-nav">
-            <a href="#mis-notas"><i class="fa-solid fa-star"></i> Mis Calificaciones</a>
-            <a href="#mis-pagos"><i class="fa-solid fa-receipt"></i> Estado de Cuenta</a>
-            <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+            <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link active"><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</a>
+            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Mis Pagos y Extras</a>
+            <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </nav>
     </aside>
 
-    <!-- Contenido Principal -->
     <main class="dashboard-content">
-
-        <!-- PESTAÑA 1: CALIFICACIONES -->
-        <section id="mis-notas" class="panel-section">
-            <h2><i class="fa-solid fa-star"></i> Mis Calificaciones</h2>
+        <!-- CALIFICACIONES -->
+        <section id="calificaciones" class="panel-section active">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones Académicas</h2>
             <div class="card-table">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Módulo / Curso</th>
-                            <th>1ra Unidad</th>
-                            <th>2da Unidad</th>
-                            <th>3ra Unidad</th>
-                            <th>4ta Unidad</th>
-                            <th>Promedio Final</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Prácticas en RapidTyping</td>
-                            <td>85</td>
-                            <td>90</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td class="average">87.5</td>
-                            <td><span style="color: #25D366;">Aprobando</span></td>
-                        </tr>
-                    </tbody>
+                    <thead><tr><th>Curso</th><th>1ra Unidad</th><th>2da Unidad</th><th>3ra Unidad</th><th>4ta Unidad</th><th>Promedio</th></tr></thead>
+                    <tbody id="bodyMisNotas"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- PESTAÑA 2: PAGOS -->
-        <section id="mis-pagos" class="panel-section">
-            <h2><i class="fa-solid fa-receipt"></i> Estado de Cuenta</h2>
-            <div class="card-form">
-                <p style="margin-bottom: 20px; color: var(--text-muted);">
-                    Consulta tus meses cancelados y pendientes. Si tienes dudas, comunícate a la dirección.
-                </p>
-                <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
-                    
-                    <!-- Tarjetas de Meses -->
-                    <div class="card" style="padding: 15px; border-color: #25D366;">
-                        <h4 style="color: #25D366; margin-bottom: 5px;">Inscripción</h4>
-                        <p>Cancelado <i class="fa-solid fa-check"></i></p>
-                    </div>
-                    <div class="card" style="padding: 15px; border-color: #25D366;">
-                        <h4 style="color: #25D366; margin-bottom: 5px;">Enero</h4>
-                        <p>Cancelado <i class="fa-solid fa-check"></i></p>
-                    </div>
-                    <div class="card" style="padding: 15px; border-color: #25D366;">
-                        <h4 style="color: #25D366; margin-bottom: 5px;">Febrero</h4>
-                        <p>Cancelado <i class="fa-solid fa-check"></i></p>
-                    </div>
-                    <div class="card" style="padding: 15px; border-color: #ff4757; background: rgba(255, 71, 87, 0.05);">
-                        <h4 style="color: #ff4757; margin-bottom: 5px;">Marzo</h4>
-                        <p>Pendiente <i class="fa-solid fa-clock"></i></p>
-                    </div>
-                    <div class="card" style="padding: 15px; border-color: rgba(255,255,255,0.1);">
-                        <h4 style="color: var(--text-muted); margin-bottom: 5px;">Abril</h4>
-                        <p>No vencido</p>
-                    </div>
-                    
-                </div>
+        <!-- PAGOS -->
+        <section id="pagos" class="panel-section">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Estado de Cuenta y Manuales Asignados</h2>
+            <div class="card-table">
+                <table class="data-table">
+                    <thead><tr><th>Concepto / Mes</th><th>Monto (Q)</th><th>Estado</th></tr></thead>
+                    <tbody id="bodyMisPagos"><tr><td colspan="3" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
             </div>
         </section>
-
     </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const mesesNombres = {
+            inscripcion: 'Inscripción', enero: 'Enero', feb: 'Febrero', marzo: 'Marzo',
+            abril: 'Abril', mayo: 'Mayo', junio: 'Junio', julio: 'Julio',
+            agosto: 'Agosto', septiembre: 'Septiembre', octubre: 'Octubre',
+            noviembre: 'Noviembre', diciembre: 'Diciembre'
+        };
+
+        window.cargarDatosAlumnoPortal = async function() {
+            // Aquí puedes conectar el ID del alumno logueado (ej. guardado en localStorage al iniciar sesión)
+            // Para demostración tomaremos el primer alumno o buscaremos por sesión
+            let codigoSesion = localStorage.getItem('codigoEstudianteLogueado') || "";
+            
+            try {
+                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : Object.keys(mesesNombres);
+
+                const querySnapshot = await getDocs(collection(db, "alumnos"));
+                let alumnoEncontrado = null;
+
+                querySnapshot.forEach(d => {
+                    let a = d.data();
+                    if(!codigoSesion || a.codigo === codigoSesion) {
+                        alumnoEncontrado = a;
+                    }
+                });
+
+                if(!alumnoEncontrado && !querySnapshot.empty) {
+                    alumnoEncontrado = querySnapshot.docs[0].data(); // fallback
+                }
+
+                if(!alumnoEncontrado) return;
+
+                document.getElementById('lblNombreEstudiante').innerText = `${alumnoEncontrado.primerNombre} ${alumnoEncontrado.primerApellido}`;
+                document.getElementById('lblCursoEstudiante').innerText = alumnoEncontrado.curso;
+
+                let notas = alumnoEncontrado.notas || {u1:0,u2:0,u3:0,u4:0};
+                let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+
+                document.getElementById('bodyMisNotas').innerHTML = `
+                    <tr>
+                        <td>${alumnoEncontrado.curso}</td>
+                        <td>${notas.u1}</td><td>${notas.u2}</td><td>${notas.u3}</td><td>${notas.u4}</td>
+                        <td><strong>${prom}</strong></td>
+                    </tr>`;
+
+                let p = alumnoEncontrado.pagos || {};
+                let extras = alumnoEncontrado.cargosExtras || {};
+                let htmlPagos = "";
+
+                mesesActivos.forEach(mId => {
+                    let monto = p[mId];
+                    let pagado = monto && Number(monto) > 0;
+                    let estadoHtml = pagado ? `<span class="estado-pago pagado">Pagado (Q. ${monto})</span>` : `<span class="estado-pago pendiente">Pendiente</span>`;
+                    htmlPagos += `<tr><td>${mesesNombres[mId] || mId}</td><td>${monto || '0.00'}</td><td>${estadoHtml}</td></tr>`;
+                });
+
+                for(let key in extras) {
+                    let montoExt = extras[key];
+                    let pagadoExt = montoExt && Number(montoExt) > 0;
+                    let estadoExt = pagadoExt ? `<span class="estado-pago pagado">Pagado (Q. ${montoExt})</span>` : `<span class="estado-pago pendiente">Pendiente</span>`;
+                    htmlPagos += `<tr><td>${key} (Extra)</td><td>${montoExt || '0.00'}</td><td>${estadoExt}</td></tr>`;
+                }
+
+                document.getElementById('bodyMisPagos').innerHTML = htmlPagos;
+
+            } catch(e) { console.error(e); }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => { cargarDatosAlumnoPortal(); });
+    </script>
+    <script>
+        function mostrarSeccion(id, evt) {
+            evt.preventDefault();
+            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
 </body>
 </html>

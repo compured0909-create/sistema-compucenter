@@ -13,11 +13,28 @@
             color: var(--primary-color);
             border-left: 4px solid var(--primary-color);
         }
+        .pago-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .pago-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .pago-item { display: flex; flex-direction: column; gap: 5px; }
+        .pago-item label { font-size: 0.85rem; color: var(--text-muted); }
+        .pago-item input { padding: 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; width: 100%; }
+        @media (max-width: 768px) { .pago-grid { grid-template-columns: repeat(1, 1fr); } }
     </style>
 </head>
 <body class="dashboard-body">
 
-    <!-- Menú Lateral Docente -->
     <aside class="sidebar">
         <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
             <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
@@ -30,189 +47,62 @@
         <nav class="sidebar-nav">
             <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
             <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
-            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Gestión de Pagos</a>
+            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
             <a href="index.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </nav>
     </aside>
 
-    <!-- Contenido Principal -->
     <main class="dashboard-content">
-
-        <!-- GESTIÓN DE ALUMNOS -->
         <section id="registro" class="panel-section active">
-            <h2><i class="fa-solid fa-user-plus"></i> Inscripción y Control de Alumnos</h2>
-            
+            <h2><i class="fa-solid fa-user-plus"></i> Inscripción de Alumnos</h2>
             <div class="card-form" style="margin-bottom: 30px;">
                 <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso</h3>
-                <form class="grid-form" id="formInscripcion">
-                    <div class="form-group"><label>Primer Nombre</label><input type="text" id="pNombre" required></div>
+                <form class="grid-form" id="formInscripcionDoc">
+                    <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
-                    <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
-                    
-                    <div class="form-group"><label>Código de Estudiante</label><input type="text" id="codigoEstudiante" required></div>
-                    <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="fechaNac" required></div>
-                    <div class="form-group">
-                        <label>Grado que Cursa</label>
-                        <select id="gradoCursa">
-                            <option>Primero Básico</option>
-                            <option>Segundo Básico</option>
-                            <option>Tercero Básico</option>
-                            <option>Bachillerato / Otro</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Curso de Interés</label>
-                        <select id="cursoInteres">
-                            <option>Mecanografía Básico</option>
-                            <option>Técnico Operador</option>
-                            <option>Diseño Gráfico Computarizado</option>
-                            <option>Mantenimiento y Reparación</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Sede de Inscripción</label>
-                        <select id="sedeInscripcion">
-                            <option>Aldea La Victoria (COMPURED)</option>
-                            <option>La Esperanza (COMPUCENTER)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Día y Horario de Estudio</label>
-                        <input type="text" id="horarioEstudio" placeholder="Ej: Sábados 8:00 a 10:00 AM">
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 3;"><label>Dirección de Residencia</label><input type="text" id="direccion" required></div>
-                    <div class="form-group"><label>Nombre del Encargado</label><input type="text" id="nombreEncargado" required></div>
-                    <div class="form-group"><label>Teléfono Estudiante</label><input type="tel" id="telEstudiante"></div>
-                    <div class="form-group"><label>Teléfono Encargado</label><input type="tel" id="telEncargado" required></div>
-
-                    <div class="form-actions" style="grid-column: span 3;">
-                        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Alumno</button>
-                    </div>
+                    <div class="form-group"><label>Primer Apellido *</label><input type="text" id="pApellido" required></div>
+                    <div class="form-group"><label>Segundo Apellido</label><input type="text" id="sApellido"></div>
+                    <div class="form-group"><label>Código de Estudiante *</label><input type="text" id="codigoEstudiante" required></div>
+                    <div class="form-group"><label>Fecha Nacimiento *</label><input type="date" id="fechaNac" required></div>
+                    <div class="form-group"><label>Grado</label><select id="gradoCursa"><option>Primero Básico</option><option>Segundo Básico</option><option>Tercero Básico</option></select></div>
+                    <div class="form-group"><label>Curso</label><select id="cursoInteres"><option>Mecanografía Básico</option><option>Técnico Operador</option></select></div>
+                    <div class="form-group"><label>Sede</label><select id="sedeInscripcion"><option>Aldea La Victoria (COMPURED)</option></select></div>
+                    <div class="form-group"><label>Días</label><select id="diaEstudio"><option>Lunes a Viernes</option><option>Sábados</option></select></div>
+                    <div class="form-group"><label>Ingreso</label><select id="horaIngreso"><option>08:00 AM</option><option>10:00 AM</option></select></div>
+                    <div class="form-group"><label>Salida</label><select id="horaSalida"><option>10:00 AM</option><option>12:00 PM</option></select></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Dirección *</label><input type="text" id="direccion" required></div>
+                    <div class="form-group"><label>Encargado *</label><input type="text" id="nombreEncargado" required></div>
+                    <div class="form-group"><label>Teléfono *</label><input type="tel" id="telEncargado" required></div>
+                    <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Alumno</button></div>
                 </form>
             </div>
-
             <div class="card-table">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <h3 style="font-size: 1.1rem; margin: 0;">Alumnos Inscritos</h3>
-                    <input type="text" id="buscarAlumno" placeholder="🔍 Buscar por nombre o código..." onkeyup="filtrarTabla('tablaAlumnos', 'buscarAlumno')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
-                </div>
-                <table class="data-table" id="tablaAlumnos">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre Completo</th>
-                            <th>Curso</th>
-                            <th>Sede / Horario</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>COMP-001</td>
-                            <td>Juan Pérez López</td>
-                            <td>Mecanografía Básico</td>
-                            <td>Aldea La Victoria (Sábados)</td>
-                            <td>
-                                <button class="btn-icon btn-delete" title="Eliminar Alumno"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
+                <table class="data-table">
+                    <thead><tr><th>Código</th><th>Nombre</th><th>Curso</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaAlumnos"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- CALIFICACIONES -->
         <section id="calificaciones" class="panel-section">
-            <h2><i class="fa-solid fa-graduation-cap"></i> Control y Registro de Calificaciones</h2>
+            <h2><i class="fa-solid fa-graduation-cap"></i> Calificaciones</h2>
             <div class="card-table">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <h3 style="font-size: 1.1rem; margin: 0;">Notas por Estudiante</h3>
-                    <input type="text" id="buscarNotas" placeholder="🔍 Buscar estudiante..." onkeyup="filtrarTabla('tablaNotas', 'buscarNotas')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
-                </div>
-                <table class="data-table" id="tablaNotas">
-                    <thead>
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Curso / Módulo</th>
-                            <th>1ra Unidad</th>
-                            <th>2da Unidad</th>
-                            <th>3ra Unidad</th>
-                            <th>4ta Unidad</th>
-                            <th>Promedio</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Juan Pérez</td>
-                            <td>Prácticas en RapidTyping</td>
-                            <td><input type="number" value="85" class="grade-input"></td>
-                            <td><input type="number" value="90" class="grade-input"></td>
-                            <td><input type="number" placeholder="-" class="grade-input"></td>
-                            <td><input type="number" placeholder="-" class="grade-input"></td>
-                            <td class="average">87.5</td>
-                            <td>
-                                <button class="btn-icon btn-edit" title="Guardar Nota"><i class="fa-solid fa-floppy-disk"></i></button>
-                                <button class="btn-icon btn-delete" title="Borrar Nota"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
+                <table class="data-table" id="tablaCalificaciones">
+                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyCalificaciones"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- PAGOS -->
         <section id="pagos" class="panel-section">
-            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos de Alumnos</h2>
-            <div class="card-table overflow-x">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <h3 style="font-size: 1.1rem; margin: 0;">Historial de Mensualidades</h3>
-                    <input type="text" id="buscarPagos" placeholder="🔍 Buscar estudiante..." onkeyup="filtrarTabla('tablaPagos', 'buscarPagos')" style="padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: inherit; width: 280px;">
-                </div>
-                <table class="data-table payments-table" id="tablaPagos">
-                    <thead>
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Inscripción</th>
-                            <th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th>
-                            <th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>María López</td>
-                            <td><input type="checkbox" checked></td>
-                            <td><input type="checkbox" checked></td>
-                            <td><input type="checkbox" checked></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td><input type="checkbox"></td>
-                            <td>
-                                <button class="btn-icon btn-edit" title="Modificar Meses"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="btn-icon btn-delete" title="Borrar Pagos"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos Dinámico</h2>
+            <div id="contenedorPagos"><p style="text-align: center;">Cargando...</p></div>
         </section>
-
     </main>
 
-    <!-- Script de Firebase y Conexión del Formulario -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
@@ -223,76 +113,135 @@
             appId: "1:495196813256:web:d1c74002e0ca46943732fd",
             measurementId: "G-TRZ37G6SRM"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const formulario = document.getElementById('formInscripcion');
-        
-        if (formulario) {
-            formulario.addEventListener('submit', async function(e) {
+        const mesesDisponibles = [
+            { id: 'inscripcion', label: 'Inscripción' },
+            { id: 'enero', label: 'Enero' },
+            { id: 'feb', label: 'Febrero' },
+            { id: 'marzo', label: 'Marzo' },
+            { id: 'abril', label: 'Abril' },
+            { id: 'mayo', label: 'Mayo' },
+            { id: 'junio', label: 'Junio' },
+            { id: 'julio', label: 'Julio' },
+            { id: 'agosto', label: 'Agosto' },
+            { id: 'septiembre', label: 'Septiembre' },
+            { id: 'octubre', label: 'Octubre' },
+            { id: 'noviembre', label: 'Noviembre' },
+            { id: 'diciembre', label: 'Diciembre' }
+        ];
+
+        const formDoc = document.getElementById('formInscripcionDoc');
+        if(formDoc) {
+            formDoc.addEventListener('submit', async function(e) {
                 e.preventDefault();
-
-                const alumnoData = {
-                    primerNombre: document.getElementById('pNombre').value,
-                    segundoNombre: document.getElementById('sNombre').value,
-                    tercerNombre: document.getElementById('tNombre').value,
-                    codigo: document.getElementById('codigoEstudiante').value,
-                    fechaNacimiento: document.getElementById('fechaNac').value,
-                    grado: document.getElementById('gradoCursa').value,
-                    curso: document.getElementById('cursoInteres').value,
-                    sede: document.getElementById('sedeInscripcion').value,
-                    horario: document.getElementById('horarioEstudio').value,
-                    direccion: document.getElementById('direccion').value,
-                    encargado: document.getElementById('nombreEncargado').value,
-                    telEstudiante: document.getElementById('telEstudiante').value,
-                    telEncargado: document.getElementById('telEncargado').value,
-                    fechaRegistro: new Date()
-                };
-
+                const pN = document.getElementById('pNombre').value.trim();
+                const pA = document.getElementById('pApellido').value.trim();
+                const cod = document.getElementById('codigoEstudiante').value.trim();
                 try {
-                    await addDoc(collection(db, "alumnos"), alumnoData);
-                    alert("¡Alumno guardado exitosamente en la nube de Firebase!");
-                    formulario.reset();
-                } catch (error) {
-                    console.error("Error al guardar el alumno: ", error);
-                    alert("Hubo un error al guardar. Revisa la consola.");
-                }
+                    await addDoc(collection(db, "alumnos"), {
+                        primerNombre: pN, primerApellido: pA, codigo: cod,
+                        grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
+                        sede: document.getElementById('sedeInscripcion').value, diaEstudio: document.getElementById('diaEstudio').value,
+                        horaIngreso: document.getElementById('horaIngreso').value, horaSalida: document.getElementById('horaSalida').value,
+                        direccion: document.getElementById('direccion').value, encargado: document.getElementById('nombreEncargado').value,
+                        telEncargado: document.getElementById('telEncargado').value,
+                        usuarioAcceso: cod, passwordAcceso: (pN.charAt(0) + pA + cod).toLowerCase().replace(/\s+/g,''),
+                        notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}
+                    });
+                    alert("¡Registrado con éxito!");
+                    formDoc.reset();
+                    cargarDocente();
+                } catch(err) { alert("Error: " + err.message); }
             });
         }
+
+        window.cargarDocente = async function() {
+            const bodyLista = document.getElementById('bodyListaAlumnos');
+            const bodyCalif = document.getElementById('bodyCalificaciones');
+            const contPagos = document.getElementById('contenedorPagos');
+
+            try {
+                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+
+                const snap = await getDocs(collection(db, "alumnos"));
+                if(snap.empty) return;
+
+                let hL="", hC="", hP="";
+                snap.forEach(d => {
+                    let a = d.data();
+                    let id = d.id;
+                    let nombreCompleto = `${a.codigo} - ${a.primerNombre} ${a.primerApellido}`;
+                    let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
+                    let p = a.pagos || {};
+                    let extras = a.cargosExtras || {};
+                    let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+
+                    hL += `<tr><td>${a.codigo}</td><td>${a.primerNombre} ${a.primerApellido}</td><td>${a.curso}</td><td><button class="btn-icon btn-delete" onclick="eliminarAl('${id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    hC += `<tr><td><strong>${nombreCompleto}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_${id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_${id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_${id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_${id}" value="${notas.u4}" style="width:50px;"></td><td>${prom}</td><td><button class="btn-icon btn-edit" onclick="guardarN('${id}')"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
+
+                    hP += `<div class="pago-card"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:15px;"><h4 style="color:var(--primary-color); margin:0;">${nombreCompleto}</h4><button class="btn-primary" style="padding:6px 15px; font-size:0.85rem; border:none; cursor:pointer;" onclick="guardarP('${id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button></div><div class="pago-grid">`;
+                    mesesDisponibles.forEach(m => {
+                        if(mesesActivos.includes(m.id)) {
+                            hP += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="p_${m.id}_${id}" value="${p[m.id]||''}" placeholder="0.00"></div>`;
+                        }
+                    });
+                    hP += `</div>`;
+                    if(Object.keys(extras).length > 0) {
+                        hP += `<div style="border-top: 1px dashed rgba(255,255,255,0.2); padding-top:10px; margin-top:10px;"><strong style="font-size:0.85rem; color:var(--secondary-color);">Cargos Extras:</strong><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:5px;">`;
+                        for(let key in extras) {
+                            hP += `<div style="background:rgba(0,0,0,0.3); padding:5px 10px; border-radius:5px;"><span style="font-size:0.8rem;">${key}: Q </span><input type="text" id="extra_${id}_${key}" value="${extras[key]||''}" style="width:60px; background:transparent; border:none; color:#fff;"></div>`;
+                        }
+                        hP += `</div></div>`;
+                    }
+                    hP += `</div>`;
+                });
+
+                if(bodyLista) bodyLista.innerHTML = hL;
+                if(bodyCalif) bodyCalif.innerHTML = hC;
+                if(contPagos) contPagos.innerHTML = hP;
+            } catch(e){console.error(e);}
+        };
+
+        window.guardarN = async function(id) {
+            await updateDoc(doc(db, "alumnos", id), {
+                notas: { u1: document.getElementById(`u1_${id}`).value, u2: document.getElementById(`u2_${id}`).value, u3: document.getElementById(`u3_${id}`).value, u4: document.getElementById(`u4_${id}`).value }
+            });
+            alert("¡Notas actualizadas!");
+            cargarDocente();
+        };
+
+        window.guardarP = async function(id) {
+            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+            let pagosData = {};
+            mesesActivos.forEach(mId => {
+                let el = document.getElementById(`p_${mId}_${id}`);
+                if(el) pagosData[mId] = el.value;
+            });
+            await updateDoc(doc(db, "alumnos", id), { pagos: pagosData });
+            alert("¡Pagos actualizados!");
+            cargarDocente();
+        };
+
+        window.eliminarAl = async function(id) {
+            if(confirm("¿Eliminar alumno?")) {
+                await deleteDoc(doc(db, "alumnos", id));
+                cargarDocente();
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => { cargarDocente(); });
     </script>
-
     <script>
-        function mostrarSeccion(idSeccion, evento) {
-            evento.preventDefault();
-            const secciones = document.querySelectorAll('.panel-section');
-            secciones.forEach(sec => sec.classList.remove('active'));
-            
-            const seccionActiva = document.getElementById(idSeccion);
-            if (seccionActiva) {
-                seccionActiva.classList.add('active');
-            }
-            
-            const enlaces = document.querySelectorAll('.sidebar-nav a');
-            enlaces.forEach(link => link.classList.remove('active'));
-            evento.currentTarget.classList.add('active');
-        }
-
-        function filtrarTabla(idTabla, idInput) {
-            const input = document.getElementById(idInput);
-            const filtro = input.value.toLowerCase();
-            const tabla = document.getElementById(idTabla);
-            const filas = tabla.getElementsByTagName('tr');
-
-            for (let i = 1; i < filas.length; i++) {
-                let fila = filas[i];
-                let textoFila = fila.textContent || fila.innerText;
-                if (textoFila.toLowerCase().indexOf(filtro) > -1) {
-                    fila.style.display = "";
-                } else {
-                    fila.style.display = "none";
-                }
-            }
+        function mostrarSeccion(id, evt) {
+            evt.preventDefault();
+            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+            evt.currentTarget.classList.add('active');
         }
     </script>
 </body>
