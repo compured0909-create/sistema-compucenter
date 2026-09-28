@@ -28,7 +28,7 @@
         .login-card img { width: 60px; margin-bottom: 15px; }
         .form-group { margin-bottom: 20px; text-align: left; }
         .form-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px; }
-        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; outline: none; box-sizing: border-box; }
         .form-group input:focus { border-color: #00f2fe; }
     </style>
 </head>
@@ -41,14 +41,14 @@
         
         <form id="formLoginGeneral">
             <div class="form-group">
-                <label>Correo Electrónico o Código de Estudiante</label>
+                <label>Correo Electrónico o Código</label>
                 <input type="text" id="userInput" required placeholder="Correo o código">
             </div>
             <div class="form-group">
                 <label>Contraseña</label>
                 <input type="password" id="passInput" required placeholder="********">
             </div>
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 8px; font-weight: bold;">Iniciar Sesión</button>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 8px; font-weight: bold; background: #00f2fe; color: #0f172a;">Iniciar Sesión</button>
         </form>
     </div>
 
@@ -73,9 +73,10 @@
             const user = document.getElementById('userInput').value.trim();
             const pass = document.getElementById('passInput').value.trim();
 
-            // 1. Validar si es el Director General
+            // 1. Validar si es el Director General (Brayan Isaú Romero Pérez)
             if (user === "compured0909@gmail.com" && pass === "CompuRed123") {
                 localStorage.setItem('rolUsuario', 'director');
+                localStorage.setItem('nombreDirector', 'Brayan Isaú Romero Pérez');
                 window.location.href = "director.html";
                 return;
             }
@@ -89,6 +90,7 @@
                     if (d.correo === user && d.password === pass) {
                         docenteEncontrado = true;
                         localStorage.setItem('rolUsuario', 'docente');
+                        localStorage.setItem('nombreDocente', d.nombre || '');
                         window.location.href = "docente.html";
                     }
                 });

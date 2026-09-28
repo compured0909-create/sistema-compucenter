@@ -33,13 +33,13 @@
             <form id="formLoginAlumno">
                 <div class="form-group" style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 0.85rem; color: var(--text-muted);">Código de Estudiante</label>
-                    <input type="text" id="logUsuario" required placeholder="Ej: COMP-2026-001" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff;">
+                    <input type="text" id="logUsuario" required placeholder="Ej: COMP-2026-001" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; box-sizing: border-box;">
                 </div>
                 <div class="form-group" style="margin-bottom: 20px; text-align: left;">
                     <label style="font-size: 0.85rem; color: var(--text-muted);">Contraseña</label>
-                    <input type="password" id="logPassword" required placeholder="********" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff;">
+                    <input type="password" id="logPassword" required placeholder="********" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; box-sizing: border-box;">
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer;">Ingresar</button>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: 5px;">Ingresar</button>
             </form>
         </div>
     </div>
@@ -51,8 +51,9 @@
             <span>COMPURED</span>
         </div>
         <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p id="lblNombreEstudiante" style="color: #fff; font-weight: bold;">Cargando...</p>
-            <span id="lblCursoEstudiante" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Estudiante</span>
+            <p id="lblNombreEstudiante" style="color: #fff; font-weight: bold; margin-bottom: 5px;">Cargando...</p>
+            <span id="lblCursoEstudiante" style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 4px;">Estudiante</span>
+            <div id="lblSedeEstudiante" style="font-size: 0.75rem; color: #94a3b8;">Sede: Cargando...</div>
         </div>
         <nav class="sidebar-nav">
             <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link active"><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</a>
@@ -94,9 +95,9 @@
                 <form id="formCambiarPass">
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label>Nueva Contraseña</label>
-                        <input type="text" id="nuevaPass" required placeholder="Escriba su nueva contraseña" style="width:100%; padding:10px; border-radius:5px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                        <input type="text" id="nuevaPass" required placeholder="Escriba su nueva contraseña" style="width:100%; padding:10px; border-radius:5px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff; box-sizing:border-box;">
                     </div>
-                    <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Nueva Contraseña</button>
+                    <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 15px; border-radius: 5px;">Guardar Nueva Contraseña</button>
                 </form>
             </div>
         </section>
@@ -155,11 +156,18 @@
         }
 
         window.cargarPortal = async function(a) {
-            document.getElementById('lblNombreEstudiante').innerText = `${a.primerNombre} ${a.primerApellido}`;
-            document.getElementById('lblCursoEstudiante').innerText = a.curso;
-            let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
-            let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
-            document.getElementById('bodyMisNotas').innerHTML = `<tr><td>${a.curso}</td><td>${notas.u1}</td><td>${notas.u2}</td><td>${notas.u3}</td><td>${notas.u4}</td><td><strong>${prom}</strong></td></tr>`;
+            // Unir nombres y apellidos de forma segura por si alguno viene vacío
+            let nombreCompleto = [a.primerNombre, a.segundoNombre, a.primerApellido, a.segundoApellido]
+                .filter(Boolean)
+                .join(' ');
+
+            document.getElementById('lblNombreEstudiante').innerText = nombreCompleto || "Estudiante";
+            document.getElementById('lblCursoEstudiante').innerText = a.curso || "Curso no asignado";
+            document.getElementById('lblSedeEstudiante').innerText = `Sede: ${a.sede || "No especificada"}`;
+
+            let notas = a.notas || {u1:0, u2:0, u3:0, u4:0};
+            let prom = ((Number(notas.u1) + Number(notas.u2) + Number(notas.u3) + Number(notas.u4)) / 4).toFixed(1);
+            document.getElementById('bodyMisNotas').innerHTML = `<tr><td>${a.curso || 'General'}</td><td>${notas.u1}</td><td>${notas.u2}</td><td>${notas.u3}</td><td>${notas.u4}</td><td><strong>${prom}</strong></td></tr>`;
 
             const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
             let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : Object.keys(mesesNombres);
