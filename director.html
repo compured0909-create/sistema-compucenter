@@ -64,7 +64,7 @@
                 <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
                 <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
                 <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
-                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-calendar-days"></i> Configurar Meses</a>
+                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-calendar-days"></i> Configuración</a>
                 <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
                 <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
             </nav>
@@ -143,7 +143,7 @@
 
         <!-- CONFIGURAR MESES Y CARGOS -->
         <section id="configMeses" class="panel-section">
-            <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Cargos Extras</h2>
+            <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Bloqueos</h2>
             
             <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
                 <h3 style="color: #38ef7d; font-size: 1rem;">1. Activar / Desactivar Meses</h3>
@@ -151,10 +151,35 @@
                 <button class="btn-primary" onclick="guardarConfigMeses()" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Meses</button>
             </div>
 
+            <!-- CONFIGURAR REQUISITOS DE UNIDADES PARA BLOQUEO -->
             <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                <h3 style="color: #38ef7d; font-size: 1rem;">2. Asignar Gasto Extra (Cobro Pendiente)</h3>
+                <h3 style="color: #38ef7d; font-size: 1rem;">2. Configurar Meses Requeridos por Unidad (Bloqueo de Notas)</h3>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Selecciona qué meses debe haber pagado el alumno para que se le desbloquee cada unidad.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #00f2fe; margin-top:0;">1ra Unidad</h4>
+                        <div id="checkReqU1" style="display: flex; flex-direction: column; gap: 5px;"></div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #00f2fe; margin-top:0;">2da Unidad</h4>
+                        <div id="checkReqU2" style="display: flex; flex-direction: column; gap: 5px;"></div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #00f2fe; margin-top:0;">3ra Unidad</h4>
+                        <div id="checkReqU3" style="display: flex; flex-direction: column; gap: 5px;"></div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #00f2fe; margin-top:0;">4ta Unidad</h4>
+                        <div id="checkReqU4" style="display: flex; flex-direction: column; gap: 5px;"></div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="guardarRequisitosUnidades()" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Requisitos de Unidades</button>
+            </div>
+
+            <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h3 style="color: #38ef7d; font-size: 1rem;">3. Asignar Gasto Extra (Cobro Pendiente)</h3>
                 <form id="formCargoExtra" onsubmit="aplicarCargoExtra(event)" class="grid-form" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="form-group"><label>Concepto (Ej: Inscripción Extra, Libro)</label><input type="text" id="nombreCargo" required></div>
+                    <div class="form-group"><label>Concepto (Ej: Libro, Carné)</label><input type="text" id="nombreCargo" required></div>
                     <div class="form-group"><label>Monto a Cobrar (Q)</label><input type="number" step="0.01" id="montoCargo" required></div>
                     <div class="form-group" style="grid-column: span 2;"><label>Aplicar a:</label><select id="destinoCargo"><option value="todos">Todos los alumnos</option><option value="especifico">Un alumno específico</option></select></div>
                     <div class="form-group" id="divAlumnoEspecifico" style="grid-column: span 2; display: none;"><label>Seleccionar Alumno</label><select id="selectAlumnoExtra"></select></div>
@@ -303,6 +328,13 @@
         let cicloActual = "2026";
         let listaAlumnosGlobal = [];
 
+        const mesesDisponibles = [
+            { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
+            { id: 'marzo', label: 'Marzo' }, { id: 'abril', label: 'Abril' }, { id: 'mayo', label: 'Mayo' },
+            { id: 'junio', label: 'Junio' }, { id: 'julio', label: 'Julio' }, { id: 'agosto', label: 'Agosto' },
+            { id: 'septiembre', label: 'Septiembre' }, { id: 'octubre', label: 'Octubre' }, { id: 'noviembre', label: 'Noviembre' }, { id: 'diciembre', label: 'Diciembre' }
+        ];
+
         window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'director') {
                 alert("Acceso no autorizado.");
@@ -355,13 +387,6 @@
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        const mesesDisponibles = [
-            { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
-            { id: 'marzo', label: 'Marzo' }, { id: 'abril', label: 'Abril' }, { id: 'mayo', label: 'Mayo' },
-            { id: 'junio', label: 'Junio' }, { id: 'julio', label: 'Julio' }, { id: 'agosto', label: 'Agosto' },
-            { id: 'septiembre', label: 'Septiembre' }, { id: 'octubre', label: 'Octubre' }, { id: 'noviembre', label: 'Noviembre' }, { id: 'diciembre', label: 'Diciembre' }
-        ];
-
         window.actualizarDias = function() {
             let tipo = document.getElementById('tipoJornada').value;
             let selectDias = document.getElementById('diaEstudio');
@@ -387,6 +412,27 @@
                 html += `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" class="chk-mes" value="${m.id}" ${isChecked}> ${m.label}</label>`;
             });
             grid.innerHTML = html;
+
+            // Cargar configuración de requisitos de unidades
+            const reqSnap = await getDoc(doc(db, "configuracion", "requisitosUnidades"));
+            let reqs = reqSnap.exists() ? reqSnap.data() : {
+                u1: ['inscripcion', 'feb', 'marzo', 'abril'],
+                u2: ['mayo', 'junio'],
+                u3: ['julio', 'agosto', 'septiembre'],
+                u4: ['octubre', 'noviembre', 'diciembre']
+            };
+
+            ['u1', 'u2', 'u3', 'u4'].forEach(u => {
+                let container = document.getElementById(`checkReq${u.toUpperCase()}`);
+                if(container) {
+                    let htmlReq = "";
+                    mesesDisponibles.forEach(m => {
+                        let checked = (reqs[u] && reqs[u].includes(m.id)) ? "checked" : "";
+                        htmlReq += `<label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;"><input type="checkbox" class="chk-req-${u}" value="${m.id}" ${checked}> ${m.label}</label>`;
+                    });
+                    container.innerHTML = htmlReq;
+                }
+            });
         };
 
         window.guardarConfigMeses = async function() {
@@ -398,6 +444,21 @@
                 alert("¡Meses guardados!");
                 cargarDatosDirector();
             } catch(e) { alert("Error: " + e.message); }
+        };
+
+        window.guardarRequisitosUnidades = async function() {
+            let nuevoReqs = {};
+            ['u1', 'u2', 'u3', 'u4'].forEach(u => {
+                let chks = document.querySelectorAll(`.chk-req-${u}`);
+                let seleccionados = [];
+                chks.forEach(c => { if(c.checked) seleccionados.push(c.value); });
+                nuevoReqs[u] = seleccionados;
+            });
+
+            try {
+                await setDoc(doc(db, "configuracion", "requisitosUnidades"), nuevoReqs);
+                alert("¡Requisitos de unidades para bloqueo guardados con éxito!");
+            } catch(e) { alert("Error al guardar requisitos: " + e.message); }
         };
 
         async function obtenerSiguienteCodigo(ciclo) {
@@ -636,7 +697,6 @@
             }
         };
 
-        // Renderizar lista de cargos globales registrados en los alumnos para poder editar o eliminar
         window.renderizarCargosGlobales = function() {
             const bodyCargos = document.getElementById('bodyListaCargosGlobales');
             let mapaCargos = {};

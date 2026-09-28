@@ -10,6 +10,16 @@
         .panel-section { display: none !important; }
         .panel-section.active { display: block !important; }
         .sidebar-nav a.active { background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-left: 4px solid #00f2fe; }
+        .bloqueo-notas {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid #ff4757;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #ff4757;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body class="dashboard-body">
@@ -50,11 +60,8 @@
 
         <section id="calificaciones" class="panel-section">
             <h2><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</h2>
-            <div class="card-table">
-                <table class="data-table">
-                    <thead><tr><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th></tr></thead>
-                    <tbody id="bodyCalifEstudiante"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
+            <div class="card-table" id="contenedorContenidoCalificaciones">
+                <p style="text-align: center;">Cargando calificaciones...</p>
             </div>
         </section>
 
@@ -102,9 +109,22 @@
             if(!alumnoId) { window.location.href = "login.html"; return; }
 
             try {
+                // 1. Cargar datos del alumno
                 const snap = await getDoc(doc(db, "alumnos", alumnoId));
                 if(!snap.exists()) { alert("Estudiante no encontrado."); return; }
                 const a = snap.data();
+
+                // 2. Cargar configuración de meses activos y requisitos de unidades
+                const configPagosSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+                let mesesActivos = configPagosSnap.exists() ? configPagosSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+
+                const reqSnap = await getDoc(doc(db, "configuracion", "requisitosUnidades"));
+                let requisitosUnidades = reqSnap.exists() ? reqSnap.data() : {
+                    u1: ['inscripcion', 'feb', 'marzo', 'abril'],
+                    u2: ['mayo', 'junio'],
+                    u3: ['julio', 'agosto', 'septiembre'],
+                    u4: ['octubre', 'noviembre', 'diciembre']
+                };
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompleto = nombresArray.filter(Boolean).join(" ");
@@ -127,32 +147,85 @@
                 `;
 
                 let n = a.notas || {u1:0,u2:0,u3:0,u4:0};
-                let prom = ((Number(n.u1)+Number(n.u2)+Number(n.u3)+Number(n.u4))/4).toFixed(1);
-                document.getElementById('bodyCalifEstudiante').innerHTML = `
-                    <tr>
-                        <td>${a.curso}</td>
-                        <td>${n.u1}</td><td>${n.u2}</td><td>${n.u3}</td><td>${n.u4}</td>
-                        <td><strong>${prom}</strong></td>
-                    </tr>
-                `;
-
-                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
                 let p = a.pagos || {};
-                let eCargos = a.cargosExtras || {};
 
+                // Mapa rápido para obtener el nombre legible de cada mes a partir de su ID
+                let mapaNombresMeses = {};
+                mesesDisponibles.forEach(m => { mapaNombresMeses[m.id] = m.label; });
+
+                // Función que verifica la unidad y recopila exactamente qué meses faltan (de entre los activos y requeridos)
+                function obtenerMesesFaltantesUnidad(unidadKey) {
+                    let mesesReq = requisitosUnidades[unidadKey] || [];
+                    let faltantes = [];
+
+                    for(let mId of mesesReq) {
+                        // Solo evaluamos el mes si está activado globalmente en la plataforma y no ha sido pagado
+                        if(mesesActivos.includes(mId)) {
+                            if(!p[mId] || Number(p[mId]) <= 0) {
+                                faltantes.push(mapaNombresMeses[mId] || mId);
+                            }
+                        }
+                    }
+                    return faltantes;
+                }
+
+                let htmlCalif = `<table class="data-table">
+                    <thead><tr><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th></tr></thead>
+                    <tbody>
+                    <tr>
+                        <td>${a.curso}</td>`;
+
+                let faltantesU1 = obtenerMesesFaltantesUnidad('u1');
+                let faltantesU2 = obtenerMesesFaltantesUnidad('u2');
+                let faltantesU3 = obtenerMesesFaltantesUnidad('u3');
+                let faltantesU4 = obtenerMesesFaltantesUnidad('u4');
+
+                let u1Val = (faltantesU1.length === 0) ? n.u1 : `<i class="fa-solid fa-lock"></i> Bloqueado`;
+                let u2Val = (faltantesU2.length === 0) ? n.u2 : `<i class="fa-solid fa-lock"></i> Bloqueado`;
+                let u3Val = (faltantesU3.length === 0) ? n.u3 : `<i class="fa-solid fa-lock"></i> Bloqueado`;
+                let u4Val = (faltantesU4.length === 0) ? n.u4 : `<i class="fa-solid fa-lock"></i> Bloqueado`;
+
+                let notasNumericas = [];
+                if(faltantesU1.length === 0) notasNumericas.push(Number(n.u1));
+                if(faltantesU2.length === 0) notasNumericas.push(Number(n.u2));
+                if(faltantesU3.length === 0) notasNumericas.push(Number(n.u3));
+                if(faltantesU4.length === 0) notasNumericas.push(Number(n.u4));
+
+                let promTexto = notasNumericas.length > 0 ? (notasNumericas.reduce((acc, val) => acc + val, 0) / notasNumericas.length).toFixed(1) : "---";
+
+                htmlCalif += `<td>${u1Val}</td><td>${u2Val}</td><td>${u3Val}</td><td>${u4Val}</td><td><strong>${promTexto}</strong></td></tr></tbody></table>`;
+
+                // Construir mensajes de advertencia específicos indicando exactamente qué meses debe por unidad bloqueada
+                let mensajesBloqueoHtml = "";
+                let unidadesConDeuda = [
+                    { nombre: '1ra Unidad', faltantes: faltantesU1 },
+                    { nombre: '2da Unidad', faltantes: faltantesU2 },
+                    { nombre: '3ra Unidad', faltantes: faltantesU3 },
+                    { nombre: '4ta Unidad', faltantes: faltantesU4 }
+                ];
+
+                unidadesConDeuda.forEach(item => {
+                    if(item.faltantes.length > 0) {
+                        mensajesBloqueoHtml += `<div class="bloqueo-notas">
+                            <i class="fa-solid fa-triangle-exclamation"></i> <strong>${item.nombre} bloqueada:</strong> Para ver esta nota, debes estar al día con los meses activos requeridos. Tienes pendiente de cancelar: <strong>${item.faltantes.join(', ')}</strong>.
+                        </div>`;
+                    }
+                });
+
+                htmlCalif += mensajesBloqueoHtml;
+                document.getElementById('contenedorContenidoCalificaciones').innerHTML = htmlCalif;
+
+                // Renderizar Estado de Pagos
                 let htmlP = "";
-                
-                // 1. Renderizar meses activos e inscripción
                 mesesDisponibles.forEach(m => {
                     if(mesesActivos.includes(m.id)) {
                         let val = p[m.id];
-                        let estado = val ? `<span style="color:#25D366; font-weight:bold;">Pagado (Q. ${val})</span>` : `<span style="color:#ff4757;">Pendiente</span>`;
+                        let estado = val ? `<span style="color:#25D366; font-weight:bold;">Pagado (Q. ${val})</span>` : `<span style="color:#ff4757; font-weight:bold;">Pendiente</span>`;
                         htmlP += `<tr><td>${m.label}</td><td>${estado}</td></tr>`;
                     }
                 });
 
-                // 2. Renderizar Cargos Extras asignados al estudiante
+                let eCargos = a.cargosExtras || {};
                 let keysExtras = Object.keys(eCargos);
                 if(keysExtras.length > 0) {
                     htmlP += `<tr><td colspan="2" style="background: rgba(0,242,254,0.1); color: #00f2fe; font-weight: bold; text-align: center;">Cargos Extras / Gastos Pendientes</td></tr>`;
