@@ -40,24 +40,45 @@
 </head>
 <body class="dashboard-body">
 
-    <aside class="sidebar">
-        <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
-            <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
-            <span>COMPURED</span>
+    <aside class="sidebar" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
+                <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
+                <span>COMPURED</span>
+            </div>
+            <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #fff; font-weight: bold; font-size: 0.95rem;">Brayan Isaú Romero Pérez</p>
+                <span style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Director General</span>
+            </div>
+            
+            <!-- Selector de Ciclo Escolar -->
+            <div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.1);">
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Ciclo Escolar Activo:</label>
+                <div style="display: flex; gap: 5px;">
+                    <select id="selectCicloGlobal" onchange="cambiarCicloGlobal(this.value)" style="width: 100%; padding: 6px; border-radius: 5px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <button onclick="agregarNuevoCiclo()" title="Añadir nuevo año" style="background: var(--primary-color); border: none; padding: 0 10px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #0f172a;"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
+                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
+                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
+                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Configurar Meses / Cargos</a>
+                <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
+                <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
+            </nav>
         </div>
-        <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p style="color: #fff; font-weight: bold; font-size: 0.95rem;">Brayan Isaú Romero Pérez</p>
-            <span style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Director General</span>
+
+        <!-- Indicador de Ciclo Grande Arriba de Salir -->
+        <div style="padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; letter-spacing: 1px;">Ciclo Actual</span>
+            <h2 id="lblAnioGrande" style="color: var(--primary-color); font-size: 1.8rem; margin: 0; font-weight: 800;">2026</h2>
+            <a href="login.html" class="logout" style="margin-top: 10px; display: block;"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </div>
-        <nav class="sidebar-nav">
-            <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
-            <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
-            <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
-            <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Configurar Meses / Cargos</a>
-            <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
-            <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
-            <a href="login.html" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
-        </nav>
     </aside>
 
     <main class="dashboard-content">
@@ -65,7 +86,7 @@
         <section id="registro" class="panel-section active">
             <h2><i class="fa-solid fa-user-plus"></i> Ficha de Inscripción y Control de Alumnos</h2>
             <div class="card-form" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso Institucional</h3>
+                <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso Institucional (<span class="lblAnioTxt">2026</span>)</h3>
                 <form class="grid-form" id="formInscripcion" style="grid-template-columns: repeat(3, 1fr);">
                     <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
@@ -100,7 +121,7 @@
                     </div>
                     <div class="form-group"><label>Curso o Carrera *</label>
                         <select id="cursoInteres" required>
-                            <option value="Mecanografía Básico">Mecanografía Básica</option>
+                            <option value="Mecanografía Básica">Mecanografía Básica</option>
                             <option value="Técnico Operador de Computadoras">Técnico Operador de Computadoras</option>
                             <option value="Técnico en Diseño Gráfico">Técnico en Diseño Gráfico</option>
                             <option value="Técnico en Reparación de computadoras">Técnico en Reparación de computadoras</option>
@@ -122,9 +143,12 @@
             </div>
 
             <div class="card-table">
-                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')">COMPURED</button>
-                    <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')">COMPUCENTER</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="display: flex; gap: 15px;">
+                        <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')">COMPURED</button>
+                        <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')">COMPUCENTER</button>
+                    </div>
+                    <span style="font-size: 0.9rem; color: var(--primary-color); font-weight: bold;">Ciclo: <span class="lblAnioTxt">2026</span></span>
                 </div>
                 <h3 style="margin-bottom: 15px; font-size: 1.1rem;" id="tituloTablaSede">Listado General - COMPURED</h3>
                 <table class="data-table">
@@ -216,7 +240,7 @@
 
         <!-- FINANZAS -->
         <section id="finanzas" class="panel-section">
-            <h2><i class="fa-solid fa-chart-line"></i> Control Financiero Limpio</h2>
+            <h2><i class="fa-solid fa-chart-line"></i> Control Financiero Global (Todos los Años)</h2>
             <div class="grid-container" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
                 <div class="card" style="border-color: #25D366; text-align: left; padding: 20px;"><span style="color: var(--text-muted); font-size: 0.9rem;">Ingresos Totales</span><h3 id="lblTotalIngresos" style="color: #25D366; font-size: 1.8rem; margin-top: 5px;">Q. 0.00</h3></div>
                 <div class="card" style="border-color: #ff4757; text-align: left; padding: 20px;"><span style="color: var(--text-muted); font-size: 0.9rem;">Gastos Totales</span><h3 id="lblTotalGastos" style="color: #ff4757; font-size: 1.8rem; margin-top: 5px;">Q. 0.00</h3></div>
@@ -266,15 +290,61 @@
         const db = getFirestore(app);
 
         let sedeSeleccionadaDirector = "COMPURED";
+        let cicloActual = "2026";
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'director') {
                 alert("Acceso no autorizado.");
                 window.location.href = "login.html";
                 return;
             }
+            await cargarCiclosDisponibles();
             cargarDatosDirector();
         });
+
+        window.cargarCiclosDisponibles = async function() {
+            try {
+                const snap = await getDoc(doc(db, "configuracion", "ciclosEscolares"));
+                let listaCiclos = snap.exists() ? snap.data().anios : ["2026", "2027"];
+                let select = document.getElementById('selectCicloGlobal');
+                let html = "";
+                listaCiclos.forEach(c => {
+                    html += `<option value="${c}">${c}</option>`;
+                });
+                select.innerHTML = html;
+                cicloActual = localStorage.getItem('cicloActivoDirector') || listaCiclos[0];
+                select.value = cicloActual;
+                actualizarTextosAnio();
+            } catch(e) { console.error(e); }
+        };
+
+        window.cambiarCicloGlobal = function(val) {
+            cicloActual = val;
+            localStorage.setItem('cicloActivoDirector', cicloActual);
+            actualizarTextosAnio();
+            cargarDatosDirector();
+        };
+
+        window.actualizarTextosAnio = function() {
+            document.getElementById('lblAnioGrande').innerText = cicloActual;
+            document.querySelectorAll('.lblAnioTxt').forEach(el => el.innerText = cicloActual);
+        };
+
+        window.agregarNuevoCiclo = async function() {
+            let nuevoAnio = prompt("Ingrese el nuevo año para el ciclo escolar (Ej: 2028):");
+            if(!nuevoAnio) return;
+            try {
+                const ref = doc(db, "configuracion", "ciclosEscolares");
+                const snap = await getDoc(ref);
+                let lista = snap.exists() ? snap.data().anios : ["2026", "2027"];
+                if(!lista.includes(nuevoAnio)) {
+                    lista.push(nuevoAnio);
+                    await setDoc(ref, { anios: lista });
+                    alert("¡Ciclo escolar agregado con éxito!");
+                    cargarCiclosDisponibles();
+                } else { alert("El año ya existe."); }
+            } catch(e) { alert("Error: " + e.message); }
+        };
 
         const mesesDisponibles = [
             { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
@@ -335,13 +405,14 @@
                 try {
                     const snap = await getDocs(collection(db, "alumnos"));
                     const siguienteNumero = snap.size + 1;
-                    const codigoGenerado = `COMP-2026-${String(siguienteNumero).padStart(4, '0')}`;
+                    const codigoGenerado = `COMP-${cicloActual}-${String(siguienteNumero).padStart(4, '0')}`;
                     const passwordGenerada = (pN.charAt(0) + pA + String(siguienteNumero).padStart(4, '0')).toLowerCase().replace(/\s+/g,'');
 
                     await addDoc(collection(db, "alumnos"), {
                         primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
                         tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
                         segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
+                        ciclo: cicloActual,
                         fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
                         codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
                         establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
@@ -353,7 +424,7 @@
                         usuarioAcceso: codigoGenerado, passwordAcceso: passwordGenerada,
                         notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}, fechaRegistro: new Date().toISOString()
                     });
-                    alert(`¡Inscrito con éxito!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
+                    alert(`¡Inscrito con éxito (${cicloActual})!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
                     formInscripcion.reset();
                     cargarDatosDirector();
                 } catch(err) { alert("Error: " + err.message); }
@@ -417,7 +488,8 @@
                     const a = docSnap.data();
                     const id = docSnap.id;
                     
-                    if (a.sede !== sedeSeleccionadaDirector) return;
+                    let cicloAlumno = a.ciclo || "2026";
+                    if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
                     alumnosEncontrados++;
 
                     let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
@@ -428,6 +500,12 @@
                     let p = a.pagos || {}, extras = a.cargosExtras || {};
                     let promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
 
+                    // Sumar pagos de este alumno para finanzas globales
+                    mesesDisponibles.forEach(m => {
+                        let val = p[m.id] || '';
+                        if(val && !isNaN(val)) totalPagosAlumnos += Number(val);
+                    });
+
                     htmlSelect += `<option value="${id}">${nombreParaMostrar}</option>`;
                     htmlLista += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:var(--text-muted);">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:var(--primary-color);">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-delete" onclick="eliminarAlumno('${id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                     htmlCalif += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_dir_${id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_dir_${id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_dir_${id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_dir_${id}" value="${notas.u4}" style="width:50px;"></td><td>${promedio}</td><td><button class="btn-icon btn-edit" onclick="guardarNotas('${id}')"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
@@ -436,7 +514,6 @@
                     mesesDisponibles.forEach(m => {
                         if (mesesActivos.includes(m.id)) {
                             let val = p[m.id] || '';
-                            if(val && !isNaN(val)) totalPagosAlumnos += Number(val);
                             htmlPagos += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="p_${m.id}_${id}" value="${val}" placeholder="0.00"></div>`;
                         }
                     });
@@ -444,9 +521,9 @@
                 });
 
                 if(alumnosEncontrados === 0) {
-                    htmlLista = `<tr><td colspan="5" style="text-align: center;">No hay alumnos registrados en ${sedeSeleccionadaDirector}.</td></tr>`;
-                    htmlCalif = `<tr><td colspan="8" style="text-align: center;">No hay alumnos registrados en esta sede.</td></tr>`;
-                    htmlPagos = `<p style="text-align: center;">No hay alumnos registrados en esta sede.</p>`;
+                    htmlLista = `<tr><td colspan="5" style="text-align: center;">No hay alumnos registrados en ${sedeSeleccionadaDirector} para el ciclo ${cicloActual}.</td></tr>`;
+                    htmlCalif = `<tr><td colspan="8" style="text-align: center;">No hay alumnos registrados en esta sede para este ciclo.</td></tr>`;
+                    htmlPagos = `<p style="text-align: center;">No hay alumnos registrados en esta sede para este ciclo.</p>`;
                 }
 
                 if(bodyLista) bodyLista.innerHTML = htmlLista;
