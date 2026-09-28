@@ -2,35 +2,35 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Docente | COMPURED</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .panel-section { display: none !important; }
         .panel-section.active { display: block !important; }
-        .sidebar-nav a.active {
-            background: rgba(0, 242, 254, 0.15);
-            color: var(--primary-color);
-            border-left: 4px solid var(--primary-color);
+        .sidebar-nav a.active { background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-left: 4px solid #00f2fe; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+            padding: 15px;
         }
-        .pago-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+        .modal-container {
+            background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; width: 100%; max-width: 750px; max-height: 90vh;
+            overflow-y: auto; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .pago-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
+        .pago-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .pago-item { display: flex; flex-direction: column; gap: 5px; }
-        .pago-item label { font-size: 0.85rem; color: var(--text-muted); }
+        .pago-item label { font-size: 0.85rem; color: #94a3b8; }
         .pago-item input { padding: 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; width: 100%; }
-        @media (max-width: 768px) { .pago-grid { grid-template-columns: repeat(1, 1fr); } }
+        
+        .estudiante-link { color: #00f2fe; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .estudiante-link:hover { text-decoration: underline; color: #38ef7d; }
+        
+        @media (max-width: 900px) { .pago-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="dashboard-body">
@@ -38,45 +38,99 @@
     <aside class="sidebar" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
-                <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
-                <span>COMPURED</span>
+                <img src="logo.png" alt="Logo" style="width: 30px; height: auto;">
+                <span id="lblTituloLogo">COMPURED</span>
             </div>
-            <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <p id="lblNombreDocente" style="color: #fff; font-weight: bold; font-size: 0.95rem;">Docente</p>
-                <span style="font-size: 0.75rem; color: #fff; display: block; margin-top: 3px;">Docente</span>
-                <span id="lblSedeDocente" style="font-size: 0.75rem; background: rgba(56,239,125,0.2); color: #38ef7d; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 4px;">Sede</span>
+            <div style="padding: 12px; text-align: center; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p id="lblNombreDocente" style="color: #fff; font-weight: bold; font-size: 0.9rem; margin: 0;">Cargando...</p>
+                <span style="font-size: 0.7rem; color: #fff; display: block; margin-top: 3px;">Docente</span>
+                <span id="lblSedeDocente" style="font-size: 0.7rem; background: rgba(56,239,125,0.2); color: #38ef7d; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 4px;">Sede</span>
             </div>
 
-            <!-- Selector de Ciclo Escolar -->
-            <div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.1);">
-                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Ciclo Escolar Activo:</label>
+            <div style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.1);">
+                <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 5px;">Ciclo Escolar Activo:</label>
                 <select id="selectCicloGlobalDoc" onchange="cambiarCicloDoc(this.value)" style="width: 100%; padding: 6px; border-radius: 5px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
                     <option value="2026">2026</option>
                     <option value="2027">2027</option>
                 </select>
             </div>
 
-            <nav class="sidebar-nav">
-                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
-                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
-                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
+            <nav class="sidebar-nav" style="display: flex; flex-direction: column;">
+                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
+                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
+                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
             </nav>
         </div>
 
-        <!-- Indicador de Ciclo Grande Arriba de Salir -->
-        <div style="padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
-            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; letter-spacing: 1px;">Ciclo Actual</span>
-            <h2 id="lblAnioGrandeDoc" style="color: var(--primary-color); font-size: 1.8rem; margin: 0; font-weight: 800;">2026</h2>
-            <a href="login.html" class="logout" style="margin-top: 10px; display: block;"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+        <div style="padding: 12px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+            <span style="font-size: 0.65rem; color: #94a3b8; display: block; text-transform: uppercase;">Ciclo Actual</span>
+            <h2 id="lblAnioGrandeDoc" style="color: #00f2fe; font-size: 1.5rem; margin: 0; font-weight: 800;">2026</h2>
+            <a href="login.html" class="logout" style="margin-top: 8px; display: block; color: #ff4757; text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </div>
     </aside>
 
     <main class="dashboard-content">
         <section id="registro" class="panel-section active">
-            <h2><i class="fa-solid fa-user-plus"></i> Inscripción de Alumnos en su Sede (<span class="lblAnioTxtDoc">2026</span>)</h2>
-            <div class="card-form" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso</h3>
-                <form class="grid-form" id="formInscripcionDoc" style="grid-template-columns: repeat(3, 1fr);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                <h2><i class="fa-solid fa-user-plus"></i> Inscripción en <span id="lblNombreSedeTitulo" style="color:#00f2fe;">Sede</span> (<span class="lblAnioTxtDoc">2026</span>)</h2>
+                <button onclick="abrirModalEstudianteDoc()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+            </div>
+            
+            <div class="card-table">
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <input type="text" id="inputBuscarAlumnoDoc" placeholder="Buscar por nombre o código..." onkeyup="aplicarFiltrosAlumnosDoc()" style="flex: 1; min-width: 220px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
+                    <select id="selectFiltroDiaDoc" onchange="aplicarFiltrosAlumnosDoc()" style="padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: #1e293b; color: #fff;">
+                        <option value="TODOS">Todos los días</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+
+                <table class="data-table">
+                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario</th><th>Credenciales</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaAlumnos"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="calificaciones" class="panel-section">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Calificaciones de su Sede</h2>
+            <div class="card-table">
+                <table class="data-table">
+                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyCalificaciones"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="pagos" class="panel-section">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Haz clic sobre el nombre del alumno para abrir su ventana de pagos.</p>
+            <div style="margin-bottom: 15px;"><input type="text" id="buscarPagosDoc" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDoc()"></div>
+            <div class="card-table">
+                <table class="data-table">
+                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Curso</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyListaPagosDoc"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL NUEVO ESTUDIANTE (DOCENTE) -->
+    <div id="modalEstudianteDoc" class="modal-overlay">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 id="tituloModalEstudianteDoc" style="color: #00f2fe; margin: 0; font-size: 1.2rem;">Nuevo Estudiante</h3>
+                <button onclick="cerrarModalEstudianteDoc()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="formInscripcionModalDoc">
+                <input type="hidden" id="editandoAlumnoIdDoc" value="">
+                <div class="grid-form" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
                     <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
                     <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
@@ -85,16 +139,13 @@
                     <div class="form-group"><label>Fecha Nacimiento *</label><input type="date" id="fechaNac" required></div>
 
                     <div class="form-group"><label>Teléfono Estudiante</label><input type="tel" id="telEstudiante"></div>
-                    <div class="form-group"><label>Código MINEDUC (Opcional)</label><input type="text" id="codigoMineduc" placeholder="Ej. P1234A"></div>
-                    <div class="form-group"><label>Establecimiento de Estudio</label><input type="text" id="establecimiento" placeholder="Procedencia"></div>
+                    <div class="form-group"><label>Código MINEDUC</label><input type="text" id="codigoMineduc" placeholder="Ej. P1234A"></div>
+                    <div class="form-group"><label>Establecimiento</label><input type="text" id="establecimiento"></div>
 
-                    <div class="form-group"><label>Nombre del Encargado *</label><input type="text" id="nombreEncargado" required></div>
-                    <div class="form-group"><label>Teléfono del Encargado *</label><input type="tel" id="telEncargado" required></div>
+                    <div class="form-group"><label>Nombre Encargado *</label><input type="text" id="nombreEncargado" required></div>
+                    <div class="form-group"><label>Teléfono Encargado *</label><input type="tel" id="telEncargado" required></div>
                     <div class="form-group"><label>Tipo de Jornada *</label>
-                        <select id="tipoJornada" onchange="actualizarDiasDoc()" required>
-                            <option value="Entre semana">Entre semana</option>
-                            <option value="Fin de semana">Fin de semana</option>
-                        </select>
+                        <select id="tipoJornada" onchange="actualizarDiasDoc()" required><option value="Entre semana">Entre semana</option><option value="Fin de semana">Fin de semana</option></select>
                     </div>
 
                     <div class="form-group"><label>Día de Asistencia *</label>
@@ -112,36 +163,39 @@
                         <select id="gradoCursa"><option>Primero Básico</option><option>Segundo Básico</option><option>Tercero Básico</option></select>
                     </div>
 
-                    <div class="form-group"><label>Hora de Entrada (Manual) *</label><input type="text" id="horaIngreso" required placeholder="Ej. 08:00 AM"></div>
-                    <div class="form-group"><label>Hora de Salida (Manual) *</label><input type="text" id="horaSalida" required placeholder="Ej. 12:00 PM"></div>
+                    <div class="form-group"><label>Hora de Entrada *</label><input type="text" id="horaIngreso" required placeholder="08:00 AM"></div>
+                    <div class="form-group"><label>Hora de Salida *</label><input type="text" id="horaSalida" required placeholder="12:00 PM"></div>
                     <div class="form-group"><label>Dirección Domiciliar *</label><input type="text" id="direccion" required></div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="cerrarModalEstudianteDoc()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                    <button type="submit" id="btnSubmitAlumnoModalDoc" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Estudiante</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                    <div class="form-actions" style="grid-column: span 3;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Alumno</button></div>
-                </form>
+    <!-- MODAL PAGOS (DOCENTE) -->
+    <div id="modalPagosDoc" class="modal-overlay">
+        <div class="modal-container" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 id="modalTituloEstudianteDoc" style="color: #00f2fe; margin: 0; font-size: 1.2rem;">Pagos del Estudiante</h3>
+                <button onclick="cerrarModalPagosDoc()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="card-table">
-                <table class="data-table">
-                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario</th><th>Credenciales</th><th>Acciones</th></tr></thead>
-                    <tbody id="bodyListaAlumnos"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
-            </div>
-        </section>
+            <input type="hidden" id="modalAlumnoIdDoc" value="">
+            
+            <h4 style="color: #38ef7d; margin-bottom: 5px; font-size: 1rem;">Cuotas Mensuales / Inscripción</h4>
+            <div class="pago-grid" id="modalContenedorInputsPagosDoc"></div>
 
-        <section id="calificaciones" class="panel-section">
-            <h2><i class="fa-solid fa-graduation-cap"></i> Calificaciones de su Sede</h2>
-            <div class="card-table">
-                <table class="data-table" id="tablaCalificaciones">
-                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyCalificaciones"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
-            </div>
-        </section>
+            <h4 style="color: #ff4757; margin-top: 15px; margin-bottom: 5px; font-size: 1rem;">Gastos / Cargos Extras Pendientes</h4>
+            <div class="pago-grid" id="modalContenedorCargosExtrasDoc"></div>
 
-        <section id="pagos" class="panel-section">
-            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos de su Sede</h2>
-            <div id="contenedorPagos"><p style="text-align: center;">Cargando...</p></div>
-        </section>
-    </main>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="cerrarModalPagosDoc()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                <button type="button" onclick="guardarPagosModalDoc()" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -162,6 +216,7 @@
         let sedeDocente = "";
         let nombreDocente = "";
         let cicloActualDoc = "2026";
+        let listaAlumnosDocGlobal = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'docente') {
@@ -169,11 +224,33 @@
                 window.location.href = "login.html";
                 return;
             }
-            sedeDocente = localStorage.getItem('sedeDocente') || "COMPURED";
-            nombreDocente = localStorage.getItem('nombreDocente') || "Docente";
-            
+
+            const idDocenteLogueado = localStorage.getItem('idUsuarioDocente');
+            if (idDocenteLogueado) {
+                try {
+                    const docRef = doc(db, "docentes", idDocenteLogueado);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        sedeDocente = docSnap.data().sede || "COMPURED";
+                        nombreDocente = docSnap.data().nombre || "Docente";
+                    } else {
+                        sedeDocente = localStorage.getItem('sedeDocente') || "COMPURED";
+                        nombreDocente = localStorage.getItem('nombreDocente') || "Docente";
+                    }
+                } catch(e) {
+                    sedeDocente = localStorage.getItem('sedeDocente') || "COMPURED";
+                    nombreDocente = localStorage.getItem('nombreDocente') || "Docente";
+                }
+            } else {
+                sedeDocente = localStorage.getItem('sedeDocente') || "COMPURED";
+                nombreDocente = localStorage.getItem('nombreDocente') || "Docente";
+            }
+
             document.getElementById('lblSedeDocente').innerText = sedeDocente;
+            document.getElementById('lblNombreSedeTitulo').innerText = sedeDocente;
             document.getElementById('lblNombreDocente').innerText = nombreDocente;
+            document.getElementById('lblTituloLogo').innerText = sedeDocente;
+            document.title = `Panel Docente | ${sedeDocente}`;
 
             await cargarCiclosDoc();
             cargarDocente();
@@ -215,101 +292,310 @@
         window.actualizarDiasDoc = function() {
             let tipo = document.getElementById('tipoJornada').value;
             let selectDias = document.getElementById('diaEstudio');
-            selectDias.innerHTML = "";
-            if(tipo === 'Entre semana') {
-                selectDias.innerHTML = `<option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>`;
-            } else {
-                selectDias.innerHTML = `<option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>`;
-            }
+            selectDias.innerHTML = tipo === 'Entre semana' ? `<option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>` : `<option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>`;
         };
 
-        const formDoc = document.getElementById('formInscripcionDoc');
-        if(formDoc) {
-            formDoc.addEventListener('submit', async function(e) {
+        async function obtenerSiguienteCodigoDoc(ciclo) {
+            const snap = await getDocs(collection(db, "alumnos"));
+            let codigosExistentes = [];
+            snap.forEach(d => {
+                let data = d.data();
+                if(data.ciclo === ciclo && data.codigo) {
+                    let partes = data.codigo.split('-');
+                    if(partes.length === 3) {
+                        let num = parseInt(partes[2]);
+                        if(!isNaN(num)) codigosExistentes.push(num);
+                    }
+                }
+            });
+            codigosExistentes.sort((a, b) => a - b);
+            let menorDisponible = 1;
+            for(let num of codigosExistentes) {
+                if(num === menorDisponible) menorDisponible++;
+                else if(num > menorDisponible) break;
+            }
+            return `COMP-${ciclo}-${String(menorDisponible).padStart(4, '0')}`;
+        }
+
+        window.abrirModalEstudianteDoc = function() {
+            document.getElementById('formInscripcionModalDoc').reset();
+            document.getElementById('editandoAlumnoIdDoc').value = '';
+            document.getElementById('tituloModalEstudianteDoc').innerText = `Nuevo Estudiante (${cicloActualDoc})`;
+            document.getElementById('btnSubmitAlumnoModalDoc').innerText = "Guardar Estudiante";
+            actualizarDiasDoc();
+            document.getElementById('modalEstudianteDoc').style.display = 'flex';
+        };
+
+        window.cerrarModalEstudianteDoc = function() {
+            document.getElementById('modalEstudianteDoc').style.display = 'none';
+        };
+
+        const formModalDoc = document.getElementById('formInscripcionModalDoc');
+        if(formModalDoc) {
+            formModalDoc.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                const editId = document.getElementById('editandoAlumnoIdDoc').value;
                 const pN = document.getElementById('pNombre').value.trim();
                 const pA = document.getElementById('pApellido').value.trim();
+                
                 try {
-                    const snap = await getDocs(collection(db, "alumnos"));
-                    const siguienteNumero = snap.size + 1;
-                    const codigoGenerado = `COMP-${cicloActualDoc}-${String(siguienteNumero).padStart(4, '0')}`;
-                    const passwordGenerada = (pN.charAt(0) + pA + String(siguienteNumero).padStart(4, '0')).toLowerCase().replace(/\s+/g,'');
+                    if(editId) {
+                        await updateDoc(doc(db, "alumnos", editId), {
+                            primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
+                            tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
+                            segundoApellido: document.getElementById('sApellido').value.trim(),
+                            fechaNacimiento: document.getElementById('fechaNac').value,
+                            telEstudiante: document.getElementById('telEstudiante').value.trim(),
+                            codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
+                            establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
+                            grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
+                            sede: sedeDocente, tipoJornada: document.getElementById('tipoJornada').value,
+                            diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
+                            horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
+                            encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim()
+                        });
+                        alert("¡Datos actualizados!");
+                    } else {
+                        const codigoGenerado = await obtenerSiguienteCodigoDoc(cicloActualDoc);
+                        const passwordGenerada = (pN.charAt(0) + pA + codigoGenerado.slice(-4)).toLowerCase().replace(/\s+/g,'');
 
-                    await addDoc(collection(db, "alumnos"), {
-                        primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
-                        tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
-                        segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
-                        ciclo: cicloActualDoc,
-                        fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
-                        codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
-                        establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
-                        grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                        sede: sedeDocente, tipoJornada: document.getElementById('tipoJornada').value,
-                        diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
-                        horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
-                        encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
-                        usuarioAcceso: codigoGenerado, passwordAcceso: passwordGenerada,
-                        notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}, fechaRegistro: new Date().toISOString()
-                    });
-                    alert(`¡Inscrito en ${sedeDocente} (${cicloActualDoc})!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
-                    formDoc.reset();
+                        await addDoc(collection(db, "alumnos"), {
+                            primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
+                            tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
+                            segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
+                            ciclo: cicloActualDoc,
+                            fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
+                            codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
+                            establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
+                            grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
+                            sede: sedeDocente, tipoJornada: document.getElementById('tipoJornada').value,
+                            diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
+                            horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
+                            encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
+                            usuarioAcceso: codigoGenerado, passwordAcceso: passwordGenerada,
+                            notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}, fechaRegistro: new Date().toISOString()
+                        });
+                        alert(`¡Inscrito (${cicloActualDoc})!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
+                    }
+                    cerrarModalEstudianteDoc();
                     cargarDocente();
                 } catch(err) { alert("Error: " + err.message); }
             });
         }
 
-        window.cargarDocente = async function() {
-            const bodyLista = document.getElementById('bodyListaAlumnos');
-            const bodyCalif = document.getElementById('bodyCalificaciones');
-            const contPagos = document.getElementById('contenedorPagos');
-
+        window.cargarParaEditarDoc = async function(id) {
             try {
-                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+                const snap = await getDoc(doc(db, "alumnos", id));
+                if(!snap.exists()) return;
+                let a = snap.data();
+                document.getElementById('editandoAlumnoIdDoc').value = id;
+                document.getElementById('pNombre').value = a.primerNombre || '';
+                document.getElementById('sNombre').value = a.segundoNombre || '';
+                document.getElementById('tNombre').value = a.tercerNombre || '';
+                document.getElementById('pApellido').value = a.primerApellido || '';
+                document.getElementById('sApellido').value = a.segundoApellido || '';
+                document.getElementById('fechaNac').value = a.fechaNacimiento || '';
+                document.getElementById('telEstudiante').value = a.telEstudiante || '';
+                document.getElementById('codigoMineduc').value = a.codigoMineduc !== 'No asignado' ? a.codigoMineduc : '';
+                document.getElementById('establecimiento').value = a.establecimiento !== 'No especificado' ? a.establecimiento : '';
+                document.getElementById('nombreEncargado').value = a.encargado || '';
+                document.getElementById('telEncargado').value = a.telEncargado || '';
+                document.getElementById('tipoJornada').value = a.tipoJornada || 'Entre semana';
+                actualizarDiasDoc();
+                document.getElementById('diaEstudio').value = a.diaEstudio || 'Lunes';
+                document.getElementById('cursoInteres').value = a.curso || 'Mecanografía Básica';
+                document.getElementById('horaIngreso').value = a.horaIngreso || '';
+                document.getElementById('horaSalida').value = a.horaSalida || '';
+                document.getElementById('gradoCursa').value = a.grado || 'Primero Básico';
+                document.getElementById('direccion').value = a.direccion || '';
 
+                document.getElementById('tituloModalEstudianteDoc').innerText = `Editando Alumno: ${a.codigo}`;
+                document.getElementById('btnSubmitAlumnoModalDoc').innerText = "Guardar Cambios";
+                document.getElementById('modalEstudianteDoc').style.display = 'flex';
+            } catch(e) { console.error(e); }
+        };
+
+        window.cargarDocente = async function() {
+            try {
                 const snap = await getDocs(collection(db, "alumnos"));
-                if(snap.empty) {
-                    if(bodyLista) bodyLista.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay alumnos.</td></tr>`;
-                    return;
-                }
-
-                let hL="", hC="", hP="", alumnosEnSede = 0;
-                snap.forEach(d => {
-                    let a = d.data(); let id = d.id;
-                    let cicloAlumno = a.ciclo || "2026";
-                    if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
-                    alumnosEnSede++;
-
-                    let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
-                    let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-                    let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
-
-                    let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
-                    let p = a.pagos || {}, extras = a.cargosExtras || {};
-                    let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
-
-                    hL += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:var(--text-muted);">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:var(--primary-color);">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-delete" onclick="eliminarAl('${id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                    hC += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_${id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_${id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_${id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_${id}" value="${notas.u4}" style="width:50px;"></td><td>${prom}</td><td><button class="btn-icon btn-edit" onclick="guardarN('${id}')"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
-
-                    hP += `<div class="pago-card"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:15px;"><h4 style="color:var(--primary-color); margin:0;">${nombreParaMostrar}</h4><button class="btn-primary" style="padding:6px 15px; font-size:0.85rem; border:none; cursor:pointer;" onclick="guardarP('${id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button></div><div class="pago-grid">`;
-                    mesesDisponibles.forEach(m => {
-                        if(mesesActivos.includes(m.id)) {
-                            hP += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="p_${m.id}_${id}" value="${p[m.id]||''}" placeholder="0.00"></div>`;
-                        }
-                    });
-                    hP += `</div></div>`;
+                listaAlumnosDocGlobal = [];
+                snap.forEach(docSnap => {
+                    listaAlumnosDocGlobal.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                if(alumnosEnSede === 0) {
-                    hL = `<tr><td colspan="5" style="text-align: center;">No hay alumnos en esta sede para este ciclo.</td></tr>`;
-                    hC = `<tr><td colspan="8" style="text-align: center;">No hay alumnos en esta sede para este ciclo.</td></tr>`;
-                    hP = `<p style="text-align: center;">No hay alumnos en esta sede para este ciclo.</p>`;
-                }
+                renderizarTablaAlumnosDoc();
+                renderizarSeccionPagosDoc();
+                renderizarCalificacionesDoc();
 
-                if(bodyLista) bodyLista.innerHTML = hL;
-                if(bodyCalif) bodyCalif.innerHTML = hC;
-                if(contPagos) contPagos.innerHTML = hP;
             } catch(e){console.error(e);}
+        };
+
+        window.renderizarTablaAlumnosDoc = function() {
+            const bodyLista = document.getElementById('bodyListaAlumnos');
+            const textoBusqueda = document.getElementById('inputBuscarAlumnoDoc').value.toLowerCase();
+            const diaSeleccionado = document.getElementById('selectFiltroDiaDoc').value;
+
+            let hL = "";
+            let alumnosEnSede = 0;
+
+            listaAlumnosDocGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto}`.toLowerCase();
+
+                if (textoBusqueda && !textoCompletoFiltro.includes(textoBusqueda)) return;
+                if (diaSeleccionado !== "TODOS" && a.diaEstudio !== diaSeleccionado) return;
+
+                alumnosEnSede++;
+                hL += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditarDoc('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button><button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAl('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+
+            if(alumnosEnSede === 0) {
+                hL = `<tr><td colspan="5" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
+            }
+
+            if(bodyLista) bodyLista.innerHTML = hL;
+        };
+
+        window.aplicarFiltrosAlumnosDoc = function() {
+            renderizarTablaAlumnosDoc();
+        };
+
+        window.renderizarSeccionPagosDoc = function() {
+            const bodyPagos = document.getElementById('bodyListaPagosDoc');
+            let htmlPagos = "";
+
+            listaAlumnosDocGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
+                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagosDoc('${a.id}')">${nombreCompletoTexto}</a></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagosDoc('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
+            });
+
+            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="4" style="text-align: center;">No hay alumnos.</td></tr>`;
+        };
+
+        window.filtrarTablaPagosDoc = function() {
+            const f = document.getElementById('buscarPagosDoc').value.toLowerCase();
+            const filas = document.getElementById('bodyListaPagosDoc').getElementsByTagName('tr');
+            for(let fila of filas) {
+                let nom = fila.getAttribute('data-nombre') || "";
+                fila.style.display = nom.includes(f) ? "" : "none";
+            }
+        };
+
+        window.abrirModalPagosDoc = async function(id) {
+            try {
+                const snap = await getDoc(doc(db, "alumnos", id));
+                if(!snap.exists()) return;
+                let a = snap.data();
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+
+                document.getElementById('modalTituloEstudianteDoc').innerHTML = `Pagos de: <span style="color:#fff;">${a.codigo} - ${nombreCompletoTexto}</span>`;
+                document.getElementById('modalAlumnoIdDoc').value = id;
+
+                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+                let p = a.pagos || {};
+                let eCargos = a.cargosExtras || {};
+
+                let htmlInputs = "";
+                mesesDisponibles.forEach(m => {
+                    if (mesesActivos.includes(m.id)) {
+                        let val = p[m.id] || '';
+                        htmlInputs += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="modal_doc_p_${m.id}" value="${val}" placeholder="0.00"></div>`;
+                    }
+                });
+                document.getElementById('modalContenedorInputsPagosDoc').innerHTML = htmlInputs;
+
+                let htmlExtras = "";
+                let keysExtras = Object.keys(eCargos);
+                if(keysExtras.length === 0) {
+                    htmlExtras = `<div style="grid-column: span 3; color: #94a3b8; font-size: 0.85rem; font-style: italic;">No hay cargos extras asignados.</div>`;
+                } else {
+                    keysExtras.forEach(key => {
+                        let objVal = eCargos[key];
+                        let montoPendiente = typeof objVal === 'object' ? (objVal.monto || '') : objVal;
+                        let pagadoVal = typeof objVal === 'object' ? (objVal.pagado || '') : '';
+                        
+                        htmlExtras += `<div class="pago-item" style="border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:6px; background:rgba(0,0,0,0.1);">
+                            <label style="color:#00f2fe; font-weight:bold;">${key} (Debe: Q. ${montoPendiente})</label>
+                            <input type="text" id="modal_doc_extra_${key}" value="${pagadoVal}" placeholder="Abono / Pagado">
+                        </div>`;
+                    });
+                }
+                document.getElementById('modalContenedorCargosExtrasDoc').innerHTML = htmlExtras;
+                document.getElementById('modalPagosDoc').style.display = 'flex';
+            } catch(e) { console.error(e); }
+        };
+
+        window.cerrarModalPagosDoc = function() {
+            document.getElementById('modalPagosDoc').style.display = 'none';
+        };
+
+        window.guardarPagosModalDoc = async function() {
+            const id = document.getElementById('modalAlumnoIdDoc').value;
+            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+            
+            let pagosData = {};
+            mesesActivos.forEach(mId => {
+                let el = document.getElementById(`modal_doc_p_${mId}`);
+                if(el) pagosData[mId] = el.value;
+            });
+
+            const alumnoRef = doc(db, "alumnos", id);
+            const alumnoSnap = await getDoc(alumnoRef);
+            let cargosActuales = alumnoSnap.exists() ? (alumnoSnap.data().cargosExtras || {}) : {};
+
+            let nuevosCargos = {};
+            Object.keys(cargosActuales).forEach(key => {
+                let objVal = cargosActuales[key];
+                let montoOriginal = typeof objVal === 'object' ? objVal.monto : objVal;
+                let inputEl = document.getElementById(`modal_doc_extra_${key}`);
+                let pagadoIngresado = inputEl ? inputEl.value : (typeof objVal === 'object' ? objVal.pagado : '');
+
+                nuevosCargos[key] = {
+                    monto: montoOriginal,
+                    pagado: pagadoIngresado
+                };
+            });
+
+            try {
+                await updateDoc(alumnoRef, { pagos: pagosData, cargosExtras: nuevosCargos });
+                alert("¡Pagos y cargos actualizados con éxito!");
+                cerrarModalPagosDoc();
+                cargarDocente();
+            } catch(err) { alert("Error al guardar pagos: " + err.message); }
+        };
+
+        window.renderizarCalificacionesDoc = function() {
+            const bodyCalif = document.getElementById('bodyCalificaciones');
+            let hC = "";
+
+            listaAlumnosDocGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
+                let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
+                let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+
+                hC += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_${a.id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_${a.id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_${a.id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_${a.id}" value="${notas.u4}" style="width:50px;"></td><td>${prom}</td><td><button class="btn-icon btn-edit" onclick="guardarN('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
+            });
+
+            if(bodyCalif) bodyCalif.innerHTML = hC || `<tr><td colspan="8" style="text-align: center;">No hay alumnos.</td></tr>`;
         };
 
         window.guardarN = async function(id) {
@@ -317,14 +603,7 @@
             alert("¡Notas actualizadas!"); cargarDocente();
         };
 
-        window.guardarP = async function(id) {
-            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
-            let pagosData = {}; mesesActivos.forEach(mId => { let el = document.getElementById(`p_${mId}_${id}`); if(el) pagosData[mId] = el.value; });
-            await updateDoc(doc(db, "alumnos", id), { pagos: pagosData }); alert("¡Pagos actualizados!"); cargarDocente();
-        };
-
-        window.eliminarAl = async function(id) { if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "alumnos", id)); cargarDocente(); } };
+        window.eliminarAl = async function(id) { if(confirm("¿Eliminar estudiante?")) { await deleteDoc(doc(db, "alumnos", id)); alert("Eliminado."); cargarDocente(); } };
     </script>
     <script>
         function mostrarSeccion(id, evt) {

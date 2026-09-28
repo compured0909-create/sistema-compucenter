@@ -57,12 +57,11 @@ body {
     gap: 15px;
 }
 
-/* Estilos para tu imagen de logo */
 .logo-img {
-    width: 60px; /* Puedes aumentar o reducir este número según lo grande que quieras el logo */
+    width: 60px;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.4)); /* Resplandor sutil */
+    filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.4));
     transition: transform 0.3s ease;
 }
 
@@ -436,7 +435,7 @@ footer {
     }
 
     .logo-img {
-        width: 70px; /* Un poco más grande en móviles para que resalte */
+        width: 70px;
     }
 
     .logo-text {
@@ -457,11 +456,11 @@ footer {
         font-size: 1rem;
     }
 }
+
 /* =========================================
-   ESTILOS PARA EL SISTEMA (AGREGAR AL FINAL)
+   ESTILOS PARA EL SISTEMA Y PANELES RESPONSIVOS
    ========================================= */
 
-/* Botón Iniciar Sesión en Menú */
 .btn-login {
     background: rgba(0, 242, 254, 0.2);
     padding: 8px 15px;
@@ -475,12 +474,13 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+    padding: 20px;
 }
 .login-box {
     background: rgba(255, 255, 255, 0.05);
-    padding: 40px;
+    padding: 30px;
     border-radius: 20px;
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -522,15 +522,23 @@ footer {
 }
 .back-link:hover { color: var(--primary-color); }
 
-/* --- DASHBOARD Y PANELES --- */
-.dashboard-body { display: flex; height: 100vh; overflow: hidden; background: #080c14; }
+/* --- DASHBOARD Y PANELES ADAPTABLES --- */
+.dashboard-body { 
+    display: flex; 
+    min-height: 100vh; 
+    overflow-x: hidden; 
+    background: #080c14; 
+}
+
 .sidebar {
-    width: 250px;
+    width: 260px;
     background: rgba(255, 255, 255, 0.03);
     border-right: 1px solid rgba(255,255,255,0.05);
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
+
 .sidebar-logo {
     padding: 20px;
     font-size: 1.2rem;
@@ -539,7 +547,13 @@ footer {
     text-align: center;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-.sidebar-nav { display: flex; flex-direction: column; padding: 20px 0; }
+
+.sidebar-nav { 
+    display: flex; 
+    flex-direction: column; 
+    padding: 20px 0; 
+}
+
 .sidebar-nav a {
     padding: 15px 25px;
     color: var(--text-muted);
@@ -549,34 +563,70 @@ footer {
     align-items: center;
     transition: 0.3s;
 }
-.sidebar-nav a:hover { background: rgba(0,242,254,0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); }
-.logout { margin-top: auto; color: #ff4757 !important; }
-.logout:hover { background: rgba(255,71,87,0.1) !important; border-color: #ff4757 !important; }
 
-/* Contenido Principal */
-.dashboard-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+.sidebar-nav a:hover { 
+    background: rgba(0,242,254,0.1); 
+    color: var(--primary-color); 
+    border-left: 3px solid var(--primary-color); 
+}
 
-/* Truco de CSS para Pestañas sin JS */
+.logout { 
+    margin-top: auto; 
+    color: #ff4757 !important; 
+}
+.logout:hover { 
+    background: rgba(255,71,87,0.1) !important; 
+    border-color: #ff4757 !important; 
+}
+
+/* Contenido Principal Adaptable */
+.dashboard-content { 
+    flex: 1; 
+    padding: 30px; 
+    overflow-x: auto; 
+    position: relative; 
+}
+
+/* Secciones de Pestañas */
 .panel-section { display: none; animation: fadeUp 0.5s ease; }
-/* Por defecto muestra la primera si no hay nada en el enlace, o la seleccionada */
-.panel-section:target, #registro:target ~ .panel-section { display: block; }
-/* Muestra el registro por defecto al entrar */
 #registro { display: block; }
-:target ~ #registro { display: none; }
-#registro:target { display: block !important; }
+.panel-section.active { display: block !important; }
 
-.panel-section h2 { margin-bottom: 30px; color: var(--primary-color); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+.panel-section h2 { 
+    margin-bottom: 30px; 
+    color: var(--primary-color); 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    padding-bottom: 15px; 
+    font-size: 1.5rem;
+}
 
 /* Formularios del Sistema */
 .card-form, .card-table {
     background: rgba(255, 255, 255, 0.03);
-    padding: 30px;
+    padding: 25px;
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 25px;
+    overflow-x: auto;
 }
-.grid-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.form-group { display: flex; flex-direction: column; gap: 8px; }
-.form-group label { font-size: 0.9rem; color: var(--text-muted); }
+
+.grid-form { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+}
+
+.form-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+}
+
+.form-group label { 
+    font-size: 0.9rem; 
+    color: var(--text-muted); 
+}
+
 .form-group input, .form-group select {
     padding: 10px 15px;
     background: rgba(0,0,0,0.3);
@@ -584,14 +634,25 @@ footer {
     border-radius: 8px;
     color: #fff;
     outline: none;
+    width: 100%;
 }
+
 .form-group input:focus, .form-group select:focus { border-color: var(--primary-color); }
 .form-group select option { background: #0b0f19; color: #fff; }
 
-/* Tablas */
+/* Tablas Responsivas con Scroll Horizontal */
 .overflow-x { overflow-x: auto; }
-.data-table { width: 100%; border-collapse: collapse; text-align: left; }
-.data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.data-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    text-align: left; 
+    min-width: 600px; 
+}
+.data-table th, .data-table td { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    font-size: 0.9rem;
+}
 .data-table th { color: var(--secondary-color); font-weight: 600; background: rgba(0,0,0,0.2); }
 .data-table tr:hover { background: rgba(255,255,255,0.02); }
 .grade-input { width: 60px; padding: 5px; background: rgba(0,0,0,0.4); border: 1px solid #444; color: #fff; text-align: center; border-radius: 5px; }
@@ -605,3 +666,31 @@ footer {
 
 /* Checkboxes para pagos */
 .payments-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }
+
+/* =========================================
+   MEDIA QUERIES PARA PANTALLAS MÓVILES Y TABLETS
+   ========================================= */
+@media (max-width: 900px) {
+    .dashboard-body {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    
+    .dashboard-content {
+        padding: 15px;
+        max-width: 100%;
+    }
+    
+    .grid-form {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .form-actions {
+        grid-column: span 1 !important;
+    }
+}

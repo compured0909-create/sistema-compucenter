@@ -2,40 +2,38 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Directivo | COMPURED</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .panel-section { display: none !important; }
         .panel-section.active { display: block !important; }
-        .sidebar-nav a.active {
-            background: rgba(0, 242, 254, 0.15);
-            color: var(--primary-color);
-            border-left: 4px solid var(--primary-color);
+        .sidebar-nav a.active { background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-left: 4px solid #00f2fe; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+            padding: 15px;
         }
-        .pago-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+        .modal-container {
+            background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; width: 100%; max-width: 750px; max-height: 90vh;
+            overflow-y: auto; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .pago-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
+        .pago-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .pago-item { display: flex; flex-direction: column; gap: 5px; }
-        .pago-item label { font-size: 0.85rem; color: var(--text-muted); }
+        .pago-item label { font-size: 0.85rem; color: #94a3b8; }
         .pago-item input { padding: 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; width: 100%; }
-        .sede-tab-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        .sede-tab-btn.active-tab { background: var(--primary-color); color: #0f172a; border-color: var(--primary-color); }
-        @media (max-width: 768px) { .pago-grid { grid-template-columns: repeat(1, 1fr); } }
+        
+        .sede-tab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .sede-tab-btn.active-tab { background: #00f2fe; color: #0f172a; border-color: #00f2fe; }
+        
+        .estudiante-link { color: #00f2fe; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .estudiante-link:hover { text-decoration: underline; color: #38ef7d; }
+        
+        @media (max-width: 900px) { .pago-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="dashboard-body">
@@ -43,51 +41,178 @@
     <aside class="sidebar" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <div class="sidebar-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px;">
-                <img src="logo.png" alt="Logo" style="width: 35px; height: auto;">
+                <img src="logo.png" alt="Logo" style="width: 30px; height: auto;">
                 <span>COMPURED</span>
             </div>
-            <div style="padding: 15px; text-align: center; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <p style="color: #fff; font-weight: bold; font-size: 0.95rem;">Brayan Isaú Romero Pérez</p>
-                <span style="font-size: 0.75rem; background: rgba(0,242,254,0.2); color: var(--primary-color); padding: 2px 8px; border-radius: 10px;">Director General</span>
+            <div style="padding: 12px; text-align: center; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #fff; font-weight: bold; font-size: 0.9rem; margin: 0;">Brayan Isaú Romero Pérez</p>
+                <span style="font-size: 0.7rem; background: rgba(0,242,254,0.2); color: #00f2fe; padding: 2px 8px; border-radius: 10px; display:inline-block; margin-top:4px;">Director General</span>
             </div>
             
-            <!-- Selector de Ciclo Escolar -->
-            <div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.1);">
-                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Ciclo Escolar Activo:</label>
+            <div style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.1);">
+                <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 5px;">Ciclo Escolar Activo:</label>
                 <div style="display: flex; gap: 5px;">
                     <select id="selectCicloGlobal" onchange="cambiarCicloGlobal(this.value)" style="width: 100%; padding: 6px; border-radius: 5px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
                         <option value="2026">2026</option>
                         <option value="2027">2027</option>
                     </select>
-                    <button onclick="agregarNuevoCiclo()" title="Añadir nuevo año" style="background: var(--primary-color); border: none; padding: 0 10px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #0f172a;"><i class="fa-solid fa-plus"></i></button>
+                    <button onclick="agregarNuevoCiclo()" title="Añadir nuevo año" style="background: #00f2fe; border: none; padding: 0 10px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #0f172a;"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
 
-            <nav class="sidebar-nav">
-                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
-                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
-                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
-                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link"><i class="fa-solid fa-calendar-days"></i> Configurar Meses / Cargos</a>
-                <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
-                <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
+            <nav class="sidebar-nav" style="display: flex; flex-direction: column;">
+                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
+                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
+                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
+                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-calendar-days"></i> Configurar Meses</a>
+                <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
+                <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
             </nav>
         </div>
 
-        <!-- Indicador de Ciclo Grande Arriba de Salir -->
-        <div style="padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
-            <span style="font-size: 0.7rem; color: var(--text-muted); display: block; text-transform: uppercase; letter-spacing: 1px;">Ciclo Actual</span>
-            <h2 id="lblAnioGrande" style="color: var(--primary-color); font-size: 1.8rem; margin: 0; font-weight: 800;">2026</h2>
-            <a href="login.html" class="logout" style="margin-top: 10px; display: block;"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+        <div style="padding: 12px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+            <span style="font-size: 0.65rem; color: #94a3b8; display: block; text-transform: uppercase;">Ciclo Actual</span>
+            <h2 id="lblAnioGrande" style="color: #00f2fe; font-size: 1.5rem; margin: 0; font-weight: 800;">2026</h2>
+            <a href="login.html" class="logout" style="margin-top: 8px; display: block; color: #ff4757; text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
         </div>
     </aside>
 
     <main class="dashboard-content">
         <!-- GESTIÓN DE ALUMNOS -->
         <section id="registro" class="panel-section active">
-            <h2><i class="fa-solid fa-user-plus"></i> Ficha de Inscripción y Control de Alumnos</h2>
-            <div class="card-form" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.1rem;">Nuevo Ingreso Institucional (<span class="lblAnioTxt">2026</span>)</h3>
-                <form class="grid-form" id="formInscripcion" style="grid-template-columns: repeat(3, 1fr);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                <h2><i class="fa-solid fa-user-plus"></i> Ficha de Inscripción y Control de Alumnos</h2>
+                <button onclick="abrirModalEstudiante()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+            </div>
+
+            <div class="card-table">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')">COMPURED</button>
+                        <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')">COMPUCENTER</button>
+                    </div>
+                    <span style="font-size: 0.9rem; color: #00f2fe; font-weight: bold;">Ciclo: <span class="lblAnioTxt">2026</span></span>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <input type="text" id="inputBuscarAlumno" placeholder="Buscar por nombre o código..." onkeyup="aplicarFiltrosAlumnos()" style="flex: 1; min-width: 220px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
+                    <select id="selectFiltroDia" onchange="aplicarFiltrosAlumnos()" style="padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: #1e293b; color: #fff;">
+                        <option value="TODOS">Todos los días</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem;" id="tituloTablaSede">Listado General - COMPURED</h3>
+                <table class="data-table">
+                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario / Día</th><th>Credenciales</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaAlumnosDir"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CALIFICACIONES -->
+        <section id="calificaciones" class="panel-section">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Control de Calificaciones</h2>
+            <div class="card-table">
+                <div style="margin-bottom: 15px;"><input type="text" id="buscarCalificacionDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTabla('tablaCalificacionesDir', 'buscarCalificacionDir')"></div>
+                <table class="data-table" id="tablaCalificacionesDir">
+                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyCalificacionesDir"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CONTROL DE PAGOS -->
+        <section id="pagos" class="panel-section">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Haz clic sobre el nombre de cualquier estudiante para abrir su ventana de pagos.</p>
+            <div style="margin-bottom: 15px;"><input type="text" id="buscarPagosDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDir()"></div>
+            <div class="card-table">
+                <table class="data-table">
+                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Curso</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyListaPagosDir"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CONFIGURAR MESES Y CARGOS -->
+        <section id="configMeses" class="panel-section">
+            <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Cargos Extras</h2>
+            
+            <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h3 style="color: #38ef7d; font-size: 1rem;">1. Activar / Desactivar Meses</h3>
+                <div id="gridCheckMeses" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px;"></div>
+                <button class="btn-primary" onclick="guardarConfigMeses()" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Meses</button>
+            </div>
+
+            <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h3 style="color: #38ef7d; font-size: 1rem;">2. Asignar Gasto Extra (Cobro Pendiente)</h3>
+                <form id="formCargoExtra" onsubmit="aplicarCargoExtra(event)" class="grid-form" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="form-group"><label>Concepto (Ej: Inscripción Extra, Libro)</label><input type="text" id="nombreCargo" required></div>
+                    <div class="form-group"><label>Monto a Cobrar (Q)</label><input type="number" step="0.01" id="montoCargo" required></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Aplicar a:</label><select id="destinoCargo"><option value="todos">Todos los alumnos</option><option value="especifico">Un alumno específico</option></select></div>
+                    <div class="form-group" id="divAlumnoEspecifico" style="grid-column: span 2; display: none;"><label>Seleccionar Alumno</label><select id="selectAlumnoExtra"></select></div>
+                    <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Asignar Cargo Pendiente</button></div>
+                </form>
+            </div>
+
+            <div class="card-table">
+                <h3 style="color: #00f2fe; margin-bottom: 15px; font-size: 1rem;">Listado de Cargos Extras Registrados</h3>
+                <table class="data-table">
+                    <thead><tr><th>Concepto / Gasto Extra</th><th>Monto Estándar (Q)</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaCargosGlobales"><tr><td colspan="3" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- GESTIÓN DE DOCENTES -->
+        <section id="docentes" class="panel-section">
+            <h2><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</h2>
+            <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <form class="grid-form" id="formRegistroDocente" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="form-group"><label>Nombre Completo</label><input type="text" id="docNombre" required></div>
+                    <div class="form-group"><label>Correo</label><input type="email" id="docCorreo" required></div>
+                    <div class="form-group"><label>Teléfono</label><input type="tel" id="docTel" required></div>
+                    <div class="form-group"><label>Contraseña</label><input type="password" id="docPass" required></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Sede Asignada</label><select id="docSede" required><option value="COMPURED">COMPURED</option><option value="COMPUCENTER">COMPUCENTER</option></select></div>
+                    <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Docente</button></div>
+                </form>
+            </div>
+            <div class="card-table"><table class="data-table"><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Sede</th><th>Pass</th><th>Acciones</th></tr></thead><tbody id="bodyListaDocentes"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody></table></div>
+        </section>
+
+        <!-- FINANZAS -->
+        <section id="finanzas" class="panel-section">
+            <h2><i class="fa-solid fa-chart-line"></i> Finanzas Globales</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                <div class="card" style="border:1px solid #25D366; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Ingresos</span><h3 id="lblTotalIngresos" style="color:#25D366; margin:5px 0 0 0;">Q. 0.00</h3></div>
+                <div class="card" style="border:1px solid #ff4757; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Gastos</span><h3 id="lblTotalGastos" style="color:#ff4757; margin:5px 0 0 0;">Q. 0.00</h3></div>
+                <div class="card" style="border:1px solid #00f2fe; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Balance</span><h3 id="lblBalanceNeto" style="color:#00f2fe; margin:5px 0 0 0;">Q. 0.00</h3></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                <div class="card-form" style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px;"><h3 style="color:#25D366; margin-top:0;">Registrar Depósito</h3><form onsubmit="registrarTransaccionFinanciera(event, 'ingreso')"><div class="form-group" style="margin-bottom:10px;"><label>Concepto</label><input type="text" id="descIngreso" required></div><div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoIngreso" required></div><button type="submit" class="btn-primary" style="background:#25D366; border:none; padding:10px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;">Guardar</button></form></div>
+                <div class="card-form" style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px;"><h3 style="color:#ff4757; margin-top:0;">Registrar Gasto</h3><form onsubmit="registrarTransaccionFinanciera(event, 'gasto')"><div class="form-group" style="margin-bottom:10px;"><label>Descripción</label><input type="text" id="descGasto" required></div><div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoGasto" required></div><button type="submit" class="btn-primary" style="background:#ff4757; border:none; padding:10px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;">Guardar</button></form></div>
+            </div>
+            <div class="card-table"><table class="data-table"><thead><tr><th>Tipo</th><th>Descripción</th><th>Monto</th><th>Acción</th></tr></thead><tbody id="bodyMovimientos"><tr><td colspan="4" style="text-align: center;">Sin movimientos.</td></tr></tbody></table></div>
+        </section>
+    </main>
+
+    <!-- VENTANA EMERGENTE (MODAL) ESTUDIANTE -->
+    <div id="modalEstudiante" class="modal-overlay">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 id="tituloModalEstudiante" style="color: #00f2fe; margin: 0; font-size: 1.2rem;">Nuevo Estudiante</h3>
+                <button onclick="cerrarModalEstudiante()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="formInscripcionModal">
+                <input type="hidden" id="editandoAlumnoId" value="">
+                <div class="grid-form" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
                     <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
                     <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
@@ -96,28 +221,20 @@
                     <div class="form-group"><label>Fecha de Nacimiento *</label><input type="date" id="fechaNac" required></div>
                     
                     <div class="form-group"><label>Teléfono Estudiante</label><input type="tel" id="telEstudiante"></div>
-                    <div class="form-group"><label>Código MINEDUC (Opcional)</label><input type="text" id="codigoMineduc" placeholder="Ej. P1234A"></div>
-                    <div class="form-group"><label>Establecimiento de Estudio</label><input type="text" id="establecimiento" placeholder="Procedencia"></div>
+                    <div class="form-group"><label>Código MINEDUC</label><input type="text" id="codigoMineduc" placeholder="Ej. P1234A"></div>
+                    <div class="form-group"><label>Establecimiento</label><input type="text" id="establecimiento"></div>
 
-                    <div class="form-group"><label>Nombre del Encargado *</label><input type="text" id="nombreEncargado" required></div>
-                    <div class="form-group"><label>Teléfono del Encargado *</label><input type="tel" id="telEncargado" required></div>
+                    <div class="form-group"><label>Nombre Encargado *</label><input type="text" id="nombreEncargado" required></div>
+                    <div class="form-group"><label>Teléfono Encargado *</label><input type="tel" id="telEncargado" required></div>
                     <div class="form-group"><label>Sede Institucional *</label>
-                        <select id="sedeInscripcion" required>
-                            <option value="COMPURED">COMPURED</option>
-                            <option value="COMPUCENTER">COMPUCENTER</option>
-                        </select>
+                        <select id="sedeInscripcion" required><option value="COMPURED">COMPURED</option><option value="COMPUCENTER">COMPUCENTER</option></select>
                     </div>
 
                     <div class="form-group"><label>Tipo de Jornada *</label>
-                        <select id="tipoJornada" onchange="actualizarDias()" required>
-                            <option value="Entre semana">Entre semana</option>
-                            <option value="Fin de semana">Fin de semana</option>
-                        </select>
+                        <select id="tipoJornada" onchange="actualizarDias()" required><option value="Entre semana">Entre semana</option><option value="Fin de semana">Fin de semana</option></select>
                     </div>
                     <div class="form-group"><label>Día de Asistencia *</label>
-                        <select id="diaEstudio" required>
-                            <option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>
-                        </select>
+                        <select id="diaEstudio" required><option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option></select>
                     </div>
                     <div class="form-group"><label>Curso o Carrera *</label>
                         <select id="cursoInteres" required>
@@ -128,150 +245,43 @@
                         </select>
                     </div>
 
-                    <div class="form-group"><label>Hora de Entrada (Manual) *</label><input type="text" id="horaIngreso" required placeholder="Ej. 08:00 AM"></div>
-                    <div class="form-group"><label>Hora de Salida (Manual) *</label><input type="text" id="horaSalida" required placeholder="Ej. 12:00 PM"></div>
+                    <div class="form-group"><label>Hora de Entrada *</label><input type="text" id="horaIngreso" required placeholder="08:00 AM"></div>
+                    <div class="form-group"><label>Hora de Salida *</label><input type="text" id="horaSalida" required placeholder="12:00 PM"></div>
                     <div class="form-group"><label>Grado</label>
                         <select id="gradoCursa"><option>Primero Básico</option><option>Segundo Básico</option><option>Tercero Básico</option><option>Bachillerato / Otro</option></select>
                     </div>
 
                     <div class="form-group" style="grid-column: span 3;"><label>Dirección Domiciliar *</label><input type="text" id="direccion" required></div>
-
-                    <div class="form-actions" style="grid-column: span 3;">
-                        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Generar Código y Registrar Alumno</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="card-table">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="display: flex; gap: 15px;">
-                        <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')">COMPURED</button>
-                        <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')">COMPUCENTER</button>
-                    </div>
-                    <span style="font-size: 0.9rem; color: var(--primary-color); font-weight: bold;">Ciclo: <span class="lblAnioTxt">2026</span></span>
                 </div>
-                <h3 style="margin-bottom: 15px; font-size: 1.1rem;" id="tituloTablaSede">Listado General - COMPURED</h3>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario / Día</th><th>Credenciales</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody id="bodyListaAlumnosDir"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- CALIFICACIONES -->
-        <section id="calificaciones" class="panel-section">
-            <h2><i class="fa-solid fa-graduation-cap"></i> Control de Calificaciones</h2>
-            <div class="card-table">
-                <div style="margin-bottom: 15px;">
-                    <input type="text" id="buscarCalificacionDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTabla('tablaCalificacionesDir', 'buscarCalificacionDir')">
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="cerrarModalEstudiante()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                    <button type="submit" id="btnSubmitAlumnoModal" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Estudiante</button>
                 </div>
-                <table class="data-table" id="tablaCalificacionesDir">
-                    <thead>
-                        <tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr>
-                    </thead>
-                    <tbody id="bodyCalificacionesDir"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
-            </div>
-        </section>
+            </form>
+        </div>
+    </div>
 
-        <!-- CONTROL DE PAGOS -->
-        <section id="pagos" class="panel-section">
-            <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos y Cobros Extras</h2>
-            <div style="margin-bottom: 15px;">
-                <input type="text" id="buscarPagosDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaDivs('contenedorPagosDir', 'buscarPagosDir')">
+    <!-- VENTANA EMERGENTE (MODAL) PARA PAGOS -->
+    <div id="modalPagos" class="modal-overlay">
+        <div class="modal-container" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 id="modalTituloEstudiante" style="color: #00f2fe; margin: 0; font-size: 1.2rem;">Pagos del Estudiante</h3>
+                <button onclick="cerrarModalPagos()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="contenedorPagosDir"><p style="text-align: center; color: var(--text-muted);">Cargando...</p></div>
-        </section>
+            <input type="hidden" id="modalAlumnoId" value="">
+            
+            <h4 style="color: #38ef7d; margin-bottom: 5px; font-size: 1rem;">Cuotas Mensuales / Inscripción</h4>
+            <div class="pago-grid" id="modalContenedorInputsPagos"></div>
 
-        <!-- CONFIGURAR MESES Y CARGOS -->
-        <section id="configMeses" class="panel-section">
-            <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Asignación de Manuales/Extras</h2>
-            <div class="card-form" style="margin-bottom: 30px;">
-                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">1. Activar / Desactivar Meses del Ciclo</h3>
-                <div id="gridCheckMeses" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;"></div>
-                <button class="btn-primary" onclick="guardarConfigMeses()" style="border:none; cursor:pointer;">Guardar Configuración de Meses</button>
-            </div>
-            <div class="card-form">
-                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">2. Asignar Gasto Extra</h3>
-                <form id="formCargoExtra" onsubmit="aplicarCargoExtra(event)" class="grid-form" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="form-group"><label>Concepto</label><input type="text" id="nombreCargo" required placeholder="Ej. Manual"></div>
-                    <div class="form-group"><label>Monto (Q)</label><input type="number" step="0.01" id="montoCargo" required placeholder="0.00"></div>
-                    <div class="form-group" style="grid-column: span 2;"><label>Aplicar a:</label>
-                        <select id="destinoCargo"><option value="todos">Todos los alumnos</option><option value="especifico">Un alumno en específico</option></select>
-                    </div>
-                    <div class="form-group" id="divAlumnoEspecifico" style="grid-column: span 2; display: none;"><label>Seleccionar Alumno</label><select id="selectAlumnoExtra"></select></div>
-                    <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Aplicar Cargo</button></div>
-                </form>
-            </div>
-        </section>
+            <h4 style="color: #ff4757; margin-top: 15px; margin-bottom: 5px; font-size: 1rem;">Gastos / Cargos Extras Pendientes</h4>
+            <div class="pago-grid" id="modalContenedorCargosExtras"></div>
 
-        <!-- GESTIÓN DE DOCENTES -->
-        <section id="docentes" class="panel-section">
-            <h2><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</h2>
-            <div class="card-form" style="margin-bottom: 30px;">
-                <h3 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 15px;">Registrar Nuevo Docente y Asignar Sede</h3>
-                <form class="grid-form" id="formRegistroDocente" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="form-group"><label>Nombre Completo</label><input type="text" id="docNombre" required></div>
-                    <div class="form-group"><label>Correo Electrónico (Acceso)</label><input type="email" id="docCorreo" required></div>
-                    <div class="form-group"><label>Teléfono</label><input type="tel" id="docTel" required></div>
-                    <div class="form-group"><label>Contraseña de Acceso</label><input type="password" id="docPass" required></div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Sede Asignada</label>
-                        <select id="docSede" required>
-                            <option value="COMPURED">COMPURED</option>
-                            <option value="COMPUCENTER">COMPUCENTER</option>
-                        </select>
-                    </div>
-                    <div class="form-actions" style="grid-column: span 2;">
-                        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Guardar Docente</button>
-                    </div>
-                </form>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="cerrarModalPagos()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                <button type="button" onclick="guardarPagosModal()" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button>
             </div>
-            <div class="card-table">
-                <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Plantilla de Docentes Registrados</h3>
-                <table class="data-table">
-                    <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Sede Asignada</th><th>Contraseña</th><th>Acciones</th></tr></thead>
-                    <tbody id="bodyListaDocentes"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- FINANZAS -->
-        <section id="finanzas" class="panel-section">
-            <h2><i class="fa-solid fa-chart-line"></i> Control Financiero Global (Todos los Años)</h2>
-            <div class="grid-container" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
-                <div class="card" style="border-color: #25D366; text-align: left; padding: 20px;"><span style="color: var(--text-muted); font-size: 0.9rem;">Ingresos Totales</span><h3 id="lblTotalIngresos" style="color: #25D366; font-size: 1.8rem; margin-top: 5px;">Q. 0.00</h3></div>
-                <div class="card" style="border-color: #ff4757; text-align: left; padding: 20px;"><span style="color: var(--text-muted); font-size: 0.9rem;">Gastos Totales</span><h3 id="lblTotalGastos" style="color: #ff4757; font-size: 1.8rem; margin-top: 5px;">Q. 0.00</h3></div>
-                <div class="card" style="border-color: var(--primary-color); text-align: left; padding: 20px;"><span style="color: var(--text-muted); font-size: 0.9rem;">Balance Neto</span><h3 id="lblBalanceNeto" style="color: var(--primary-color); font-size: 1.8rem; margin-top: 5px;">Q. 0.00</h3></div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                <div class="card-form">
-                    <h3 style="color: #25D366; font-size: 1rem; margin-bottom: 10px;">Registrar Depósito</h3>
-                    <form onsubmit="registrarTransaccionFinanciera(event, 'ingreso')">
-                        <div class="form-group" style="margin-bottom:10px;"><label>Concepto</label><input type="text" id="descIngreso" required></div>
-                        <div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoIngreso" required></div>
-                        <button type="submit" class="btn-primary" style="background:#25D366; border:none; cursor:pointer;">Guardar Depósito</button>
-                    </form>
-                </div>
-                <div class="card-form">
-                    <h3 style="color: #ff4757; font-size: 1rem; margin-bottom: 10px;">Registrar Gasto</h3>
-                    <form onsubmit="registrarTransaccionFinanciera(event, 'gasto')">
-                        <div class="form-group" style="margin-bottom:10px;"><label>Descripción</label><input type="text" id="descGasto" required></div>
-                        <div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoGasto" required></div>
-                        <button type="submit" class="btn-primary" style="background:#ff4757; border:none; cursor:pointer;">Guardar Gasto</button>
-                    </form>
-                </div>
-            </div>
-            <div class="card-table">
-                <table class="data-table">
-                    <thead><tr><th>Tipo</th><th>Descripción</th><th>Monto</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyMovimientos"><tr><td colspan="4" style="text-align: center;">Sin movimientos.</td></tr></tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -291,6 +301,7 @@
 
         let sedeSeleccionadaDirector = "COMPURED";
         let cicloActual = "2026";
+        let listaAlumnosGlobal = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'director') {
@@ -308,9 +319,7 @@
                 let listaCiclos = snap.exists() ? snap.data().anios : ["2026", "2027"];
                 let select = document.getElementById('selectCicloGlobal');
                 let html = "";
-                listaCiclos.forEach(c => {
-                    html += `<option value="${c}">${c}</option>`;
-                });
+                listaCiclos.forEach(c => { html += `<option value="${c}">${c}</option>`; });
                 select.innerHTML = html;
                 cicloActual = localStorage.getItem('cicloActivoDirector') || listaCiclos[0];
                 select.value = cicloActual;
@@ -340,7 +349,7 @@
                 if(!lista.includes(nuevoAnio)) {
                     lista.push(nuevoAnio);
                     await setDoc(ref, { anios: lista });
-                    alert("¡Ciclo escolar agregado con éxito!");
+                    alert("¡Ciclo agregado con éxito!");
                     cargarCiclosDisponibles();
                 } else { alert("El año ya existe."); }
             } catch(e) { alert("Error: " + e.message); }
@@ -356,12 +365,7 @@
         window.actualizarDias = function() {
             let tipo = document.getElementById('tipoJornada').value;
             let selectDias = document.getElementById('diaEstudio');
-            selectDias.innerHTML = "";
-            if(tipo === 'Entre semana') {
-                selectDias.innerHTML = `<option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>`;
-            } else {
-                selectDias.innerHTML = `<option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>`;
-            }
+            selectDias.innerHTML = tipo === 'Entre semana' ? `<option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>` : `<option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>`;
         };
 
         window.filtrarSedeDirector = function(sede) {
@@ -369,7 +373,7 @@
             document.getElementById('btnTabCompured').classList.toggle('active-tab', sede === 'COMPURED');
             document.getElementById('btnTabCompucenter').classList.toggle('active-tab', sede === 'COMPUCENTER');
             document.getElementById('tituloTablaSede').innerText = `Listado General - ${sede}`;
-            cargarDatosDirector();
+            renderizarTablaAlumnos();
         };
 
         window.cargarConfiguracionMeses = async function() {
@@ -396,40 +400,126 @@
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        const formInscripcion = document.getElementById('formInscripcion');
-        if(formInscripcion) {
-            formInscripcion.addEventListener('submit', async function(e) {
+        async function obtenerSiguienteCodigo(ciclo) {
+            const snap = await getDocs(collection(db, "alumnos"));
+            let codigosExistentes = [];
+            snap.forEach(d => {
+                let data = d.data();
+                if(data.ciclo === ciclo && data.codigo) {
+                    let partes = data.codigo.split('-');
+                    if(partes.length === 3) {
+                        let num = parseInt(partes[2]);
+                        if(!isNaN(num)) codigosExistentes.push(num);
+                    }
+                }
+            });
+            codigosExistentes.sort((a, b) => a - b);
+            let menorDisponible = 1;
+            for(let num of codigosExistentes) {
+                if(num === menorDisponible) menorDisponible++;
+                else if(num > menorDisponible) break;
+            }
+            return `COMP-${ciclo}-${String(menorDisponible).padStart(4, '0')}`;
+        }
+
+        window.abrirModalEstudiante = function() {
+            document.getElementById('formInscripcionModal').reset();
+            document.getElementById('editandoAlumnoId').value = '';
+            document.getElementById('tituloModalEstudiante').innerText = `Nuevo Estudiante (${cicloActual})`;
+            document.getElementById('btnSubmitAlumnoModal').innerText = "Guardar Estudiante";
+            actualizarDias();
+            document.getElementById('modalEstudiante').style.display = 'flex';
+        };
+
+        window.cerrarModalEstudiante = function() {
+            document.getElementById('modalEstudiante').style.display = 'none';
+        };
+
+        const formModalInscripcion = document.getElementById('formInscripcionModal');
+        if(formModalInscripcion) {
+            formModalInscripcion.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                const editId = document.getElementById('editandoAlumnoId').value;
                 const pN = document.getElementById('pNombre').value.trim();
                 const pA = document.getElementById('pApellido').value.trim();
+                
                 try {
-                    const snap = await getDocs(collection(db, "alumnos"));
-                    const siguienteNumero = snap.size + 1;
-                    const codigoGenerado = `COMP-${cicloActual}-${String(siguienteNumero).padStart(4, '0')}`;
-                    const passwordGenerada = (pN.charAt(0) + pA + String(siguienteNumero).padStart(4, '0')).toLowerCase().replace(/\s+/g,'');
+                    if(editId) {
+                        await updateDoc(doc(db, "alumnos", editId), {
+                            primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
+                            tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
+                            segundoApellido: document.getElementById('sApellido').value.trim(),
+                            fechaNacimiento: document.getElementById('fechaNac').value,
+                            telEstudiante: document.getElementById('telEstudiante').value.trim(),
+                            codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
+                            establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
+                            grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
+                            sede: document.getElementById('sedeInscripcion').value, tipoJornada: document.getElementById('tipoJornada').value,
+                            diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
+                            horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
+                            encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim()
+                        });
+                        alert("¡Datos actualizados!");
+                    } else {
+                        const codigoGenerado = await obtenerSiguienteCodigo(cicloActual);
+                        const passwordGenerada = (pN.charAt(0) + pA + codigoGenerado.slice(-4)).toLowerCase().replace(/\s+/g,'');
 
-                    await addDoc(collection(db, "alumnos"), {
-                        primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
-                        tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
-                        segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
-                        ciclo: cicloActual,
-                        fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
-                        codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
-                        establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
-                        grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                        sede: document.getElementById('sedeInscripcion').value, tipoJornada: document.getElementById('tipoJornada').value,
-                        diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
-                        horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
-                        encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
-                        usuarioAcceso: codigoGenerado, passwordAcceso: passwordGenerada,
-                        notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}, fechaRegistro: new Date().toISOString()
-                    });
-                    alert(`¡Inscrito con éxito (${cicloActual})!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
-                    formInscripcion.reset();
+                        await addDoc(collection(db, "alumnos"), {
+                            primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
+                            tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
+                            segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
+                            ciclo: cicloActual,
+                            fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
+                            codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
+                            establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
+                            grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
+                            sede: document.getElementById('sedeInscripcion').value, tipoJornada: document.getElementById('tipoJornada').value,
+                            diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
+                            horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
+                            encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
+                            usuarioAcceso: codigoGenerado, passwordAcceso: passwordGenerada,
+                            notas: {u1:0,u2:0,u3:0,u4:0}, pagos: {}, cargosExtras: {}, fechaRegistro: new Date().toISOString()
+                        });
+                        alert(`¡Inscrito (${cicloActual})!\nCódigo: ${codigoGenerado}\nPass: ${passwordGenerada}`);
+                    }
+                    cerrarModalEstudiante();
                     cargarDatosDirector();
                 } catch(err) { alert("Error: " + err.message); }
             });
         }
+
+        window.cargarParaEditar = async function(id) {
+            try {
+                const snap = await getDoc(doc(db, "alumnos", id));
+                if(!snap.exists()) return;
+                let a = snap.data();
+                document.getElementById('editandoAlumnoId').value = id;
+                document.getElementById('pNombre').value = a.primerNombre || '';
+                document.getElementById('sNombre').value = a.segundoNombre || '';
+                document.getElementById('tNombre').value = a.tercerNombre || '';
+                document.getElementById('pApellido').value = a.primerApellido || '';
+                document.getElementById('sApellido').value = a.segundoApellido || '';
+                document.getElementById('fechaNac').value = a.fechaNacimiento || '';
+                document.getElementById('telEstudiante').value = a.telEstudiante || '';
+                document.getElementById('codigoMineduc').value = a.codigoMineduc !== 'No asignado' ? a.codigoMineduc : '';
+                document.getElementById('establecimiento').value = a.establecimiento !== 'No especificado' ? a.establecimiento : '';
+                document.getElementById('nombreEncargado').value = a.encargado || '';
+                document.getElementById('telEncargado').value = a.telEncargado || '';
+                document.getElementById('sedeInscripcion').value = a.sede || 'COMPURED';
+                document.getElementById('tipoJornada').value = a.tipoJornada || 'Entre semana';
+                actualizarDias();
+                document.getElementById('diaEstudio').value = a.diaEstudio || 'Lunes';
+                document.getElementById('cursoInteres').value = a.curso || 'Mecanografía Básica';
+                document.getElementById('horaIngreso').value = a.horaIngreso || '';
+                document.getElementById('horaSalida').value = a.horaSalida || '';
+                document.getElementById('gradoCursa').value = a.grado || 'Primero Básico';
+                document.getElementById('direccion').value = a.direccion || '';
+
+                document.getElementById('tituloModalEstudiante').innerText = `Editando Alumno: ${a.codigo}`;
+                document.getElementById('btnSubmitAlumnoModal').innerText = "Guardar Cambios";
+                document.getElementById('modalEstudiante').style.display = 'flex';
+            } catch(e) { console.error(e); }
+        };
 
         const formDocente = document.getElementById('formRegistroDocente');
         if(formDocente) {
@@ -444,99 +534,305 @@
                         sede: document.getElementById('docSede').value,
                         fechaRegistro: new Date().toISOString()
                     });
-                    alert("¡Docente registrado y asignado a su sede!");
+                    alert("¡Docente registrado!");
                     formDocente.reset();
                     cargarDatosDirector();
                 } catch(err) { alert("Error: " + err.message); }
             });
         }
 
-        window.eliminarDocente = async function(id) {
-            if(confirm("¿Eliminar docente?")) { await deleteDoc(doc(db, "docentes", id)); cargarDatosDirector(); }
-        };
+        window.eliminarDocente = async function(id) { if(confirm("¿Eliminar docente?")) { await deleteDoc(doc(db, "docentes", id)); cargarDatosDirector(); } };
 
         window.cargarDatosDirector = async function() {
             await cargarConfiguracionMeses();
-            const bodyLista = document.getElementById('bodyListaAlumnosDir');
-            const bodyCalif = document.getElementById('bodyCalificacionesDir');
-            const contenedorPagos = document.getElementById('contenedorPagosDir');
-            const selectAlumnoExtra = document.getElementById('selectAlumnoExtra');
-            const bodyMovimientos = document.getElementById('bodyMovimientos');
             const bodyDocentes = document.getElementById('bodyListaDocentes');
 
             try {
-                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
-
                 const docSnapshots = await getDocs(collection(db, "docentes"));
                 let hDoc = "";
                 if(docSnapshots.empty) { hDoc = `<tr><td colspan="6" style="text-align: center;">No hay docentes.</td></tr>`; }
                 else {
                     docSnapshots.forEach(d => {
                         let dt = d.data();
-                        hDoc += `<tr><td>${dt.nombre}</td><td>${dt.correo}</td><td>${dt.telefono}</td><td>${dt.sede}</td><td><span style="color:var(--primary-color); font-weight:bold;">${dt.password}</span></td><td><button class="btn-icon btn-delete" onclick="eliminarDocente('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        hDoc += `<tr><td>${dt.nombre}</td><td>${dt.correo}</td><td>${dt.telefono}</td><td>${dt.sede}</td><td><span style="color:#00f2fe; font-weight:bold;">${dt.password}</span></td><td><button class="btn-icon btn-delete" onclick="eliminarDocente('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                     });
                 }
                 if(bodyDocentes) bodyDocentes.innerHTML = hDoc;
 
-                const querySnapshot = await getDocs(collection(db, "alumnos"));
-                let htmlLista = "", htmlCalif = "", htmlPagos = "", htmlSelect = "";
-                let totalPagosAlumnos = 0;
-                let alumnosEncontrados = 0;
-
-                querySnapshot.forEach((docSnap) => {
-                    const a = docSnap.data();
-                    const id = docSnap.id;
-                    
-                    let cicloAlumno = a.ciclo || "2026";
-                    if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
-                    alumnosEncontrados++;
-
-                    let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
-                    let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-                    let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
-
-                    let notas = a.notas || { u1: 0, u2: 0, u3: 0, u4: 0 };
-                    let p = a.pagos || {}, extras = a.cargosExtras || {};
-                    let promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
-
-                    // Sumar pagos de este alumno para finanzas globales
-                    mesesDisponibles.forEach(m => {
-                        let val = p[m.id] || '';
-                        if(val && !isNaN(val)) totalPagosAlumnos += Number(val);
-                    });
-
-                    htmlSelect += `<option value="${id}">${nombreParaMostrar}</option>`;
-                    htmlLista += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:var(--text-muted);">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:var(--primary-color);">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-delete" onclick="eliminarAlumno('${id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                    htmlCalif += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_dir_${id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_dir_${id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_dir_${id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_dir_${id}" value="${notas.u4}" style="width:50px;"></td><td>${promedio}</td><td><button class="btn-icon btn-edit" onclick="guardarNotas('${id}')"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
-
-                    htmlPagos += `<div class="pago-card" data-nombre="${nombreCompletoTexto.toLowerCase()}"><div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom:15px;"><h4 style="color: var(--primary-color); margin:0;">${nombreParaMostrar}</h4><button class="btn-primary" style="padding: 6px 15px; font-size: 0.85rem; border:none; cursor:pointer;" onclick="guardarPagos('${id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button></div><div class="pago-grid">`;
-                    mesesDisponibles.forEach(m => {
-                        if (mesesActivos.includes(m.id)) {
-                            let val = p[m.id] || '';
-                            htmlPagos += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="p_${m.id}_${id}" value="${val}" placeholder="0.00"></div>`;
-                        }
-                    });
-                    htmlPagos += `</div></div>`;
+                const snapAlumnos = await getDocs(collection(db, "alumnos"));
+                listaAlumnosGlobal = [];
+                snapAlumnos.forEach(docSnap => {
+                    listaAlumnosGlobal.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                if(alumnosEncontrados === 0) {
-                    htmlLista = `<tr><td colspan="5" style="text-align: center;">No hay alumnos registrados en ${sedeSeleccionadaDirector} para el ciclo ${cicloActual}.</td></tr>`;
-                    htmlCalif = `<tr><td colspan="8" style="text-align: center;">No hay alumnos registrados en esta sede para este ciclo.</td></tr>`;
-                    htmlPagos = `<p style="text-align: center;">No hay alumnos registrados en esta sede para este ciclo.</p>`;
+                renderizarTablaAlumnos();
+                renderizarSeccionPagosDir();
+                renderizarCargosGlobales();
+                renderizarCalificacionesFinanzas();
+
+            } catch (e) { console.error(e); }
+        };
+
+        window.renderizarTablaAlumnos = function() {
+            const bodyLista = document.getElementById('bodyListaAlumnosDir');
+            const textoBusqueda = document.getElementById('inputBuscarAlumno').value.toLowerCase();
+            const diaSeleccionado = document.getElementById('selectFiltroDia').value;
+
+            let htmlLista = "";
+            let alumnosEncontrados = 0;
+
+            listaAlumnosGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto}`.toLowerCase();
+
+                if (textoBusqueda && !textoCompletoFiltro.includes(textoBusqueda)) return;
+                if (diaSeleccionado !== "TODOS" && a.diaEstudio !== diaSeleccionado) return;
+
+                alumnosEncontrados++;
+                htmlLista += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditar('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button><button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAlumno('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+
+            if(alumnosEncontrados === 0) {
+                htmlLista = `<tr><td colspan="5" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
+            }
+            if(bodyLista) bodyLista.innerHTML = htmlLista;
+        };
+
+        window.aplicarFiltrosAlumnos = function() {
+            renderizarTablaAlumnos();
+        };
+
+        window.renderizarSeccionPagosDir = function() {
+            const bodyPagos = document.getElementById('bodyListaPagosDir');
+            const selectAlumnoExtra = document.getElementById('selectAlumnoExtra');
+            let htmlPagos = "", htmlSelect = "";
+
+            listaAlumnosGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
+                htmlSelect += `<option value="${a.id}">${nombreParaMostrar}</option>`;
+                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagos('${a.id}')">${nombreCompletoTexto}</a></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagos('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
+            });
+
+            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="4" style="text-align: center;">No hay alumnos.</td></tr>`;
+            if(selectAlumnoExtra) selectAlumnoExtra.innerHTML = htmlSelect;
+        };
+
+        window.filtrarTablaPagosDir = function() {
+            const f = document.getElementById('buscarPagosDir').value.toLowerCase();
+            const filas = document.getElementById('bodyListaPagosDir').getElementsByTagName('tr');
+            for(let fila of filas) {
+                let nom = fila.getAttribute('data-nombre') || "";
+                fila.style.display = nom.includes(f) ? "" : "none";
+            }
+        };
+
+        // Renderizar lista de cargos globales registrados en los alumnos para poder editar o eliminar
+        window.renderizarCargosGlobales = function() {
+            const bodyCargos = document.getElementById('bodyListaCargosGlobales');
+            let mapaCargos = {};
+
+            listaAlumnosGlobal.forEach(a => {
+                let extras = a.cargosExtras || {};
+                Object.keys(extras).forEach(key => {
+                    let objVal = extras[key];
+                    let monto = typeof objVal === 'object' ? objVal.monto : objVal;
+                    mapaCargos[key] = monto;
+                });
+            });
+
+            let htmlC = "";
+            let keys = Object.keys(mapaCargos);
+            if(keys.length === 0) {
+                htmlC = `<tr><td colspan="3" style="text-align: center;">No hay cargos extras registrados.</td></tr>`;
+            } else {
+                keys.forEach(k => {
+                    htmlC += `<tr><td><strong>${k}</strong></td><td>Q. ${mapaCargos[k]}</td><td>
+                        <button class="btn-icon btn-edit" title="Editar monto a todos" onclick="editarCargoGlobal('${k}', '${mapaCargos[k]}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon btn-delete" title="Eliminar cargo de todos" onclick="eliminarCargoGlobal('${k}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td></tr>`;
+                });
+            }
+            if(bodyCargos) bodyCargos.innerHTML = htmlC;
+        };
+
+        window.editarCargoGlobal = async function(nombreViejo, montoActual) {
+            let nuevoNombre = prompt("Modificar concepto del cargo extra:", nombreViejo);
+            if(!nuevoNombre) return;
+            let nuevoMonto = prompt("Modificar monto estándar (Q):", montoActual);
+            if(!nuevoMonto) return;
+
+            try {
+                for(let a of listaAlumnosGlobal) {
+                    let extras = a.cargosExtras || {};
+                    if(extras[nombreViejo] !== undefined) {
+                        let estadoActual = extras[nombreViejo];
+                        delete extras[nombreViejo];
+                        extras[nuevoNombre] = {
+                            monto: nuevoMonto,
+                            pagado: typeof estadoActual === 'object' ? estadoActual.pagado : ''
+                        };
+                        await updateDoc(doc(db, "alumnos", a.id), { cargosExtras: extras });
+                    }
                 }
+                alert("¡Cargo actualizado con éxito!");
+                cargarDatosDirector();
+            } catch(e) { alert("Error al editar: " + e.message); }
+        };
 
-                if(bodyLista) bodyLista.innerHTML = htmlLista;
-                if(bodyCalif) bodyCalif.innerHTML = htmlCalif;
-                if(contenedorPagos) contenedorPagos.innerHTML = htmlPagos;
-                if(selectAlumnoExtra) selectAlumnoExtra.innerHTML = htmlSelect;
+        window.eliminarCargoGlobal = async function(nombreCargo) {
+            if(!confirm(`¿Estás seguro de eliminar el cargo "${nombreCargo}" de todos los estudiantes?`)) return;
+            try {
+                for(let a of listaAlumnosGlobal) {
+                    let extras = a.cargosExtras || {};
+                    if(extras[nombreCargo] !== undefined) {
+                        delete extras[nombreCargo];
+                        await updateDoc(doc(db, "alumnos", a.id), { cargosExtras: extras });
+                    }
+                }
+                alert("¡Cargo eliminado con éxito!");
+                cargarDatosDirector();
+            } catch(e) { alert("Error al eliminar: " + e.message); }
+        };
 
+        window.abrirModalPagos = async function(id) {
+            try {
+                const snap = await getDoc(doc(db, "alumnos", id));
+                if(!snap.exists()) return;
+                let a = snap.data();
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+
+                document.getElementById('modalTituloEstudiante').innerHTML = `Pagos de: <span style="color:#fff;">${a.codigo} - ${nombreCompletoTexto}</span>`;
+                document.getElementById('modalAlumnoId').value = id;
+
+                const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+                let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+                let p = a.pagos || {};
+                let eCargos = a.cargosExtras || {};
+
+                let htmlInputs = "";
+                mesesDisponibles.forEach(m => {
+                    if (mesesActivos.includes(m.id)) {
+                        let val = p[m.id] || '';
+                        htmlInputs += `<div class="pago-item"><label>${m.label} (Q)</label><input type="text" id="modal_p_${m.id}" value="${val}" placeholder="0.00"></div>`;
+                    }
+                });
+                document.getElementById('modalContenedorInputsPagos').innerHTML = htmlInputs;
+
+                let htmlExtras = "";
+                let keysExtras = Object.keys(eCargos);
+                if(keysExtras.length === 0) {
+                    htmlExtras = `<div style="grid-column: span 3; color: #94a3b8; font-size: 0.85rem; font-style: italic;">No hay cargos extras asignados.</div>`;
+                } else {
+                    keysExtras.forEach(key => {
+                        let objVal = eCargos[key];
+                        let montoPendiente = typeof objVal === 'object' ? (objVal.monto || '') : objVal;
+                        let pagadoVal = typeof objVal === 'object' ? (objVal.pagado || '') : '';
+                        
+                        htmlExtras += `<div class="pago-item" style="border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:6px; background:rgba(0,0,0,0.1);">
+                            <label style="color:#00f2fe; font-weight:bold;">${key} (Debe: Q. ${montoPendiente})</label>
+                            <input type="text" id="modal_extra_${key}" value="${pagadoVal}" placeholder="Abono / Pagado">
+                        </div>`;
+                    });
+                }
+                document.getElementById('modalContenedorCargosExtras').innerHTML = htmlExtras;
+                document.getElementById('modalPagos').style.display = 'flex';
+            } catch(e) { console.error(e); }
+        };
+
+        window.cerrarModalPagos = function() {
+            document.getElementById('modalPagos').style.display = 'none';
+        };
+
+        window.guardarPagosModal = async function() {
+            const id = document.getElementById('modalAlumnoId').value;
+            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
+            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+            
+            let pagosData = {};
+            mesesActivos.forEach(mId => {
+                let el = document.getElementById(`modal_p_${mId}`);
+                if(el) pagosData[mId] = el.value;
+            });
+
+            const alumnoRef = doc(db, "alumnos", id);
+            const alumnoSnap = await getDoc(alumnoRef);
+            let cargosActuales = alumnoSnap.exists() ? (alumnoSnap.data().cargosExtras || {}) : {};
+
+            let nuevosCargos = {};
+            Object.keys(cargosActuales).forEach(key => {
+                let objVal = cargosActuales[key];
+                let montoOriginal = typeof objVal === 'object' ? objVal.monto : objVal;
+                let inputEl = document.getElementById(`modal_extra_${key}`);
+                let pagadoIngresado = inputEl ? inputEl.value : (typeof objVal === 'object' ? objVal.pagado : '');
+
+                nuevosCargos[key] = {
+                    monto: montoOriginal,
+                    pagado: pagadoIngresado
+                };
+            });
+
+            try {
+                await updateDoc(alumnoRef, { pagos: pagosData, cargosExtras: nuevosCargos });
+                alert("¡Pagos y cargos actualizados con éxito!");
+                cerrarModalPagos();
+                cargarDatosDirector();
+            } catch(err) { alert("Error al guardar pagos: " + err.message); }
+        };
+
+        window.renderizarCalificacionesFinanzas = async function() {
+            const bodyCalif = document.getElementById('bodyCalificacionesDir');
+            const bodyMovimientos = document.getElementById('bodyMovimientos');
+
+            let htmlCalif = "";
+            let totalPagosAlumnos = 0;
+
+            listaAlumnosGlobal.forEach(a => {
+                let cicloAlumno = a.ciclo || "2026";
+                if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+
+                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
+                let notas = a.notas || { u1: 0, u2: 0, u3: 0, u4: 0 };
+                let p = a.pagos || {};
+                let extras = a.cargosExtras || {};
+                let promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+
+                mesesDisponibles.forEach(m => {
+                    let val = p[m.id] || '';
+                    if(val && !isNaN(val)) totalPagosAlumnos += Number(val);
+                });
+
+                Object.keys(extras).forEach(k => {
+                    let ex = extras[k];
+                    let valPagado = typeof ex === 'object' ? ex.pagado : '';
+                    if(valPagado && !isNaN(valPagado)) totalPagosAlumnos += Number(valPagado);
+                });
+
+                htmlCalif += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_dir_${a.id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_dir_${a.id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_dir_${a.id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_dir_${a.id}" value="${notas.u4}" style="width:50px;"></td><td>${promedio}</td><td><button class="btn-icon btn-edit" onclick="guardarNotas('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
+            });
+
+            if(bodyCalif) bodyCalif.innerHTML = htmlCalif || `<tr><td colspan="8" style="text-align: center;">No hay alumnos.</td></tr>`;
+
+            try {
                 const finSnap = await getDocs(collection(db, "finanzas"));
                 let totalExtrasIngresos = 0, totalGastos = 0, htmlMov = "";
                 finSnap.forEach(d => {
                     let f = d.data(); let montoNum = Number(f.monto);
-                    if(f.tipo === 'ingreso') { totalExtrasIngresos += montoNum; htmlMov += `<tr><td><span style="color:#25D366">Depósito</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
-                    else { totalGastos += montoNum; htmlMov += `<tr><td><span style="color:#ff4757">Gasto</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
+                    if(f.tipo === 'ingreso') { totalExtrasIngresos += montoNum; htmlMov += `<tr><td><span style="color:#25D366">Depósito</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
+                    else { totalGastos += montoNum; htmlMov += `<tr><td><span style="color:#ff4757">Gasto</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
                 });
 
                 let granTotalIngresos = totalPagosAlumnos + totalExtrasIngresos;
@@ -544,7 +840,7 @@
                 document.getElementById('lblTotalGastos').innerText = `Q. ${totalGastos.toFixed(2)}`;
                 document.getElementById('lblBalanceNeto').innerText = `Q. ${(granTotalIngresos - totalGastos).toFixed(2)}`;
                 if(bodyMovimientos && htmlMov !== "") bodyMovimientos.innerHTML = htmlMov;
-            } catch (e) { console.error(e); }
+            } catch(e) { console.error(e); }
         };
 
         window.aplicarCargoExtra = async function(e) {
@@ -558,11 +854,14 @@
                 snap.forEach(async (d) => {
                     let aData = d.data();
                     if(destino === 'todos' || d.id === alumnoId) {
-                        let extras = aData.cargosExtras || {}; extras[nombre] = monto;
+                        let extras = aData.cargosExtras || {};
+                        extras[nombre] = { monto: monto, pagado: "" };
                         await updateDoc(doc(db, "alumnos", d.id), { cargosExtras: extras });
                     }
                 });
-                alert("¡Cargo aplicado!"); document.getElementById('formCargoExtra').reset(); cargarDatosDirector();
+                alert("¡Cargo pendiente asignado con éxito!"); 
+                document.getElementById('formCargoExtra').reset(); 
+                cargarDatosDirector();
             } catch(err) { alert("Error: " + err.message); }
         };
 
@@ -578,13 +877,7 @@
             await updateDoc(doc(db, "alumnos", id), { notas: { u1: document.getElementById(`u1_dir_${id}`).value, u2: document.getElementById(`u2_dir_${id}`).value, u3: document.getElementById(`u3_dir_${id}`).value, u4: document.getElementById(`u4_dir_${id}`).value } });
             alert("¡Notas guardadas!"); cargarDatosDirector();
         };
-        window.guardarPagos = async function(id) {
-            const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-            let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
-            let pagosData = {}; mesesActivos.forEach(mId => { let el = document.getElementById(`p_${mId}_${id}`); if(el) pagosData[mId] = el.value; });
-            await updateDoc(doc(db, "alumnos", id), { pagos: pagosData }); alert("¡Pagos guardados!"); cargarDatosDirector();
-        };
-        window.eliminarAlumno = async function(id) { if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "alumnos", id)); cargarDatosDirector(); } };
+        window.eliminarAlumno = async function(id) { if(confirm("¿Eliminar estudiante por completo?")) { await deleteDoc(doc(db, "alumnos", id)); alert("Eliminado."); cargarDatosDirector(); } };
 
         document.getElementById('destinoCargo').addEventListener('change', function() {
             document.getElementById('divAlumnoEspecifico').style.display = this.value === 'especifico' ? 'block' : 'none';
@@ -602,11 +895,6 @@
             const f = document.getElementById(idI).value.toLowerCase();
             const filas = document.getElementById(idT).getElementsByTagName('tr');
             for(let i=1; i<filas.length; i++) { let td = filas[i].getElementsByTagName('td')[0]; if(td) filas[i].style.display = td.textContent.toLowerCase().includes(f) ? "" : "none"; }
-        }
-        function filtrarTablaDivs(idC, idI) {
-            const f = document.getElementById(idI).value.toLowerCase();
-            const cards = document.getElementById(idC).getElementsByClassName('pago-card');
-            for(let c of cards) { c.style.display = c.getAttribute('data-nombre').includes(f) ? "" : "none"; }
         }
     </script>
 </body>
