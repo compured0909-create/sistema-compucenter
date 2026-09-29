@@ -6,15 +6,51 @@
     <title>COMPURED | Academia de Mecanografía y Computación</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos para el modo edición del Director */
+        .editable-field { transition: all 0.3s ease; }
+        .modo-edicion-activo .editable-field {
+            outline: 2px dashed #00f2fe;
+            outline-offset: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        .modo-edicion-activo .editable-field:hover {
+            background: rgba(0, 242, 254, 0.1);
+        }
+        #btnFlotanteDirector {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0f172a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,242,254,0.4);
+            cursor: pointer;
+            z-index: 9999;
+            display: none; /* Oculto por defecto hasta que el director inicie sesión */
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+        #btnFlotanteDirector:hover { transform: scale(1.05); }
+    </style>
 </head>
 <body>
+
+    <!-- Botón flotante exclusivo para el Director -->
+    <button id="btnFlotanteDirector" onclick="toggleModoEdicion()">
+        <i class="fa-solid fa-pen-to-square"></i> <span id="txtBtnEdicion">Activar Modo Edición</span>
+    </button>
 
     <!-- Navegación -->
     <nav class="navbar">
         <div class="logo">
-            <!-- AQUÍ VA TU LOGO. Reemplaza "logo.png" con el nombre exacto de tu archivo -->
-            <img src="logo.png" alt="Logo de COMPURED" class="logo-img">
-            <span class="logo-text">Academia de Mecanografía y Computación<br>COMPURED Y COMPUCENTER</span>
+            <img src="logo.png" alt="Logo de COMPURED" class="logo-img editable-img" data-id="logoNav">
+            <span class="logo-text editable-field" data-id="textoLogo">Academia de Mecanografía y Computación<br>COMPURED Y COMPUCENTER</span>
         </div>
         <ul class="nav-links">
             <li><a href="#inicio">Inicio</a></li>
@@ -27,9 +63,15 @@
     <!-- Sección Hero -->
     <header id="inicio" class="hero">
         <div class="hero-content">
-            <h1 class="typing-text">Domina el Futuro Digital</h1>
-            <p>Centro de aprendizaje de tecnologías de la información y la comunicación. Prepárate desde nivel básico hasta experto con nuestra metodología innovadora.</p>
-            <a href="#cursos" class="btn-primary">Ver Cursos</a>
+            <h1 class="typing-text editable-field" data-id="heroTitulo">Domina el Futuro Digital</h1>
+            <p class="editable-field" data-id="heroSubtitulo">Centro de aprendizaje de tecnologías de la información y la comunicación. Prepárate desde nivel básico hasta experto con nuestra metodología innovadora.</p>
+            <a href="#cursos" class="btn-primary editable-field" data-id="heroBoton">Ver Cursos</a>
+        </div>
+        <!-- Espacio multimedia opcional para fotos o videos institucionales -->
+        <div class="hero-media" style="margin-top: 20px; text-align: center;">
+            <div id="contenedorMultimediaHero">
+                <!-- Aquí aparecerá la foto o video que subas -->
+            </div>
         </div>
         <div class="hero-shapes">
             <div class="shape shape-1"></div>
@@ -38,70 +80,71 @@
         </div>
     </header>
 
-    <!-- Sección Cursos -->
+
+ <!-- Sección Cursos -->
     <section id="cursos" class="courses">
-        <h2 class="section-title">Nuestra Oferta Educativa</h2>
+        <h2 class="section-title editable-field" data-id="tituloCursos">Nuestra Oferta Educativa</h2>
         
         <div class="grid-container">
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-regular fa-keyboard"></i>
-                </div>
-                <h3>Mecanografía Básico</h3>
-                <p>Programa especializado para estudiantes de <strong>primero, segundo y tercero básico</strong>. Desarrolla velocidad, agilidad y precisión en el teclado con prácticas dinámicas.</p>
+            <!-- Curso 1 -->
+            <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=mecanografia'">
+                <div class="card-icon"><i class="fa-regular fa-keyboard"></i></div>
+                <h3 class="editable-field" data-id="curso1Titulo">Mecanografía Básica</h3>
+                <p class="editable-field" data-id="curso1Desc">Programa especializado para estudiantes de <strong>primero, segundo y tercero básico</strong>.</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
             
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <h3>Técnico Operador</h3>
-                <p>Curso libre diseñado para dominar las herramientas ofimáticas, el manejo de sistemas operativos y la gestión eficiente de la computadora en entornos laborales.</p>
+            <!-- Curso 2 -->
+            <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=operador'">
+                <div class="card-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                <h3 class="editable-field" data-id="curso2Titulo">Técnico Operador de Computadoras</h3>
+                <p class="editable-field" data-id="curso2Desc">Domina herramientas ofimáticas y sistemas operativos.</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
             
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-solid fa-bezier-curve"></i>
-                </div>
-                <h3>Diseño Gráfico Computarizado</h3>
-                <p>Curso libre técnico. Explota tu creatividad y aprende a utilizar las principales herramientas y programas de diseño, edición visual y retoque fotográfico.</p>
+            <!-- Curso 3 -->
+            <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=diseno'">
+                <div class="card-icon"><i class="fa-solid fa-bezier-curve"></i></div>
+                <h3 class="editable-field" data-id="curso3Titulo">Diseño Gráfico Computarizado</h3>
+                <p class="editable-field" data-id="curso3Desc">Explota tu creatividad en edición visual y retoque fotográfico.</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
 
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-solid fa-screwdriver-wrench"></i>
-                </div>
-                <h3>Mantenimiento y Reparación</h3>
-                <p>Curso libre técnico. Aprende a diagnosticar, ensamblar, dar mantenimiento preventivo y reparar equipos informáticos de manera totalmente profesional.</p>
+            <!-- Curso 4 -->
+            <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=mantenimiento'">
+                <div class="card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <h3 class="editable-field" data-id="curso4Titulo">Mantenimiento y Reparación</h3>
+                <p class="editable-field" data-id="curso4Desc">Aprende a ensamblar y reparar equipos informáticos.</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+
+            <!-- Curso 5 (Nuevo Agregado) -->
+            <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=programador'">
+                <div class="card-icon"><i class="fa-solid fa-code"></i></div>
+                <h3 class="editable-field" data-id="curso5Titulo">Técnico Programador de Computadoras</h3>
+                <p class="editable-field" data-id="curso5Desc">Inicia en el mundo del desarrollo de software y lenguajes informáticos.</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
         </div>
     </section>
 
     <!-- Sección Ubicaciones -->
     <section id="ubicaciones" class="locations">
-        <h2 class="section-title">Nuestras Sedes</h2>
+        <h2 class="section-title editable-field" data-id="tituloUbicaciones">Nuestras Sedes</h2>
         
         <div class="grid-container locations-grid">
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-solid fa-location-dot location-pulse"></i>
-                </div>
-                <h3>COMPURED</h3>
-                <p class="address-text">
-                    <strong>Aldea La Victoria</strong><br>
-                    San Juan Ostuncalco, Quetzaltenango
-                </p>
+            <div class="card" style="cursor: pointer;" onclick="location.href='sede-detalle.html?id=compured'">
+                <div class="card-icon"><i class="fa-solid fa-location-dot location-pulse"></i></div>
+                <h3 class="editable-field" data-id="sede1Nombre">COMPURED</h3>
+                <p class="address-text editable-field" data-id="sede1Direccion"><strong>Aldea La Victoria</strong><br>San Juan Ostuncalco, Quetzaltenango</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver instalaciones <i class="fa-solid fa-arrow-right"></i></span>
             </div>
             
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fa-solid fa-map-location-dot location-pulse"></i>
-                </div>
-                <h3>COMPUCENTER</h3>
-                <p class="address-text">
-                    <strong>Mercado Municipal, Local 27</strong><br>
-                    La Esperanza, Quetzaltenango
-                </p>
+            <div class="card" style="cursor: pointer;" onclick="location.href='sede-detalle.html?id=compucenter'">
+                <div class="card-icon"><i class="fa-solid fa-map-location-dot location-pulse"></i></div>
+                <h3 class="editable-field" data-id="sede2Nombre">COMPUCENTER</h3>
+                <p class="address-text editable-field" data-id="sede2Direccion"><strong>Mercado Municipal, Local 27</strong><br>La Esperanza, Quetzaltenango</p>
+                <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver instalaciones <i class="fa-solid fa-arrow-right"></i></span>
             </div>
         </div>
     </section>
@@ -114,8 +157,94 @@
 
     <!-- Pie de página -->
     <footer>
-        <p>&copy; 2026 COMPURED Y COMPUCENTER. Todos los derechos reservados.</p>
+        <p class="editable-field" data-id="textoFooter">&copy; 2026 COMPURED Y COMPUCENTER. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- Script de Firebase y lógica de edición -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // 1. Cargar textos guardados en Firestore al abrir la página
+        async function cargarContenidoWeb() {
+            try {
+                const docRef = doc(db, "configuracion", "contenidoWeb");
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.querySelectorAll('.editable-field').forEach(el => {
+                        const id = el.getAttribute('data-id');
+                        if (data[id]) el.innerHTML = data[id];
+                    });
+                    if (data.multimediaHero) {
+                        document.getElementById('contenedorMultimediaHero').innerHTML = data.multimediaHero;
+                    }
+                }
+            } catch(e) { console.error("Error cargando web:", e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarContenidoWeb);
+
+        // 2. Validar si el usuario actual es el Director
+        const rol = localStorage.getItem('rolUsuario');
+        if (rol === 'admin' || rol === 'director' || localStorage.getItem('esDirector') === 'true') {
+            document.getElementById('btnFlotanteDirector').style.display = 'flex';
+        }
+
+        let editando = false;
+        window.toggleModoEdicion = async function() {
+            editando = !editando;
+            const body = document.body;
+            const txtBtn = document.getElementById('txtBtnEdicion');
+
+            if (editando) {
+                body.classList.add('modo-edicion-activo');
+                txtBtn.innerText = "Guardar Cambios";
+                alert("Modo edición activado. Haz clic en cualquier texto para modificarlo directamente, o sube archivos multimedia.");
+                
+                // Permitir edición por clic
+                document.querySelectorAll('.editable-field').forEach(el => {
+                    el.contentEditable = "true";
+                });
+            } else {
+                body.classList.remove('modo-edicion-activo');
+                txtBtn.innerText = "Activar Modo Edición";
+                
+                // Desactivar edición por clic y recopilar datos para guardar
+                document.querySelectorAll('.editable-field').forEach(el => {
+                    el.contentEditable = "false";
+                });
+
+                let nuevosDatos = {};
+                document.querySelectorAll('.editable-field').forEach(el => {
+                    nuevosDatos[el.getAttribute('data-id')] = el.innerHTML;
+                });
+
+                // Guardar en Firestore
+                try {
+                    await setDoc(doc(db, "configuracion", "contenidoWeb"), nuevosDatos, { merge: true });
+                    alert("¡Cambios guardados exitosamente en la nube!");
+                } catch(e) {
+                    console.error(e);
+                    alert("Hubo un error al guardar los cambios.");
+                }
+            }
+        };
+    </script>
 </body>
 </html>

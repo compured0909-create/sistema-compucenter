@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de la Sede | COMPURED Y COMPUCENTER</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .editable-field { transition: all 0.3s ease; }
+        .modo-edicion-activo .editable-field { outline: 2px dashed #00f2fe; outline-offset: 4px; cursor: pointer; }
+        .modo-edicion-activo .editable-field:hover { background: rgba(0, 242, 254, 0.1); }
+        
+        .controles-edicion { display: none; text-align: center; margin-bottom: 20px; }
+        .modo-edicion-activo .controles-edicion { display: block; }
+        
+        #btnFlotanteDirector {
+            position: fixed; bottom: 30px; left: 30px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0f172a; border: none; padding: 12px 20px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,242,254,0.4); cursor: pointer; z-index: 9999; display: none; align-items: center; gap: 8px;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+            background: rgba(3, 7, 18, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <button id="btnFlotanteDirector" onclick="toggleModoEdicion()">
+        <i class="fa-solid fa-pen-to-square"></i> <span id="txtBtnEdicion">Activar Modo Edición</span>
+    </button>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo" class="logo-img">
+            <span class="logo-text">COMPURED Y COMPUCENTER</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Volver al Inicio</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero" style="padding: 40px 20px; text-align: center;">
+        <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+            <h1 class="editable-field" data-id="tituloSede" style="font-size: 2.5rem; color: #00f2fe; margin-bottom: 15px;">Cargando sede...</h1>
+            <p class="editable-field" data-id="descSede" style="font-size: 1.1rem; line-height: 1.6;">Espere un momento...</p>
+        </div>
+    </header>
+
+    <!-- SECCIÓN DE UBICACIÓN Y MAPA INTERACTIVO -->
+    <section style="max-width: 1000px; margin: 20px auto; padding: 0 20px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #fff;"><i class="fa-solid fa-map-location-dot"></i> Ubicación Satelital de la Sede</h2>
+        
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 12px;">
+            <p class="editable-field" data-id="direccionTexto" style="font-size: 1.15rem; color: #fff; margin-bottom: 20px; text-align: center;">
+                Dirección exacta: Cargando ubicación...
+            </p>
+
+            <div class="map-container">
+                <div class="editable-field" data-id="mapaHTML" style="width: 100%; height: 100%;">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3845.5..." 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; filter: invert(90%) hue-rotate(180deg) contrast(120%);" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <a id="linkGoogleMapsBtn" href="https://maps.google.com" target="_blank" style="color: #00f2fe; text-decoration: none; font-weight: bold; font-size: 1.1rem;">
+                    <i class="fa-solid fa-external-link-alt"></i> Abrir ubicación exacta en Google Maps
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE FOTOGRAFÍAS -->
+    <section style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #fff;"><i class="fa-solid fa-camera"></i> Fotografías de las Instalaciones</h2>
+        
+        <div class="controles-edicion">
+            <button onclick="agregarFoto()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                <i class="fa-solid fa-plus"></i> Añadir una foto a esta sede
+            </button>
+        </div>
+
+        <div id="galeriaSede" class="editable-field" data-id="galeriaHTML" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 12px; min-height: 200px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
+            <p style="color: #94a3b8; width: 100%; text-align: center;">No hay fotos agregadas todavía.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 COMPURED Y COMPUCENTER. Todos los derechos reservados.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sedeId = urlParams.get('id') || 'compured';
+
+        async function cargarDatosSede() {
+            try {
+                const docRef = doc(db, "configuracion", `sede_${sedeId}`);
+                const snap = await getDoc(docRef);
+                
+                // Configurar enlace directo del botón según la sede
+                const btnMaps = document.getElementById('linkGoogleMapsBtn');
+                if(sedeId === 'compured') {
+                    btnMaps.href = "https://maps.app.goo.gl/YwF91s53spsGvqnJA";
+                } else if(sedeId === 'compucenter') {
+                    btnMaps.href = "https://maps.app.goo.gl/tX7pBAKaJDxNjqiw5";
+                }
+
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.querySelectorAll('.editable-field').forEach(el => {
+                        const id = el.getAttribute('data-id');
+                        if (data[id]) el.innerHTML = data[id];
+                    });
+                } else {
+                    // Valores por defecto predefinidos con tus enlaces
+                    if(sedeId === 'compured') {
+                        document.querySelector('[data-id="tituloSede"]').innerText = "Sede COMPURED";
+                        document.querySelector('[data-id="descSede"]').innerText = "Centro de aprendizaje de tecnologías de la información y la comunicación.";
+                        document.querySelector('[data-id="direccionTexto"]').innerText = "Dirección Oficial: COMPURED (San Juan Ostuncalco)";
+                    } else if(sedeId === 'compucenter') {
+                        document.querySelector('[data-id="tituloSede"]').innerText = "Sede COMPUCENTER";
+                        document.querySelector('[data-id="descSede"]').innerText = "Innovación y tecnología a tu alcance.";
+                        document.querySelector('[data-id="direccionTexto"]').innerText = "Dirección Oficial: COMPUCENTER";
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarDatosSede);
+
+        const rol = localStorage.getItem('rolUsuario');
+        if (rol === 'admin' || rol === 'director' || localStorage.getItem('esDirector') === 'true') {
+            document.getElementById('btnFlotanteDirector').style.display = 'flex';
+        }
+
+        let editando = false;
+        window.toggleModoEdicion = async function() {
+            editando = !editando;
+            const body = document.body;
+            const txtBtn = document.getElementById('txtBtnEdicion');
+
+            if (editando) {
+                body.classList.add('modo-edicion-activo');
+                txtBtn.innerText = "Guardar Cambios";
+                document.querySelectorAll('.editable-field').forEach(el => el.contentEditable = "true");
+            } else {
+                body.classList.remove('modo-edicion-activo');
+                txtBtn.innerText = "Activar Modo Edición";
+                document.querySelectorAll('.editable-field').forEach(el => el.contentEditable = "false");
+
+                let nuevosDatos = {};
+                document.querySelectorAll('.editable-field').forEach(el => {
+                    nuevosDatos[el.getAttribute('data-id')] = el.innerHTML;
+                });
+
+                try {
+                    await setDoc(doc(db, "configuracion", `sede_${sedeId}`), nuevosDatos, { merge: true });
+                    alert("¡Cambios de la sede guardados con éxito en Firebase!");
+                } catch(e) { console.error(e); alert("Error al guardar."); }
+            }
+        };
+
+        window.agregarFoto = function() {
+            const urlFoto = prompt("Pega aquí el enlace web de la imagen (URL):");
+            if (urlFoto) {
+                const galeria = document.getElementById('galeriaSede');
+                if(galeria.innerHTML.includes("No hay fotos")) { galeria.innerHTML = ""; }
+                
+                galeria.innerHTML += `<img src="${urlFoto}" style="width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #00f2fe;">`;
+            }
+        };
+    </script>
+</body>
+</html>

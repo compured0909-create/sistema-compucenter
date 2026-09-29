@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Curso | COMPURED</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .editable-field { transition: all 0.3s ease; }
+        .modo-edicion-activo .editable-field { outline: 2px dashed #00f2fe; outline-offset: 4px; cursor: pointer; }
+        .modo-edicion-activo .editable-field:hover { background: rgba(0, 242, 254, 0.1); }
+        .controles-edicion { display: none; text-align: center; margin-bottom: 20px; }
+        .modo-edicion-activo .controles-edicion { display: block; }
+        
+        #btnFlotanteDirector {
+            position: fixed; bottom: 30px; left: 30px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0f172a; border: none; padding: 12px 20px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,242,254,0.4); cursor: pointer; z-index: 9999; display: none; align-items: center; gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="btnFlotanteDirector" onclick="toggleModoEdicion()">
+        <i class="fa-solid fa-pen-to-square"></i> <span id="txtBtnEdicion">Activar Modo Edición</span>
+    </button>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo" class="logo-img">
+            <span class="logo-text">COMPURED Y COMPUCENTER</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Volver al Inicio</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero" style="padding: 40px 20px; text-align: center;">
+        <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+            <h1 class="editable-field" data-id="tituloDetalle" style="font-size: 2.5rem; color: #00f2fe; margin-bottom: 15px;">Cargando curso...</h1>
+            <p class="editable-field" data-id="descDetalle" style="font-size: 1.1rem; line-height: 1.6;">Espere un momento...</p>
+        </div>
+    </header>
+
+    <section style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+        <h2 style="text-align: center; margin-bottom: 25px; color: #fff;"><i class="fa-solid fa-images"></i> Galería y Fotografías del Curso</h2>
+        
+        <!-- Botón mágico que solo ve el director para añadir fotos fácilmente -->
+        <div class="controles-edicion">
+            <button onclick="agregarFoto()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                <i class="fa-solid fa-plus"></i> Añadir una foto a este curso
+            </button>
+        </div>
+
+        <!-- Contenedor exclusivo de fotos -->
+        <div id="galeriaCurso" class="editable-field" data-id="galeriaHTML" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 12px; min-height: 200px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
+            <p style="color: #94a3b8; width: 100%; text-align: center;">No hay fotos agregadas todavía.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 COMPURED Y COMPUCENTER. Todos los derechos reservados.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const cursoId = urlParams.get('id') || 'mecanografia';
+
+        async function cargarDatosCurso() {
+            try {
+                const docRef = doc(db, "configuracion", `curso_${cursoId}`);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.querySelectorAll('.editable-field').forEach(el => {
+                        const id = el.getAttribute('data-id');
+                        if (data[id]) el.innerHTML = data[id];
+                    });
+                } else {
+                    if(cursoId === 'mecanografia') {
+                        document.querySelector('[data-id="tituloDetalle"]').innerText = "Mecanografía Básico";
+                        document.querySelector('[data-id="descDetalle"]').innerText = "Programa especializado para estudiantes de primero, segundo y tercero básico. Desarrolla velocidad y agilidad.";
+                    } else if(cursoId === 'operador') {
+                        document.querySelector('[data-id="tituloDetalle"]').innerText = "Técnico Operador de Computadoras";
+                        document.querySelector('[data-id="descDetalle"]').innerText = "Domina herramientas ofimáticas y sistemas operativos.";
+                    } else if(cursoId === 'diseno') {
+                        document.querySelector('[data-id="tituloDetalle"]').innerText = "Diseño Gráfico Computarizado";
+                        document.querySelector('[data-id="descDetalle"]').innerText = "Explota tu creatividad y aprende edición visual y retoque fotográfico.";
+                    } else if(cursoId === 'mantenimiento') {
+                        document.querySelector('[data-id="tituloDetalle"]').innerText = "Mantenimiento y Reparación de Computadoras";
+                        document.querySelector('[data-id="descDetalle"]').innerText = "Aprende a diagnosticar, ensamblar y reparar equipos informáticos.";
+                    } else if(cursoId === 'programador') {
+                        document.querySelector('[data-id="tituloDetalle"]').innerText = "Técnico Programador de Computadoras";
+                        document.querySelector('[data-id="descDetalle"]').innerText = "Inicia en el mundo del desarrollo de software y programación.";
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarDatosCurso);
+
+        const rol = localStorage.getItem('rolUsuario');
+        if (rol === 'admin' || rol === 'director' || localStorage.getItem('esDirector') === 'true') {
+            document.getElementById('btnFlotanteDirector').style.display = 'flex';
+        }
+
+        let editando = false;
+        window.toggleModoEdicion = async function() {
+            editando = !editando;
+            const body = document.body;
+            const txtBtn = document.getElementById('txtBtnEdicion');
+
+            if (editando) {
+                body.classList.add('modo-edicion-activo');
+                txtBtn.innerText = "Guardar Cambios";
+                document.querySelectorAll('.editable-field').forEach(el => el.contentEditable = "true");
+            } else {
+                body.classList.remove('modo-edicion-activo');
+                txtBtn.innerText = "Activar Modo Edición";
+                document.querySelectorAll('.editable-field').forEach(el => el.contentEditable = "false");
+
+                let nuevosDatos = {};
+                document.querySelectorAll('.editable-field').forEach(el => {
+                    nuevosDatos[el.getAttribute('data-id')] = el.innerHTML;
+                });
+
+                try {
+                    await setDoc(doc(db, "configuracion", `curso_${cursoId}`), nuevosDatos, { merge: true });
+                    alert("¡Cambios del curso guardados correctamente en la nube!");
+                } catch(e) { console.error(e); alert("Error al guardar."); }
+            }
+        };
+
+        // Función para agregar fotos de forma sencilla
+        window.agregarFoto = function() {
+            const urlFoto = prompt("Pega aquí el enlace web de la imagen (URL):");
+            if (urlFoto) {
+                const galeria = document.getElementById('galeriaCurso');
+                if(galeria.innerHTML.includes("No hay fotos")) { galeria.innerHTML = ""; }
+                
+                galeria.innerHTML += `<img src="${urlFoto}" style="width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #00f2fe;">`;
+            }
+        };
+    </script>
+</body>
+</html>
