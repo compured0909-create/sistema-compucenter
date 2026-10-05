@@ -6,6 +6,11 @@
     <title>COMPURED | Academia de Mecanografía y Computación</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Enlaces para convertir la web en aplicación móvil (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f2fe">
+
     <style>
         /* Estilos para el modo edición del Director */
         .editable-field { transition: all 0.3s ease; }
@@ -246,5 +251,12 @@
             }
         };
     </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log("Service Worker registrado con éxito"))
+      .catch((err) => console.log("Error al registrar el Service Worker", err));
+  }
+</script>
 </body>
 </html>
