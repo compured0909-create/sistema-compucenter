@@ -46,14 +46,12 @@
     <section style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
         <h2 style="text-align: center; margin-bottom: 25px; color: #fff;"><i class="fa-solid fa-images"></i> Galería y Fotografías del Curso</h2>
         
-        <!-- Botón mágico que solo ve el director para añadir fotos fácilmente -->
         <div class="controles-edicion">
             <button onclick="agregarFoto()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                 <i class="fa-solid fa-plus"></i> Añadir una foto a este curso
             </button>
         </div>
 
-        <!-- Contenedor exclusivo de fotos -->
         <div id="galeriaCurso" class="editable-field" data-id="galeriaHTML" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 12px; min-height: 200px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
             <p style="color: #94a3b8; width: 100%; text-align: center;">No hay fotos agregadas todavía.</p>
         </div>
@@ -64,20 +62,8 @@
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
-            authDomain: "plataforma-educativa-compured.firebaseapp.com",
-            projectId: "plataforma-educativa-compured",
-            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
-            messagingSenderId: "495196813256",
-            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
-            measurementId: "G-TRZ37G6SRM"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const urlParams = new URLSearchParams(window.location.search);
         const cursoId = urlParams.get('id') || 'mecanografia';
@@ -147,7 +133,6 @@
             }
         };
 
-        // Función para agregar fotos de forma sencilla
         window.agregarFoto = function() {
             const urlFoto = prompt("Pega aquí el enlace web de la imagen (URL):");
             if (urlFoto) {

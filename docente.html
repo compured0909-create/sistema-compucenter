@@ -29,6 +29,12 @@
         
         .estudiante-link { color: #00f2fe; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .estudiante-link:hover { text-decoration: underline; color: #38ef7d; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printableCredencial, #printableCredencial * { visibility: visible; }
+            #printableCredencial { position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; padding: 20px; }
+        }
         
         @media (max-width: 900px) { .pago-grid { grid-template-columns: 1fr; } }
     </style>
@@ -73,10 +79,19 @@
         <section id="registro" class="panel-section active">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
                 <h2><i class="fa-solid fa-user-plus"></i> Inscripción en <span id="lblNombreSedeTitulo" style="color:#00f2fe;">Sede</span> (<span class="lblAnioTxtDoc">2026</span>)</h2>
-                <button onclick="abrirModalEstudianteDoc()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="exportarCSVDoc()" class="btn-primary" style="background: #25D366; color: #fff; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-file-excel"></i> Exportar CSV</button>
+                    <button onclick="abrirModalEstudianteDoc()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+                </div>
             </div>
             
             <div class="card-table">
+                <!-- FILTRO POR ALDEA SI EL DOCENTE ES DE COMPURED -->
+                <div id="contenedorFiltroAldeaDoc" style="margin-bottom: 15px; display: none; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 0.85rem; color: #00f2fe; font-weight: bold;"><i class="fa-solid fa-filter"></i> Filtrar por Aldea / Comunidad:</span>
+                    <select id="selectFiltroAldeaDoc" onchange="renderizarTablaAlumnosDoc()" style="padding: 8px 12px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
+                </div>
+
                 <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
                     <input type="text" id="inputBuscarAlumnoDoc" placeholder="Buscar por nombre o código..." onkeyup="aplicarFiltrosAlumnosDoc()" style="flex: 1; min-width: 220px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
                     <select id="selectFiltroDiaDoc" onchange="aplicarFiltrosAlumnosDoc()" style="padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: #1e293b; color: #fff;">
@@ -92,8 +107,8 @@
                 </div>
 
                 <table class="data-table">
-                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario</th><th>Credenciales</th><th>Acciones</th></tr></thead>
-                    <tbody id="bodyListaAlumnos"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Ubicación / Aldea</th><th>Curso / Horario</th><th>Credenciales</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaAlumnos"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
@@ -101,9 +116,12 @@
         <section id="calificaciones" class="panel-section">
             <h2><i class="fa-solid fa-graduation-cap"></i> Calificaciones de su Sede</h2>
             <div class="card-table">
+                <div style="margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;" id="contenedorFiltroCalifAldeaDoc">
+                    <select id="selectFiltroAldeaCalifDoc" onchange="renderizarCalificacionesDoc()" style="padding: 8px 12px; border-radius: 5px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2); display: none;"></select>
+                </div>
                 <table class="data-table">
-                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyCalificaciones"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Estudiante</th><th>Aldea / Ubicación</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyCalificaciones"><tr><td colspan="9" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
@@ -111,11 +129,14 @@
         <section id="pagos" class="panel-section">
             <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</h2>
             <p style="color: #94a3b8; margin-bottom: 20px;">Haz clic sobre el nombre del alumno para abrir su ventana de pagos.</p>
-            <div style="margin-bottom: 15px;"><input type="text" id="buscarPagosDoc" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDoc()"></div>
+            <div style="margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <input type="text" id="buscarPagosDoc" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDoc()">
+                <select id="selectFiltroAldeaPagosDoc" onchange="renderizarSeccionPagosDoc()" style="padding: 8px 12px; border-radius: 5px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2); display: none;"></select>
+            </div>
             <div class="card-table">
                 <table class="data-table">
-                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Curso</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyListaPagosDoc"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Aldea / Ubicación</th><th>Curso</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyListaPagosDoc"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
@@ -131,6 +152,18 @@
             <form id="formInscripcionModalDoc">
                 <input type="hidden" id="editandoAlumnoIdDoc" value="">
                 <div class="grid-form" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                    
+                    <!-- SELECCIÓN O CREACIÓN DE ALDEA (SOLO SI EL DOCENTE ES DE COMPURED) -->
+                    <div class="form-group" id="grupoAldeaInscripcionDoc" style="grid-column: span 3; display: none;">
+                        <label style="color: #38ef7d; font-weight: bold;">Aldea o Comunidad (COMPURED) *</label>
+                        <select id="selectAldeaInscripcionDoc" onchange="verificarNuevaAldeaDoc(this.value)" style="padding: 10px; width: 100%; border-radius: 6px; background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
+                    </div>
+
+                    <div class="form-group" id="grupoNuevaAldeaDoc" style="grid-column: span 3; display: none;">
+                        <label style="color: #38ef7d;">Escribe el nombre de la nueva Aldea / Lugar:</label>
+                        <input type="text" id="inputNuevaAldeaDoc" placeholder="Ej. Aldea San José">
+                    </div>
+
                     <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
                     <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
@@ -165,13 +198,36 @@
 
                     <div class="form-group"><label>Hora de Entrada *</label><input type="text" id="horaIngreso" required placeholder="08:00 AM"></div>
                     <div class="form-group"><label>Hora de Salida *</label><input type="text" id="horaSalida" required placeholder="12:00 PM"></div>
-                    <div class="form-group"><label>Dirección Domiciliar *</label><input type="text" id="direccion" required></div>
+                    <div class="form-group"><label>Dirección Domiciliar Específica *</label><input type="text" id="direccion" required placeholder="Ej. Sector 2, Casa frente a cancha"></div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px;">
                     <button type="button" onclick="cerrarModalEstudianteDoc()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
                     <button type="submit" id="btnSubmitAlumnoModalDoc" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Estudiante</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE CREDENCIALES / FICHA RÁPIDA IMPRIMIBLE -->
+    <div id="modalCredencialDoc" class="modal-overlay">
+        <div class="modal-container" style="max-width: 450px; background: #fff; color: #000;">
+            <div id="printableCredencial" style="padding: 20px; border: 2px dashed #00f2fe; border-radius: 10px; text-align: center;">
+                <h2 style="color: #0f172a; margin-bottom: 5px;" id="credTituloSedeDoc">COMPURED</h2>
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Ficha de Credenciales de Acceso Estudiantil</p>
+                <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px;">
+                    <p style="margin: 5px 0;"><strong>Código / Usuario:</strong> <span id="credUsuarioDoc" style="color: #0284c7; font-family: monospace; font-size: 1.1rem;"></span></p>
+                    <p style="margin: 5px 0;"><strong>Contraseña:</strong> <span id="credPassDoc" style="color: #dc2626; font-family: monospace; font-size: 1.1rem;"></span></p>
+                    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 10px 0;">
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Estudiante:</strong> <span id="credNombreDoc"></span></p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Curso:</strong> <span id="credCursoDoc"></span></p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Ubicación / Sede:</strong> <span id="credSedeAldeaDoc"></span></p>
+                </div>
+                <p style="font-size: 0.75rem; color: #64748b;">Ingresa a la plataforma educativa con estos datos en cualquier momento.</p>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="document.getElementById('modalCredencialDoc').style.display='none'" style="background: #cbd5e1; color: #0f172a; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cerrar</button>
+                <button type="button" onclick="window.print()" style="background: #0284c7; color: #fff; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-print"></i> Imprimir Volante</button>
+            </div>
         </div>
     </div>
 
@@ -198,25 +254,21 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
-            authDomain: "plataforma-educativa-compured.firebaseapp.com",
-            projectId: "plataforma-educativa-compured",
-            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
-            messagingSenderId: "495196813256",
-            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
-            measurementId: "G-TRZ37G6SRM"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { validarRangoNotas } from "./utils.js";
 
         let sedeDocente = "";
         let nombreDocente = "";
         let cicloActualDoc = "2026";
         let listaAlumnosDocGlobal = [];
+
+        const aldeasPredeterminadasDoc = [
+            "Aldea la Victoria", 
+            "Aldea Monrrovia", 
+            "Aldea Las Lagunas Cuaches", 
+            "Aldea la nueva Concepcion"
+        ];
 
         window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'docente') {
@@ -251,6 +303,14 @@
             document.getElementById('lblNombreDocente').innerText = nombreDocente;
             document.getElementById('lblTituloLogo').innerText = sedeDocente;
             document.title = `Panel Docente | ${sedeDocente}`;
+
+            // Mostrar filtro de aldeas solo si el docente pertenece a COMPURED
+            if(sedeDocente === 'COMPURED') {
+                document.getElementById('contenedorFiltroAldeaDoc').style.display = 'flex';
+                document.getElementById('selectFiltroAldeaCalifDoc').style.display = 'block';
+                document.getElementById('selectFiltroAldeaPagosDoc').style.display = 'block';
+                document.getElementById('grupoAldeaInscripcionDoc').style.display = 'block';
+            }
 
             await cargarCiclosDoc();
             cargarDocente();
@@ -295,6 +355,37 @@
             selectDias.innerHTML = tipo === 'Entre semana' ? `<option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option>` : `<option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>`;
         };
 
+        window.verificarNuevaAldeaDoc = function(val) {
+            const grupoNueva = document.getElementById('grupoNuevaAldeaDoc');
+            if (val === 'OTRA') {
+                grupoNueva.style.display = 'block';
+                document.getElementById('inputNuevaAldeaDoc').required = true;
+            } else {
+                grupoNueva.style.display = 'none';
+                document.getElementById('inputNuevaAldeaDoc').required = false;
+            }
+        };
+
+        function actualizarSelectsAldeasFiltroDoc() {
+            if(sedeDocente !== 'COMPURED') return;
+
+            let opcionesAldeas = `<option value="TODOS">Todas las Aldeas / Comunidades</option>`;
+            aldeasPredeterminadasDoc.forEach(a => { opcionesAldeas += `<option value="${a}">${a}</option>`; });
+            
+            listaAlumnosDocGlobal.forEach(a => {
+                if (a.sede === 'COMPURED' && a.aldea && !aldeasPredeterminadasDoc.includes(a.aldea)) {
+                    if (!opcionesAldeas.includes(`value="${a.aldea}"`)) {
+                        opcionesAldeas += `<option value="${a.aldea}">${a.aldea}</option>`;
+                    }
+                }
+            });
+
+            ['selectFiltroAldeaDoc', 'selectFiltroAldeaCalifDoc', 'selectFiltroAldeaPagosDoc'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.innerHTML = opcionesAldeas;
+            });
+        }
+
         async function obtenerSiguienteCodigoDoc(ciclo) {
             const snap = await getDocs(collection(db, "alumnos"));
             let codigosExistentes = [];
@@ -322,6 +413,16 @@
             document.getElementById('editandoAlumnoIdDoc').value = '';
             document.getElementById('tituloModalEstudianteDoc').innerText = `Nuevo Estudiante (${cicloActualDoc})`;
             document.getElementById('btnSubmitAlumnoModalDoc').innerText = "Guardar Estudiante";
+            
+            if(sedeDocente === 'COMPURED') {
+                let selectAldea = document.getElementById('selectAldeaInscripcionDoc');
+                let htmlAldeas = "";
+                aldeasPredeterminadasDoc.forEach(a => { htmlAldeas += `<option value="${a}">${a}</option>`; });
+                htmlAldeas += `<option value="OTRA">➕ Agregar otra aldea o lugar...</option>`;
+                selectAldea.innerHTML = htmlAldeas;
+                document.getElementById('grupoAldeaInscripcionDoc').style.display = 'block';
+            }
+
             actualizarDiasDoc();
             document.getElementById('modalEstudianteDoc').style.display = 'flex';
         };
@@ -338,6 +439,16 @@
                 const pN = document.getElementById('pNombre').value.trim();
                 const pA = document.getElementById('pApellido').value.trim();
                 
+                let aldeaVal = "Sede Principal (La Esperanza)";
+                if (sedeDocente === 'COMPURED') {
+                    let selAldea = document.getElementById('selectAldeaInscripcionDoc').value;
+                    if (selAldea === 'OTRA') {
+                        aldeaVal = document.getElementById('inputNuevaAldeaDoc').value.trim() || 'Aldea Nueva';
+                    } else {
+                        aldeaVal = selAldea;
+                    }
+                }
+                
                 try {
                     if(editId) {
                         await updateDoc(doc(db, "alumnos", editId), {
@@ -349,7 +460,7 @@
                             codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
                             establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
                             grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                            sede: sedeDocente, tipoJornada: document.getElementById('tipoJornada').value,
+                            sede: sedeDocente, aldea: aldeaVal, tipoJornada: document.getElementById('tipoJornada').value,
                             diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
                             horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
                             encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim()
@@ -368,7 +479,7 @@
                             codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
                             establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
                             grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                            sede: sedeDocente, tipoJornada: document.getElementById('tipoJornada').value,
+                            sede: sedeDocente, aldea: aldeaVal, tipoJornada: document.getElementById('tipoJornada').value,
                             diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
                             horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
                             encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
@@ -400,6 +511,24 @@
                 document.getElementById('establecimiento').value = a.establecimiento !== 'No especificado' ? a.establecimiento : '';
                 document.getElementById('nombreEncargado').value = a.encargado || '';
                 document.getElementById('telEncargado').value = a.telEncargado || '';
+                
+                if(sedeDocente === 'COMPURED') {
+                    document.getElementById('grupoAldeaInscripcionDoc').style.display = 'block';
+                    let selectAldea = document.getElementById('selectAldeaInscripcionDoc');
+                    let htmlAldeas = "";
+                    aldeasPredeterminadasDoc.forEach(ald => { htmlAldeas += `<option value="${ald}">${ald}</option>`; });
+                    htmlAldeas += `<option value="OTRA">➕ Agregar otra aldea o lugar...</option>`;
+                    selectAldea.innerHTML = htmlAldeas;
+
+                    if([...selectAldea.options].some(o => o.value === a.aldea)) {
+                        selectAldea.value = a.aldea;
+                    } else {
+                        selectAldea.value = 'OTRA';
+                        document.getElementById('grupoNuevaAldeaDoc').style.display = 'block';
+                        document.getElementById('inputNuevaAldeaDoc').value = a.aldea || '';
+                    }
+                }
+
                 document.getElementById('tipoJornada').value = a.tipoJornada || 'Entre semana';
                 actualizarDiasDoc();
                 document.getElementById('diaEstudio').value = a.diaEstudio || 'Lunes';
@@ -415,6 +544,48 @@
             } catch(e) { console.error(e); }
         };
 
+        // GENERADOR DE TARJETA DE CREDENCIALES
+        window.abrirModalCredencialDoc = function(codigo, pass, nombre, curso, sedeAldea) {
+            document.getElementById('credTituloSedeDoc').innerText = sedeDocente;
+            document.getElementById('credUsuarioDoc').innerText = codigo;
+            document.getElementById('credPassDoc').innerText = pass;
+            document.getElementById('credNombreDoc').innerText = nombre;
+            document.getElementById('credCursoDoc').innerText = curso;
+            document.getElementById('credSedeAldeaDoc').innerText = sedeAldea;
+            document.getElementById('modalCredencialDoc').style.display = 'flex';
+        };
+
+        // EXPORTAR CSV PARA DOCENTE
+        window.exportarCSVDoc = function() {
+            let csvContent = "data:text/csv;charset=utf-8,Codigo,Primer Nombre,Segundo Nombre,Primer Apellido,Segundo Apellido,Sede,Aldea,Curso,Grado,Jornada,Telefono Encargado\n";
+            
+            listaAlumnosDocGlobal.forEach(a => {
+                if (a.sede !== sedeDocente || a.ciclo !== cicloActualDoc) return;
+                let fila = [
+                    a.codigo || "",
+                    a.primerNombre || "",
+                    a.segundoNombre || "",
+                    a.primerApellido || "",
+                    a.segundoApellido || "",
+                    a.sede || "",
+                    a.aldea || "",
+                    `"${a.curso || ""}"`,
+                    a.grado || "",
+                    a.tipoJornada || "",
+                    a.telEncargado || ""
+                ];
+                csvContent += fila.join(",") + "\n";
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Alumnos_${sedeDocente}_${cicloActualDoc}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
         window.cargarDocente = async function() {
             try {
                 const snap = await getDocs(collection(db, "alumnos"));
@@ -423,6 +594,7 @@
                     listaAlumnosDocGlobal.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
+                actualizarSelectsAldeasFiltroDoc();
                 renderizarTablaAlumnosDoc();
                 renderizarSeccionPagosDoc();
                 renderizarCalificacionesDoc();
@@ -434,6 +606,7 @@
             const bodyLista = document.getElementById('bodyListaAlumnos');
             const textoBusqueda = document.getElementById('inputBuscarAlumnoDoc').value.toLowerCase();
             const diaSeleccionado = document.getElementById('selectFiltroDiaDoc').value;
+            const aldeaFiltro = document.getElementById('selectFiltroAldeaDoc') ? document.getElementById('selectFiltroAldeaDoc').value : 'TODOS';
 
             let hL = "";
             let alumnosEnSede = 0;
@@ -441,20 +614,34 @@
             listaAlumnosDocGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
                 if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+                if (sedeDocente === 'COMPURED' && aldeaFiltro !== 'TODOS' && a.aldea !== aldeaFiltro) return;
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto}`.toLowerCase();
+                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto} ${a.aldea || ''}`.toLowerCase();
 
                 if (textoBusqueda && !textoCompletoFiltro.includes(textoBusqueda)) return;
                 if (diaSeleccionado !== "TODOS" && a.diaEstudio !== diaSeleccionado) return;
 
                 alumnosEnSede++;
-                hL += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditarDoc('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button><button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAl('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                let ubicacionTexto = a.sede === 'COMPURED' ? `<span style="color:#38ef7d; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> ${a.aldea || 'Aldea Principal'}</span>` : `<span style="color:#00f2fe; font-weight:bold;">COMPUCENTER (La Esperanza)</span>`;
+
+                hL += `<tr>
+                    <td>${a.codigo}</td>
+                    <td>${nombreCompletoTexto}</td>
+                    <td>${ubicacionTexto} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.direccion || ''}</span></td>
+                    <td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td>
+                    <td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td>
+                    <td>
+                        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background:#0284c7; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:4px;" title="Imprimir Credenciales" onclick="abrirModalCredencialDoc('${a.usuarioAcceso}', '${a.passwordAcceso}', '${nombreCompletoTexto}', '${a.curso}', '${a.sede === 'COMPURED' ? a.aldea : 'COMPUCENTER (La Esperanza)'}')"><i class="fa-solid id-card"></i> Ficha</button>
+                        <button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditarDoc('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAl('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
             });
 
             if(alumnosEnSede === 0) {
-                hL = `<tr><td colspan="5" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
+                hL = `<tr><td colspan="6" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
             }
 
             if(bodyLista) bodyLista.innerHTML = hL;
@@ -466,20 +653,23 @@
 
         window.renderizarSeccionPagosDoc = function() {
             const bodyPagos = document.getElementById('bodyListaPagosDoc');
+            const aldeaFiltroPagos = document.getElementById('selectFiltroAldeaPagosDoc') ? document.getElementById('selectFiltroAldeaPagosDoc').value : 'TODOS';
             let htmlPagos = "";
 
             listaAlumnosDocGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
                 if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+                if (sedeDocente === 'COMPURED' && aldeaFiltroPagos !== 'TODOS' && a.aldea !== aldeaFiltroPagos) return;
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
                 let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+                let ubicacionTexto = a.sede === 'COMPURED' ? (a.aldea || 'Aldea Principal') : 'COMPUCENTER (La Esperanza)';
 
-                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagosDoc('${a.id}')">${nombreCompletoTexto}</a></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagosDoc('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
+                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagosDoc('${a.id}')">${nombreCompletoTexto}</a></td><td><span style="color:#38ef7d;">${ubicacionTexto}</span></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagosDoc('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
             });
 
-            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="4" style="text-align: center;">No hay alumnos.</td></tr>`;
+            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="5" style="text-align: center;">No hay alumnos.</td></tr>`;
         };
 
         window.filtrarTablaPagosDoc = function() {
@@ -579,28 +769,58 @@
 
         window.renderizarCalificacionesDoc = function() {
             const bodyCalif = document.getElementById('bodyCalificaciones');
+            const aldeaFiltroCalif = document.getElementById('selectFiltroAldeaCalifDoc') ? document.getElementById('selectFiltroAldeaCalifDoc').value : 'TODOS';
             let hC = "";
 
             listaAlumnosDocGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
                 if (a.sede !== sedeDocente || cicloAlumno !== cicloActualDoc) return;
+                if (sedeDocente === 'COMPURED' && aldeaFiltroCalif !== 'TODOS' && a.aldea !== aldeaFiltroCalif) return;
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
                 let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+                let aldeaNombre = a.sede === 'COMPURED' ? (a.aldea || 'Aldea Principal') : 'COMPUCENTER (La Esperanza)';
 
                 let notas = a.notas || {u1:0,u2:0,u3:0,u4:0};
                 let prom = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
 
-                hC += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_${a.id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_${a.id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_${a.id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_${a.id}" value="${notas.u4}" style="width:50px;"></td><td>${prom}</td><td><button class="btn-icon btn-edit" onclick="guardarN('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
+                hC += `<tr>
+                    <td><strong>${nombreParaMostrar}</strong></td>
+                    <td><span style="color:#38ef7d; font-weight:bold;">${aldeaNombre}</span></td>
+                    <td>${a.curso}</td>
+                    <td><input type="number" id="u1_${a.id}" value="${notas.u1}" style="width:50px;" min="0" max="100"></td>
+                    <td><input type="number" id="u2_${a.id}" value="${notas.u2}" style="width:50px;" min="0" max="100"></td>
+                    <td><input type="number" id="u3_${a.id}" value="${notas.u3}" style="width:50px;" min="0" max="100"></td>
+                    <td><input type="number" id="u4_${a.id}" value="${notas.u4}" style="width:50px;" min="0" max="100"></td>
+                    <td>${prom}</td>
+                    <td><button class="btn-icon btn-edit" onclick="guardarN('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td>
+                </tr>`;
             });
 
-            if(bodyCalif) bodyCalif.innerHTML = hC || `<tr><td colspan="8" style="text-align: center;">No hay alumnos.</td></tr>`;
+            if(bodyCalif) bodyCalif.innerHTML = hC || `<tr><td colspan="9" style="text-align: center;">No hay alumnos.</td></tr>`;
         };
 
         window.guardarN = async function(id) {
-            await updateDoc(doc(db, "alumnos", id), { notas: { u1: document.getElementById(`u1_${id}`).value, u2: document.getElementById(`u2_${id}`).value, u3: document.getElementById(`u3_${id}`).value, u4: document.getElementById(`u4_${id}`).value } });
-            alert("¡Notas actualizadas!"); cargarDocente();
+            let u1 = Number(document.getElementById(`u1_${id}`).value);
+            let u2 = Number(document.getElementById(`u2_${id}`).value);
+            let u3 = Number(document.getElementById(`u3_${id}`).value);
+            let u4 = Number(document.getElementById(`u4_${id}`).value);
+
+            if (!validarRangoNotas([u1, u2, u3, u4])) {
+                alert("⚠️ Error: Todas las calificaciones deben ser valores numéricos válidos entre 0 y 100.");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "alumnos", id), { 
+                    notas: { u1: u1, u2: u2, u3: u3, u4: u4 } 
+                });
+                alert("¡Notas actualizadas correctamente!"); 
+                cargarDocente(); 
+            } catch(err) { 
+                alert("Error al actualizar notas: " + err.message); 
+            }
         };
 
         window.eliminarAl = async function(id) { if(confirm("¿Eliminar estudiante?")) { await deleteDoc(doc(db, "alumnos", id)); alert("Eliminado."); cargarDocente(); } };

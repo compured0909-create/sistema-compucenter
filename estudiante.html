@@ -77,20 +77,8 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
-            authDomain: "plataforma-educativa-compured.firebaseapp.com",
-            projectId: "plataforma-educativa-compured",
-            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
-            messagingSenderId: "495196813256",
-            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
-            measurementId: "G-TRZ37G6SRM"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const mesesDisponibles = [
             { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
@@ -109,12 +97,10 @@
             if(!alumnoId) { window.location.href = "login.html"; return; }
 
             try {
-                // 1. Cargar datos del alumno
                 const snap = await getDoc(doc(db, "alumnos", alumnoId));
                 if(!snap.exists()) { alert("Estudiante no encontrado."); return; }
                 const a = snap.data();
 
-                // 2. Cargar configuración de meses activos y requisitos de unidades
                 const configPagosSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
                 let mesesActivos = configPagosSnap.exists() ? configPagosSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
 
@@ -149,17 +135,14 @@
                 let n = a.notas || {u1:0,u2:0,u3:0,u4:0};
                 let p = a.pagos || {};
 
-                // Mapa rápido para obtener el nombre legible de cada mes a partir de su ID
                 let mapaNombresMeses = {};
                 mesesDisponibles.forEach(m => { mapaNombresMeses[m.id] = m.label; });
 
-                // Función que verifica la unidad y recopila exactamente qué meses faltan (de entre los activos y requeridos)
                 function obtenerMesesFaltantesUnidad(unidadKey) {
                     let mesesReq = requisitosUnidades[unidadKey] || [];
                     let faltantes = [];
 
                     for(let mId of mesesReq) {
-                        // Solo evaluamos el mes si está activado globalmente en la plataforma y no ha sido pagado
                         if(mesesActivos.includes(mId)) {
                             if(!p[mId] || Number(p[mId]) <= 0) {
                                 faltantes.push(mapaNombresMeses[mId] || mId);
@@ -195,7 +178,6 @@
 
                 htmlCalif += `<td>${u1Val}</td><td>${u2Val}</td><td>${u3Val}</td><td>${u4Val}</td><td><strong>${promTexto}</strong></td></tr></tbody></table>`;
 
-                // Construir mensajes de advertencia específicos indicando exactamente qué meses debe por unidad bloqueada
                 let mensajesBloqueoHtml = "";
                 let unidadesConDeuda = [
                     { nombre: '1ra Unidad', faltantes: faltantesU1 },
@@ -215,7 +197,6 @@
                 htmlCalif += mensajesBloqueoHtml;
                 document.getElementById('contenedorContenidoCalificaciones').innerHTML = htmlCalif;
 
-                // Renderizar Estado de Pagos
                 let htmlP = "";
                 mesesDisponibles.forEach(m => {
                     if(mesesActivos.includes(m.id)) {

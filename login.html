@@ -31,41 +31,33 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
-            authDomain: "plataforma-educativa-compured.firebaseapp.com",
-            projectId: "plataforma-educativa-compured",
-            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
-            messagingSenderId: "495196813256",
-            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
-            measurementId: "G-TRZ37G6SRM"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         document.getElementById('formLogin').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const userInput = document.getElementById('loginUsuario').value.trim();
+            const userInput = document.getElementById('loginUsuario').value.trim().toLowerCase();
             const passInput = document.getElementById('loginPassword').value.trim();
 
-            // 1. Validar si es el Director General (Correo institucional o acceso rápido)
-            if((userInput.toLowerCase() === 'compured0909@gmail.com' && passInput === 'CompuRed123') || (userInput === 'director' && passInput === 'director2026')) {
+            // 1. Validar Director Maestro
+            if((userInput === 'compured0909@gmail.com' && passInput === 'CompuRed123') || (userInput === 'director' && passInput === 'director2026')) {
                 localStorage.setItem('rolUsuario', 'director');
                 window.location.href = 'director.html';
                 return;
             }
 
             try {
-                // 2. Buscar en la colección de DOCENTES
+                // 2. Validar Docentes en Firestore
                 const docentesSnapshot = await getDocs(collection(db, "docentes"));
                 let docenteEncontrado = false;
 
                 docentesSnapshot.forEach((docSnap) => {
                     let d = docSnap.data();
-                    if ((d.correo.toLowerCase() === userInput.toLowerCase() || d.nombre.toLowerCase() === userInput.toLowerCase()) && d.password === passInput) {
+                    let correoDb = (d.correo || "").trim().toLowerCase();
+                    let nombreDb = (d.nombre || "").trim().toLowerCase();
+                    let passDb = (d.password || "").trim();
+
+                    if ((correoDb === userInput || nombreDb === userInput) && passDb === passInput) {
                         docenteEncontrado = true;
                         localStorage.setItem('rolUsuario', 'docente');
                         localStorage.setItem('idUsuarioDocente', docSnap.id);
@@ -77,13 +69,16 @@
 
                 if (docenteEncontrado) return;
 
-                // 3. Buscar en la colección de ALUMNOS (Estudiantes)
+                // 3. Validar Alumnos (Estudiantes) en Firestore
                 const alumnosSnapshot = await getDocs(collection(db, "alumnos"));
                 let alumnoEncontrado = false;
 
                 alumnosSnapshot.forEach((docSnap) => {
                     let a = docSnap.data();
-                    if (a.usuarioAcceso === userInput && a.passwordAcceso === passInput) {
+                    let usuarioDb = (a.usuarioAcceso || "").trim().toLowerCase();
+                    let passDb = (a.passwordAcceso || "").trim();
+
+                    if (usuarioDb === userInput && passDb === passInput) {
                         alumnoEncontrado = true;
                         localStorage.setItem('rolUsuario', 'estudiante');
                         localStorage.setItem('alumnoId', docSnap.id);
@@ -93,7 +88,7 @@
 
                 if (alumnoEncontrado) return;
 
-                alert("Usuario o contraseña incorrectos.");
+                alert("❌ Usuario o contraseña incorrectos. Verifique sus datos.");
 
             } catch (error) {
                 console.error("Error en el login:", error);

@@ -27,12 +27,36 @@
         .pago-item label { font-size: 0.85rem; color: #94a3b8; }
         .pago-item input { padding: 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; width: 100%; }
         
-        .sede-tab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .sede-tab-btn.active-tab { background: #00f2fe; color: #0f172a; border-color: #00f2fe; }
+        .sede-tab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .sede-tab-btn.active-tab { background: #00f2fe; color: #0f172a; border-color: #00f2fe; box-shadow: 0 0 15px rgba(0,242,254,0.4); }
         
+        .filtro-pill { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 6px 14px; border-radius: 15px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
+        .filtro-pill.active-pill { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border-color: #00f2fe; }
+
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
+        .badge-success { background: rgba(37, 211, 102, 0.2); color: #25D366; }
+        .badge-warning { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
+
         .estudiante-link { color: #00f2fe; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .estudiante-link:hover { text-decoration: underline; color: #38ef7d; }
+
+        .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .kpi-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; }
+        .kpi-icon { font-size: 2rem; color: #00f2fe; background: rgba(0, 242, 254, 0.1); padding: 15px; border-radius: 10px; }
+        .sidebar-category { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; padding: 15px 15px 5px 15px; letter-spacing: 1px; font-weight: bold; }
         
+        .context-banner { background: linear-gradient(135deg, rgba(0,242,254,0.1), rgba(38,208,206,0.05)); border: 1px solid rgba(0,242,254,0.3); padding: 15px 20px; border-radius: 10px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .context-banner h1 { margin: 0; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .context-banner span.highlight { color: #00f2fe; font-weight: 800; }
+
+        .data-table tbody tr:hover { background: rgba(0, 242, 254, 0.04); transition: background 0.2s ease; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printableCredencial, #printableCredencial * { visibility: visible; }
+            #printableCredencial { position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; padding: 20px; }
+        }
+
         @media (max-width: 900px) { .pago-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -61,12 +85,15 @@
             </div>
 
             <nav class="sidebar-nav" style="display: flex; flex-direction: column;">
-                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
-                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
-                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
-                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-calendar-days"></i> Configuración</a>
-                <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
-                <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Finanzas y Gastos</a>
+                <div class="sidebar-category">Gestión Académica</div>
+                <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Alumnos e Inscripción</a>
+                <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
+                <a href="#" onclick="mostrarSeccion('docentes', event)" class="nav-link" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</a>
+
+                <div class="sidebar-category">Administración y Finanzas</div>
+                <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
+                <a href="#" onclick="mostrarSeccion('finanzas', event)" class="nav-link" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line"></i> Finanzas Globales</a>
+                <a href="#" onclick="mostrarSeccion('configMeses', event)" class="nav-link" style="padding: 10px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-calendar-days"></i> Configuración y Meses</a>
             </nav>
         </div>
 
@@ -78,24 +105,63 @@
     </aside>
 
     <main class="dashboard-content">
-        <!-- GESTIÓN DE ALUMNOS -->
+        <div class="context-banner">
+            <h1><i class="fa-solid fa-location-dot" style="color: #00f2fe;"></i> Sede Activa: <span id="bannerSede" class="highlight">COMPURED</span></h1>
+            <div style="font-size: 1.1rem; color: #cbd5e1;">
+                Ciclo Escolar: <span id="bannerAnio" class="highlight">2026</span>
+            </div>
+        </div>
+
         <section id="registro" class="panel-section active">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
                 <h2><i class="fa-solid fa-user-plus"></i> Ficha de Inscripción y Control de Alumnos</h2>
-                <button onclick="abrirModalEstudiante()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="exportarCSV()" class="btn-primary" style="background: #25D366; color: #fff; border: none; padding: 12px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-file-excel"></i> Exportar a CSV</button>
+                    <button onclick="abrirModalEstudiante()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-plus"></i> Agregar Nuevo Estudiante</button>
+                </div>
+            </div>
+
+            <div class="kpi-container">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+                    <div>
+                        <span style="color: #94a3b8; font-size: 0.85rem;">Alumnos en Sede / Aldea</span>
+                        <h3 id="kpiTotalAlumnos" style="color: #fff; font-size: 1.5rem; margin: 0;">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: #25D366; background: rgba(37,211,102,0.1);"><i class="fa-solid fa-wallet"></i></div>
+                    <div>
+                        <span style="color: #94a3b8; font-size: 0.85rem;">Ingresos Registrados</span>
+                        <h3 id="kpiIngresosSede" style="color: #25D366; font-size: 1.5rem; margin: 0;">Q. 0.00</h3>
+                    </div>
+                </div>
             </div>
 
             <div class="card-table">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')">COMPURED</button>
-                        <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')">COMPUCENTER</button>
+                        <button class="sede-tab-btn active-tab" id="btnTabCompured" onclick="filtrarSedeDirector('COMPURED')"><i class="fa-solid fa-school"></i> COMPURED</button>
+                        <button class="sede-tab-btn" id="btnTabCompucenter" onclick="filtrarSedeDirector('COMPUCENTER')"><i class="fa-solid fa-building-columns"></i> COMPUCENTER (La Esperanza)</button>
                     </div>
-                    <span style="font-size: 0.9rem; color: #00f2fe; font-weight: bold;">Ciclo: <span class="lblAnioTxt">2026</span></span>
+                    <span style="font-size: 0.9rem; color: #00f2fe; font-weight: bold;">Ciclo Activo: <span class="lblAnioTxt">2026</span></span>
+                </div>
+
+                <!-- FILTRO ESPECÍFICO POR ALDEA PARA COMPURED -->
+                <div id="contenedorFiltroAldea" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 0.85rem; color: #00f2fe; font-weight: bold;"><i class="fa-solid fa-filter"></i> Filtrar por Aldea / Comunidad:</span>
+                    <select id="selectFiltroAldeaDir" onchange="renderizarTablaAlumnos()" style="padding: 8px 12px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 0.85rem; color: #94a3b8;"><i class="fa-solid fa-filter"></i> Estado:</span>
+                    <button class="filtro-pill active-pill" id="pillFiltroTodos" onclick="aplicarFiltroEstado('TODOS')">Todos</button>
+                    <button class="filtro-pill" id="pillFiltroAlDia" onclick="aplicarFiltroEstado('ALDIA')">Al Día</button>
+                    <button class="filtro-pill" id="pillFiltroDeuda" onclick="aplicarFiltroEstado('DEUDA')">Con Pendientes</button>
                 </div>
 
                 <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <input type="text" id="inputBuscarAlumno" placeholder="Buscar por nombre o código..." onkeyup="aplicarFiltrosAlumnos()" style="flex: 1; min-width: 220px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
+                    <input type="text" id="inputBuscarAlumno" placeholder="Buscar por nombre o código... (Presiona Ctrl+K)" onkeyup="aplicarFiltrosAlumnos()" style="flex: 1; min-width: 220px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
                     <select id="selectFiltroDia" onchange="aplicarFiltrosAlumnos()" style="padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: #1e293b; color: #fff;">
                         <option value="TODOS">Todos los días</option>
                         <option value="Lunes">Lunes</option>
@@ -110,38 +176,41 @@
 
                 <h3 style="margin-bottom: 15px; font-size: 1.1rem;" id="tituloTablaSede">Listado General - COMPURED</h3>
                 <table class="data-table">
-                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Curso / Horario / Día</th><th>Credenciales</th><th>Acciones</th></tr></thead>
-                    <tbody id="bodyListaAlumnosDir"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Código</th><th>Nombre Completo</th><th>Ubicación / Aldea</th><th>Curso / Horario</th><th>Estado Pagos</th><th>Credenciales</th><th>Acciones</th></tr></thead>
+                    <tbody id="bodyListaAlumnosDir"><tr><td colspan="7" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- CALIFICACIONES -->
         <section id="calificaciones" class="panel-section">
             <h2><i class="fa-solid fa-graduation-cap"></i> Control de Calificaciones</h2>
             <div class="card-table">
-                <div style="margin-bottom: 15px;"><input type="text" id="buscarCalificacionDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTabla('tablaCalificacionesDir', 'buscarCalificacionDir')"></div>
+                <div style="margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <input type="text" id="buscarCalificacionDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="renderizarCalificacionesFinanzas()">
+                    <select id="selectFiltroAldeaCalif" onchange="renderizarCalificacionesFinanzas()" style="padding: 8px 12px; border-radius: 5px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
+                </div>
                 <table class="data-table" id="tablaCalificacionesDir">
-                    <thead><tr><th>Estudiante</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyCalificacionesDir"><tr><td colspan="8" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Estudiante</th><th>Aldea / Ubicación</th><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyCalificacionesDir"><tr><td colspan="9" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- CONTROL DE PAGOS -->
         <section id="pagos" class="panel-section">
             <h2><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</h2>
             <p style="color: #94a3b8; margin-bottom: 20px;">Haz clic sobre el nombre de cualquier estudiante para abrir su ventana de pagos.</p>
-            <div style="margin-bottom: 15px;"><input type="text" id="buscarPagosDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDir()"></div>
+            <div style="margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <input type="text" id="buscarPagosDir" placeholder="Buscar alumno..." style="padding: 8px 12px; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;" onkeyup="filtrarTablaPagosDir()">
+                <select id="selectFiltroAldeaPagos" onchange="renderizarSeccionPagosDir()" style="padding: 8px 12px; border-radius: 5px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
+            </div>
             <div class="card-table">
                 <table class="data-table">
-                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Curso</th><th>Acción</th></tr></thead>
-                    <tbody id="bodyListaPagosDir"><tr><td colspan="4" style="text-align: center;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Código</th><th>Nombre del Estudiante</th><th>Aldea / Ubicación</th><th>Curso</th><th>Acción</th></tr></thead>
+                    <tbody id="bodyListaPagosDir"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- CONFIGURAR MESES Y CARGOS -->
         <section id="configMeses" class="panel-section">
             <h2><i class="fa-solid fa-calendar-days"></i> Configuración de Meses y Bloqueos</h2>
             
@@ -151,27 +220,13 @@
                 <button class="btn-primary" onclick="guardarConfigMeses()" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Meses</button>
             </div>
 
-            <!-- CONFIGURAR REQUISITOS DE UNIDADES PARA BLOQUEO -->
             <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
                 <h3 style="color: #38ef7d; font-size: 1rem;">2. Configurar Meses Requeridos por Unidad (Bloqueo de Notas)</h3>
-                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Selecciona qué meses debe haber pagado el alumno para que se le desbloquee cada unidad.</p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #00f2fe; margin-top:0;">1ra Unidad</h4>
-                        <div id="checkReqU1" style="display: flex; flex-direction: column; gap: 5px;"></div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #00f2fe; margin-top:0;">2da Unidad</h4>
-                        <div id="checkReqU2" style="display: flex; flex-direction: column; gap: 5px;"></div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #00f2fe; margin-top:0;">3ra Unidad</h4>
-                        <div id="checkReqU3" style="display: flex; flex-direction: column; gap: 5px;"></div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #00f2fe; margin-top:0;">4ta Unidad</h4>
-                        <div id="checkReqU4" style="display: flex; flex-direction: column; gap: 5px;"></div>
-                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;"><h4 style="color: #00f2fe; margin-top:0;">1ra Unidad</h4><div id="checkReqU1" style="display: flex; flex-direction: column; gap: 5px;"></div></div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;"><h4 style="color: #00f2fe; margin-top:0;">2da Unidad</h4><div id="checkReqU2" style="display: flex; flex-direction: column; gap: 5px;"></div></div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;"><h4 style="color: #00f2fe; margin-top:0;">3ra Unidad</h4><div id="checkReqU3" style="display: flex; flex-direction: column; gap: 5px;"></div></div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;"><h4 style="color: #00f2fe; margin-top:0;">4ta Unidad</h4><div id="checkReqU4" style="display: flex; flex-direction: column; gap: 5px;"></div></div>
                 </div>
                 <button class="btn-primary" onclick="guardarRequisitosUnidades()" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Requisitos de Unidades</button>
             </div>
@@ -196,7 +251,6 @@
             </div>
         </section>
 
-        <!-- GESTIÓN DE DOCENTES -->
         <section id="docentes" class="panel-section">
             <h2><i class="fa-solid fa-chalkboard-user"></i> Gestión de Docentes</h2>
             <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
@@ -205,21 +259,29 @@
                     <div class="form-group"><label>Correo</label><input type="email" id="docCorreo" required></div>
                     <div class="form-group"><label>Teléfono</label><input type="tel" id="docTel" required></div>
                     <div class="form-group"><label>Contraseña</label><input type="password" id="docPass" required></div>
-                    <div class="form-group" style="grid-column: span 2;"><label>Sede Asignada</label><select id="docSede" required><option value="COMPURED">COMPURED</option><option value="COMPUCENTER">COMPUCENTER</option></select></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Sede Asignada</label><select id="docSede" required><option value="COMPURED">COMPURED</option><option value="COMPUCENTER">COMPUCENTER (La Esperanza)</option></select></div>
                     <div class="form-actions" style="grid-column: span 2;"><button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 20px; background:#00f2fe; color:#0f172a; font-weight:bold; border-radius:6px;">Guardar Docente</button></div>
                 </form>
             </div>
             <div class="card-table"><table class="data-table"><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Sede</th><th>Pass</th><th>Acciones</th></tr></thead><tbody id="bodyListaDocentes"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody></table></div>
         </section>
 
-        <!-- FINANZAS -->
         <section id="finanzas" class="panel-section">
-            <h2><i class="fa-solid fa-chart-line"></i> Finanzas Globales</h2>
+            <h2><i class="fa-solid fa-chart-line"></i> Finanzas Globales y por Aldea</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-                <div class="card" style="border:1px solid #25D366; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Ingresos</span><h3 id="lblTotalIngresos" style="color:#25D366; margin:5px 0 0 0;">Q. 0.00</h3></div>
-                <div class="card" style="border:1px solid #ff4757; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Gastos</span><h3 id="lblTotalGastos" style="color:#ff4757; margin:5px 0 0 0;">Q. 0.00</h3></div>
-                <div class="card" style="border:1px solid #00f2fe; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Balance</span><h3 id="lblBalanceNeto" style="color:#00f2fe; margin:5px 0 0 0;">Q. 0.00</h3></div>
+                <div class="card" style="border:1px solid #25D366; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Ingresos Totales</span><h3 id="lblTotalIngresos" style="color:#25D366; margin:5px 0 0 0;">Q. 0.00</h3></div>
+                <div class="card" style="border:1px solid #ff4757; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Gastos Totales</span><h3 id="lblTotalGastos" style="color:#ff4757; margin:5px 0 0 0;">Q. 0.00</h3></div>
+                <div class="card" style="border:1px solid #00f2fe; padding:15px; border-radius:8px;"><span style="color:#94a3b8;">Balance Neto</span><h3 id="lblBalanceNeto" style="color:#00f2fe; margin:5px 0 0 0;">Q. 0.00</h3></div>
             </div>
+
+            <!-- RESUMEN FINANCIERO DESGLOSADO POR ALDEA -->
+            <div class="card-form" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h3 style="color: #00f2fe; margin-top: 0; font-size: 1.1rem;"><i class="fa-solid fa-chart-pie"></i> Recaudación por Aldea y Sede Rural</h3>
+                <div id="contenedorDesgloseAldeas" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <p style="color: #94a3b8;">Cargando desglose...</p>
+                </div>
+            </div>
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px;">
                 <div class="card-form" style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px;"><h3 style="color:#25D366; margin-top:0;">Registrar Depósito</h3><form onsubmit="registrarTransaccionFinanciera(event, 'ingreso')"><div class="form-group" style="margin-bottom:10px;"><label>Concepto</label><input type="text" id="descIngreso" required></div><div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoIngreso" required></div><button type="submit" class="btn-primary" style="background:#25D366; border:none; padding:10px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;">Guardar</button></form></div>
                 <div class="card-form" style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px;"><h3 style="color:#ff4757; margin-top:0;">Registrar Gasto</h3><form onsubmit="registrarTransaccionFinanciera(event, 'gasto')"><div class="form-group" style="margin-bottom:10px;"><label>Descripción</label><input type="text" id="descGasto" required></div><div class="form-group" style="margin-bottom:15px;"><label>Monto (Q)</label><input type="number" step="0.01" id="montoGasto" required></div><button type="submit" class="btn-primary" style="background:#ff4757; border:none; padding:10px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;">Guardar</button></form></div>
@@ -228,7 +290,7 @@
         </section>
     </main>
 
-    <!-- VENTANA EMERGENTE (MODAL) ESTUDIANTE -->
+    <!-- MODAL NUEVO ESTUDIANTE ORDENADO -->
     <div id="modalEstudiante" class="modal-overlay">
         <div class="modal-container">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
@@ -238,45 +300,53 @@
             <form id="formInscripcionModal">
                 <input type="hidden" id="editandoAlumnoId" value="">
                 <div class="grid-form" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-                    <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required></div>
+                    
+                    <!-- PASO 1: SELECCIÓN DE SEDE E INSTITUCIÓN -->
+                    <div class="form-group" style="grid-column: span 3; background: rgba(0,242,254,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,242,254,0.2);">
+                        <label style="color: #00f2fe; font-weight: bold; display: block; margin-bottom: 5px;">Sede Institucional *</label>
+                        <select id="sedeInscripcion" onchange="cambiarSedeModal(this.value)" required style="padding: 10px; width: 100%; border-radius: 6px; background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                            <option value="COMPURED">COMPURED (Sedes Rurales / Aldeas)</option>
+                            <option value="COMPUCENTER">COMPUCENTER (La Esperanza)</option>
+                        </select>
+                    </div>
+
+                    <!-- PASO 2: SELECCIÓN O CREACIÓN DE ALDEA (SOLO PARA COMPURED) -->
+                    <div class="form-group" id="grupoAldeaInscripcion" style="grid-column: span 3;">
+                        <label style="color: #38ef7d; font-weight: bold;">Aldea o Comunidad (COMPURED) *</label>
+                        <select id="selectAldeaInscripcion" onchange="verificarNuevaAldea(this.value)" required style="padding: 10px; width: 100%; border-radius: 6px; background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                            <option value="Aldea la Victoria">Aldea la Victoria</option>
+                            <option value="Aldea Monrrovia">Aldea Monrrovia</option>
+                            <option value="Aldea Las Lagunas Cuaches">Aldea Las Lagunas Cuaches</option>
+                            <option value="Aldea la nueva Concepcion">Aldea la nueva Concepcion</option>
+                            <option value="OTRA">➕ Agregar otra aldea o lugar...</option>
+                        </select>
+                    </div>
+
+                    <!-- CAMPO DINÁMICO PARA NUEVA ALDEA -->
+                    <div class="form-group" id="grupoNuevaAldea" style="grid-column: span 3; display: none;">
+                        <label style="color: #38ef7d;">Escribe el nombre de la nueva Aldea / Lugar:</label>
+                        <input type="text" id="inputNuevaAldea" placeholder="Ej. Aldea San José">
+                    </div>
+
+                    <!-- DATOS PERSONALES -->
+                    <div class="form-group"><label>Primer Nombre *</label><input type="text" id="pNombre" required autofocus></div>
                     <div class="form-group"><label>Segundo Nombre</label><input type="text" id="sNombre"></div>
                     <div class="form-group"><label>Tercer Nombre</label><input type="text" id="tNombre"></div>
                     <div class="form-group"><label>Primer Apellido *</label><input type="text" id="pApellido" required></div>
                     <div class="form-group"><label>Segundo Apellido</label><input type="text" id="sApellido"></div>
                     <div class="form-group"><label>Fecha de Nacimiento *</label><input type="date" id="fechaNac" required></div>
-                    
                     <div class="form-group"><label>Teléfono Estudiante</label><input type="tel" id="telEstudiante"></div>
                     <div class="form-group"><label>Código MINEDUC</label><input type="text" id="codigoMineduc" placeholder="Ej. P1234A"></div>
                     <div class="form-group"><label>Establecimiento</label><input type="text" id="establecimiento"></div>
-
                     <div class="form-group"><label>Nombre Encargado *</label><input type="text" id="nombreEncargado" required></div>
                     <div class="form-group"><label>Teléfono Encargado *</label><input type="tel" id="telEncargado" required></div>
-                    <div class="form-group"><label>Sede Institucional *</label>
-                        <select id="sedeInscripcion" required><option value="COMPURED">COMPURED</option><option value="COMPUCENTER">COMPUCENTER</option></select>
-                    </div>
-
-                    <div class="form-group"><label>Tipo de Jornada *</label>
-                        <select id="tipoJornada" onchange="actualizarDias()" required><option value="Entre semana">Entre semana</option><option value="Fin de semana">Fin de semana</option></select>
-                    </div>
-                    <div class="form-group"><label>Día de Asistencia *</label>
-                        <select id="diaEstudio" required><option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option></select>
-                    </div>
-                    <div class="form-group"><label>Curso o Carrera *</label>
-                        <select id="cursoInteres" required>
-                            <option value="Mecanografía Básica">Mecanografía Básica</option>
-                            <option value="Técnico Operador de Computadoras">Técnico Operador de Computadoras</option>
-                            <option value="Técnico en Diseño Gráfico">Técnico en Diseño Gráfico</option>
-                            <option value="Técnico en Reparación de computadoras">Técnico en Reparación de computadoras</option>
-                        </select>
-                    </div>
-
+                    <div class="form-group"><label>Tipo de Jornada *</label><select id="tipoJornada" onchange="actualizarDias()" required><option value="Entre semana">Entre semana</option><option value="Fin de semana">Fin de semana</option></select></div>
+                    <div class="form-group"><label>Día de Asistencia *</label><select id="diaEstudio" required><option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option></select></div>
+                    <div class="form-group"><label>Curso o Carrera *</label><select id="cursoInteres" required><option value="Mecanografía Básica">Mecanografía Básica</option><option value="Técnico Operador de Computadoras">Técnico Operador de Computadoras</option><option value="Técnico en Diseño Gráfico">Técnico en Diseño Gráfico</option><option value="Técnico en Reparación de computadoras">Técnico en Reparación de computadoras</option></select></div>
                     <div class="form-group"><label>Hora de Entrada *</label><input type="text" id="horaIngreso" required placeholder="08:00 AM"></div>
                     <div class="form-group"><label>Hora de Salida *</label><input type="text" id="horaSalida" required placeholder="12:00 PM"></div>
-                    <div class="form-group"><label>Grado</label>
-                        <select id="gradoCursa"><option>Primero Básico</option><option>Segundo Básico</option><option>Tercero Básico</option><option>Bachillerato / Otro</option></select>
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 3;"><label>Dirección Domiciliar *</label><input type="text" id="direccion" required></div>
+                    <div class="form-group"><label>Grado</label><select id="gradoCursa"><option>Primero Básico</option><option>Segundo Básico</option><option>Tercero Básico</option><option>Bachillerato / Otro</option></select></div>
+                    <div class="form-group" style="grid-column: span 3;"><label>Dirección Domiciliar Específica *</label><input type="text" id="direccion" required placeholder="Ej. Sector 2, Casa frente a la cancha comunal"></div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px;">
                     <button type="button" onclick="cerrarModalEstudiante()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
@@ -286,7 +356,29 @@
         </div>
     </div>
 
-    <!-- VENTANA EMERGENTE (MODAL) PARA PAGOS -->
+    <!-- MODAL DE CREDENCIALES / FICHA RÁPIDA IMPRIMIBLE -->
+    <div id="modalCredencial" class="modal-overlay">
+        <div class="modal-container" style="max-width: 450px; background: #fff; color: #000;">
+            <div id="printableCredencial" style="padding: 20px; border: 2px dashed #00f2fe; border-radius: 10px; text-align: center;">
+                <h2 style="color: #0f172a; margin-bottom: 5px;">COMPURED / COMPUCENTER</h2>
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Ficha de Credenciales de Acceso Estudiantil</p>
+                <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px;">
+                    <p style="margin: 5px 0;"><strong>Código / Usuario:</strong> <span id="credUsuario" style="color: #0284c7; font-family: monospace; font-size: 1.1rem;"></span></p>
+                    <p style="margin: 5px 0;"><strong>Contraseña:</strong> <span id="credPass" style="color: #dc2626; font-family: monospace; font-size: 1.1rem;"></span></p>
+                    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 10px 0;">
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Estudiante:</strong> <span id="credNombre"></span></p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Curso:</strong> <span id="credCurso"></span></p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Ubicación / Sede:</strong> <span id="credSedeAldea"></span></p>
+                </div>
+                <p style="font-size: 0.75rem; color: #64748b;">Ingresa a la plataforma educativa con estos datos en cualquier momento.</p>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="document.getElementById('modalCredencial').style.display='none'" style="background: #cbd5e1; color: #0f172a; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cerrar</button>
+                <button type="button" onclick="window.print()" style="background: #0284c7; color: #fff; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-print"></i> Imprimir Volante</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modalPagos" class="modal-overlay">
         <div class="modal-container" style="max-width: 650px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
@@ -294,13 +386,10 @@
                 <button onclick="cerrarModalPagos()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <input type="hidden" id="modalAlumnoId" value="">
-            
             <h4 style="color: #38ef7d; margin-bottom: 5px; font-size: 1rem;">Cuotas Mensuales / Inscripción</h4>
             <div class="pago-grid" id="modalContenedorInputsPagos"></div>
-
             <h4 style="color: #ff4757; margin-top: 15px; margin-bottom: 5px; font-size: 1rem;">Gastos / Cargos Extras Pendientes</h4>
             <div class="pago-grid" id="modalContenedorCargosExtras"></div>
-
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                 <button type="button" onclick="cerrarModalPagos()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
                 <button type="button" onclick="guardarPagosModal()" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-floppy-disk"></i> Guardar Pagos</button>
@@ -309,24 +398,21 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
-            authDomain: "plataforma-educativa-compured.firebaseapp.com",
-            projectId: "plataforma-educativa-compured",
-            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
-            messagingSenderId: "495196813256",
-            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
-            measurementId: "G-TRZ37G6SRM"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { validarRangoNotas, formatearQuetzales } from "./utils.js";
 
         let sedeSeleccionadaDirector = "COMPURED";
         let cicloActual = "2026";
         let listaAlumnosGlobal = [];
+        let filtroEstadoActual = "TODOS";
+
+        const aldeasPredeterminadas = [
+            "Aldea la Victoria", 
+            "Aldea Monrrovia", 
+            "Aldea Las Lagunas Cuaches", 
+            "Aldea la nueva Concepcion"
+        ];
 
         const mesesDisponibles = [
             { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
@@ -344,6 +430,28 @@
             await cargarCiclosDisponibles();
             cargarDatosDirector();
         });
+
+        window.cambiarSedeModal = function(sede) {
+            const grupoAldea = document.getElementById('grupoAldeaInscripcion');
+            const grupoNueva = document.getElementById('grupoNuevaAldea');
+            if (sede === 'COMPUCENTER') {
+                grupoAldea.style.display = 'none';
+                grupoNueva.style.display = 'none';
+            } else {
+                grupoAldea.style.display = 'block';
+            }
+        };
+
+        window.verificarNuevaAldea = function(val) {
+            const grupoNueva = document.getElementById('grupoNuevaAldea');
+            if (val === 'OTRA') {
+                grupoNueva.style.display = 'block';
+                document.getElementById('inputNuevaAldea').required = true;
+            } else {
+                grupoNueva.style.display = 'none';
+                document.getElementById('inputNuevaAldea').required = false;
+            }
+        };
 
         window.cargarCiclosDisponibles = async function() {
             try {
@@ -369,6 +477,7 @@
         window.actualizarTextosAnio = function() {
             document.getElementById('lblAnioGrande').innerText = cicloActual;
             document.querySelectorAll('.lblAnioTxt').forEach(el => el.innerText = cicloActual);
+            document.getElementById('bannerAnio').innerText = cicloActual;
         };
 
         window.agregarNuevoCiclo = async function() {
@@ -396,8 +505,41 @@
         window.filtrarSedeDirector = function(sede) {
             sedeSeleccionadaDirector = sede;
             document.getElementById('btnTabCompured').classList.toggle('active-tab', sede === 'COMPURED');
-            document.getElementById('btnTabCompucenter').classList.toggle('active-tab', sede === 'COMPUCENTER');
-            document.getElementById('tituloTablaSede').innerText = `Listado General - ${sede}`;
+            document.getElementById('btnTabCompucenter', sede === 'COMPUCENTER').classList.toggle('active-tab', sede === 'COMPUCENTER');
+            document.getElementById('tituloTablaSede').innerText = sede === 'COMPURED' ? `Listado General - COMPURED (Aldeas)` : `Listado General - COMPUCENTER (La Esperanza)`;
+            document.getElementById('bannerSede').innerText = sede === 'COMPURED' ? 'COMPURED' : 'COMPUCENTER (La Esperanza)';
+            
+            const contenedorAldeaFiltro = document.getElementById('contenedorFiltroAldea');
+            contenedorAldeaFiltro.style.display = sede === 'COMPURED' ? 'flex' : 'none';
+
+            actualizarSelectsAldeasFiltro();
+            renderizarTablaAlumnos();
+        };
+
+        function actualizarSelectsAldeasFiltro() {
+            let opcionesAldeas = `<option value="TODOS">Todas las Aldeas / Comunidades</option>`;
+            aldeasPredeterminadas.forEach(a => { opcionesAldeas += `<option value="${a}">${a}</option>`; });
+            
+            // Añadir aldeas personalizadas si existen en la BD
+            listaAlumnosGlobal.forEach(a => {
+                if (a.sede === 'COMPURED' && a.aldea && !aldeasPredeterminadas.includes(a.aldea)) {
+                    if (!opcionesAldeas.includes(`value="${a.aldea}"`)) {
+                        opcionesAldeas += `<option value="${a.aldea}">${a.aldea}</option>`;
+                    }
+                }
+            });
+
+            ['selectFiltroAldeaDir', 'selectFiltroAldeaCalif', 'selectFiltroAldeaPagos'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.innerHTML = opcionesAldeas;
+            });
+        }
+
+        window.aplicarFiltroEstado = function(estado) {
+            filtroEstadoActual = estado;
+            document.getElementById('pillFiltroTodos').classList.toggle('active-pill', estado === 'TODOS');
+            document.getElementById('pillFiltroAlDia').classList.toggle('active-pill', estado === 'ALDIA');
+            document.getElementById('pillFiltroDeuda').classList.toggle('active-pill', estado === 'DEUDA');
             renderizarTablaAlumnos();
         };
 
@@ -413,13 +555,10 @@
             });
             grid.innerHTML = html;
 
-            // Cargar configuración de requisitos de unidades
             const reqSnap = await getDoc(doc(db, "configuracion", "requisitosUnidades"));
             let reqs = reqSnap.exists() ? reqSnap.data() : {
-                u1: ['inscripcion', 'feb', 'marzo', 'abril'],
-                u2: ['mayo', 'junio'],
-                u3: ['julio', 'agosto', 'septiembre'],
-                u4: ['octubre', 'noviembre', 'diciembre']
+                u1: ['inscripcion', 'feb', 'marzo', 'abril'], u2: ['mayo', 'junio'],
+                u3: ['julio', 'agosto', 'septiembre'], u4: ['octubre', 'noviembre', 'diciembre']
             };
 
             ['u1', 'u2', 'u3', 'u4'].forEach(u => {
@@ -454,10 +593,9 @@
                 chks.forEach(c => { if(c.checked) seleccionados.push(c.value); });
                 nuevoReqs[u] = seleccionados;
             });
-
             try {
                 await setDoc(doc(db, "configuracion", "requisitosUnidades"), nuevoReqs);
-                alert("¡Requisitos de unidades para bloqueo guardados con éxito!");
+                alert("¡Requisitos de unidades guardados con éxito!");
             } catch(e) { alert("Error al guardar requisitos: " + e.message); }
         };
 
@@ -488,13 +626,21 @@
             document.getElementById('editandoAlumnoId').value = '';
             document.getElementById('tituloModalEstudiante').innerText = `Nuevo Estudiante (${cicloActual})`;
             document.getElementById('btnSubmitAlumnoModal').innerText = "Guardar Estudiante";
+            document.getElementById('sedeInscripcion').value = 'COMPURED';
+            cambiarSedeModal('COMPURED');
+            
+            let selectAldea = document.getElementById('selectAldeaInscripcion');
+            let htmlAldeas = "";
+            aldeasPredeterminadas.forEach(a => { htmlAldeas += `<option value="${a}">${a}</option>`; });
+            htmlAldeas += `<option value="OTRA">➕ Agregar otra aldea o lugar...</option>`;
+            selectAldea.innerHTML = htmlAldeas;
+
             actualizarDias();
             document.getElementById('modalEstudiante').style.display = 'flex';
+            setTimeout(() => { document.getElementById('pNombre').focus(); }, 100);
         };
 
-        window.cerrarModalEstudiante = function() {
-            document.getElementById('modalEstudiante').style.display = 'none';
-        };
+        window.cerrarModalEstudiante = function() { document.getElementById('modalEstudiante').style.display = 'none'; };
 
         const formModalInscripcion = document.getElementById('formInscripcionModal');
         if(formModalInscripcion) {
@@ -503,7 +649,18 @@
                 const editId = document.getElementById('editandoAlumnoId').value;
                 const pN = document.getElementById('pNombre').value.trim();
                 const pA = document.getElementById('pApellido').value.trim();
+                const sedeVal = document.getElementById('sedeInscripcion').value;
                 
+                let aldeaVal = "Sede Principal (La Esperanza)";
+                if (sedeVal === 'COMPURED') {
+                    let selAldea = document.getElementById('selectAldeaInscripcion').value;
+                    if (selAldea === 'OTRA') {
+                        aldeaVal = document.getElementById('inputNuevaAldea').value.trim() || 'Aldea Nueva';
+                    } else {
+                        aldeaVal = selAldea;
+                    }
+                }
+
                 try {
                     if(editId) {
                         await updateDoc(doc(db, "alumnos", editId), {
@@ -515,7 +672,7 @@
                             codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
                             establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
                             grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                            sede: document.getElementById('sedeInscripcion').value, tipoJornada: document.getElementById('tipoJornada').value,
+                            sede: sedeVal, aldea: aldeaVal, tipoJornada: document.getElementById('tipoJornada').value,
                             diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
                             horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
                             encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim()
@@ -529,12 +686,12 @@
                             primerNombre: pN, segundoNombre: document.getElementById('sNombre').value.trim(),
                             tercerNombre: document.getElementById('tNombre').value.trim(), primerApellido: pA,
                             segundoApellido: document.getElementById('sApellido').value.trim(), codigo: codigoGenerado,
-                            ciclo: cicloActual,
-                            fechaNacimiento: document.getElementById('fechaNac').value, telEstudiante: document.getElementById('telEstudiante').value.trim(),
+                            ciclo: cicloActual, fechaNacimiento: document.getElementById('fechaNac').value,
+                            telEstudiante: document.getElementById('telEstudiante').value.trim(),
                             codigoMineduc: document.getElementById('codigoMineduc').value.trim() || 'No asignado',
                             establecimiento: document.getElementById('establecimiento').value.trim() || 'No especificado',
                             grado: document.getElementById('gradoCursa').value, curso: document.getElementById('cursoInteres').value,
-                            sede: document.getElementById('sedeInscripcion').value, tipoJornada: document.getElementById('tipoJornada').value,
+                            sede: sedeVal, aldea: aldeaVal, tipoJornada: document.getElementById('tipoJornada').value,
                             diaEstudio: document.getElementById('diaEstudio').value, horaIngreso: document.getElementById('horaIngreso').value.trim(),
                             horaSalida: document.getElementById('horaSalida').value.trim(), direccion: document.getElementById('direccion').value.trim(),
                             encargado: document.getElementById('nombreEncargado').value.trim(), telEncargado: document.getElementById('telEncargado').value.trim(),
@@ -567,6 +724,19 @@
                 document.getElementById('nombreEncargado').value = a.encargado || '';
                 document.getElementById('telEncargado').value = a.telEncargado || '';
                 document.getElementById('sedeInscripcion').value = a.sede || 'COMPURED';
+                cambiarSedeModal(a.sede || 'COMPURED');
+                
+                if(a.sede === 'COMPURED') {
+                    let selectAldea = document.getElementById('selectAldeaInscripcion');
+                    if([...selectAldea.options].some(o => o.value === a.aldea)) {
+                        selectAldea.value = a.aldea;
+                    } else {
+                        selectAldea.value = 'OTRA';
+                        document.getElementById('grupoNuevaAldea').style.display = 'block';
+                        document.getElementById('inputNuevaAldea').value = a.aldea || '';
+                    }
+                }
+
                 document.getElementById('tipoJornada').value = a.tipoJornada || 'Entre semana';
                 actualizarDias();
                 document.getElementById('diaEstudio').value = a.diaEstudio || 'Lunes';
@@ -580,6 +750,47 @@
                 document.getElementById('btnSubmitAlumnoModal').innerText = "Guardar Cambios";
                 document.getElementById('modalEstudiante').style.display = 'flex';
             } catch(e) { console.error(e); }
+        };
+
+        // GENERADOR DE TARJETA DE CREDENCIALES RÁPIDA
+        window.abrirModalCredencial = function(codigo, pass, nombre, curso, sedeAldea) {
+            document.getElementById('credUsuario').innerText = codigo;
+            document.getElementById('credPass').innerText = pass;
+            document.getElementById('credNombre').innerText = nombre;
+            document.getElementById('credCurso').innerText = curso;
+            document.getElementById('credSedeAldea').innerText = sedeAldea;
+            document.getElementById('modalCredencial').style.display = 'flex';
+        };
+
+        // EXPORTAR A CSV (EXCEL)
+        window.exportarCSV = function() {
+            let csvContent = "data:text/csv;charset=utf-8,Codigo,Primer Nombre,Segundo Nombre,Primer Apellido,Segundo Apellido,Sede,Aldea,Curso,Grado,Jornada,Telefono Encargado\n";
+            
+            listaAlumnosGlobal.forEach(a => {
+                if (a.ciclo !== cicloActual) return;
+                let fila = [
+                    a.codigo || "",
+                    a.primerNombre || "",
+                    a.segundoNombre || "",
+                    a.primerApellido || "",
+                    a.segundoApellido || "",
+                    a.sede || "",
+                    a.aldea || "",
+                    `"${a.curso || ""}"`,
+                    a.grado || "",
+                    a.tipoJornada || "",
+                    a.telEncargado || ""
+                ];
+                csvContent += fila.join(",") + "\n";
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Alumnos_COMPURED_${cicloActual}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
 
         const formDocente = document.getElementById('formRegistroDocente');
@@ -626,6 +837,7 @@
                     listaAlumnosGlobal.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
+                actualizarSelectsAldeasFiltro();
                 renderizarTablaAlumnos();
                 renderizarSeccionPagosDir();
                 renderizarCargosGlobales();
@@ -638,6 +850,7 @@
             const bodyLista = document.getElementById('bodyListaAlumnosDir');
             const textoBusqueda = document.getElementById('inputBuscarAlumno').value.toLowerCase();
             const diaSeleccionado = document.getElementById('selectFiltroDia').value;
+            const aldeaFiltro = document.getElementById('selectFiltroAldeaDir') ? document.getElementById('selectFiltroAldeaDir').value : 'TODOS';
 
             let htmlLista = "";
             let alumnosEncontrados = 0;
@@ -645,46 +858,75 @@
             listaAlumnosGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
                 if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+                
+                // Filtrar por aldea si es COMPURED
+                if (sedeSeleccionadaDirector === 'COMPURED' && aldeaFiltro !== 'TODOS' && a.aldea !== aldeaFiltro) return;
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto}`.toLowerCase();
+                let textoCompletoFiltro = `${a.codigo} ${nombreCompletoTexto} ${a.aldea || ''}`.toLowerCase();
 
                 if (textoBusqueda && !textoCompletoFiltro.includes(textoBusqueda)) return;
                 if (diaSeleccionado !== "TODOS" && a.diaEstudio !== diaSeleccionado) return;
 
+                let pagosAlumno = a.pagos || {};
+                let tieneDeuda = Object.values(pagosAlumno).some(val => !val || Number(val) <= 0);
+                let badgeEstado = tieneDeuda 
+                    ? `<span class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Pendiente</span>` 
+                    : `<span class="badge badge-success"><i class="fa-solid fa-check"></i> Al Día</span>`;
+
+                if (filtroEstadoActual === 'ALDIA' && tieneDeuda) return;
+                if (filtroEstadoActual === 'DEUDA' && !tieneDeuda) return;
+
                 alumnosEncontrados++;
-                htmlLista += `<tr><td>${a.codigo}</td><td>${nombreCompletoTexto}</td><td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td><td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td><td><button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditar('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button><button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAlumno('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                let ubicacionTexto = a.sede === 'COMPURED' ? `<span style="color:#38ef7d; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> ${a.aldea || 'Aldea Principal'}</span>` : `<span style="color:#00f2fe; font-weight:bold;">COMPUCENTER (La Esperanza)</span>`;
+
+                htmlLista += `<tr>
+                    <td>${a.codigo}</td>
+                    <td>${nombreCompletoTexto}</td>
+                    <td>${ubicacionTexto} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.direccion || ''}</span></td>
+                    <td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td>
+                    <td>${badgeEstado}</td>
+                    <td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td>
+                    <td>
+                        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background:#0284c7; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:4px;" title="Imprimir Credenciales" onclick="abrirModalCredencial('${a.usuarioAcceso}', '${a.passwordAcceso}', '${nombreCompletoTexto}', '${a.curso}', '${a.sede === 'COMPURED' ? a.aldea : 'COMPUCENTER (La Esperanza)'}')"><i class="fa-solid id-card"></i> Ficha</button>
+                        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background:#25D366; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:4px;" title="Ver Pagos" onclick="abrirModalPagos('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i></button>
+                        <button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditar('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:4px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAlumno('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
             });
 
             if(alumnosEncontrados === 0) {
-                htmlLista = `<tr><td colspan="5" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
+                htmlLista = `<tr><td colspan="7" style="text-align: center;">No se encontraron estudiantes con los filtros seleccionados.</td></tr>`;
             }
             if(bodyLista) bodyLista.innerHTML = htmlLista;
+            document.getElementById('kpiTotalAlumnos').innerText = alumnosEncontrados;
         };
 
-        window.aplicarFiltrosAlumnos = function() {
-            renderizarTablaAlumnos();
-        };
+        window.aplicarFiltrosAlumnos = function() { renderizarTablaAlumnos(); };
 
         window.renderizarSeccionPagosDir = function() {
             const bodyPagos = document.getElementById('bodyListaPagosDir');
             const selectAlumnoExtra = document.getElementById('selectAlumnoExtra');
+            const aldeaFiltroPagos = document.getElementById('selectFiltroAldeaPagos') ? document.getElementById('selectFiltroAldeaPagos').value : 'TODOS';
             let htmlPagos = "", htmlSelect = "";
 
             listaAlumnosGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
                 if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+                if (sedeSeleccionadaDirector === 'COMPURED' && aldeaFiltroPagos !== 'TODOS' && a.aldea !== aldeaFiltroPagos) return;
 
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
                 let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+                let ubicacionTexto = a.sede === 'COMPURED' ? (a.aldea || 'Aldea Principal') : 'COMPUCENTER (La Esperanza)';
 
                 htmlSelect += `<option value="${a.id}">${nombreParaMostrar}</option>`;
-                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagos('${a.id}')">${nombreCompletoTexto}</a></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagos('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
+                htmlPagos += `<tr data-nombre="${nombreParaMostrar.toLowerCase()}"><td>${a.codigo}</td><td><a class="estudiante-link" onclick="abrirModalPagos('${a.id}')">${nombreCompletoTexto}</a></td><td><span style="color:#38ef7d;">${ubicacionTexto}</span></td><td>${a.curso}</td><td><button class="btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background:#00f2fe; color:#0f172a; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="abrirModalPagos('${a.id}')"><i class="fa-solid fa-money-bill-wave"></i> Gestionar Pagos</button></td></tr>`;
             });
 
-            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="4" style="text-align: center;">No hay alumnos.</td></tr>`;
+            if(bodyPagos) bodyPagos.innerHTML = htmlPagos || `<tr><td colspan="5" style="text-align: center;">No hay alumnos.</td></tr>`;
             if(selectAlumnoExtra) selectAlumnoExtra.innerHTML = htmlSelect;
         };
 
@@ -700,13 +942,11 @@
         window.renderizarCargosGlobales = function() {
             const bodyCargos = document.getElementById('bodyListaCargosGlobales');
             let mapaCargos = {};
-
             listaAlumnosGlobal.forEach(a => {
                 let extras = a.cargosExtras || {};
                 Object.keys(extras).forEach(key => {
                     let objVal = extras[key];
-                    let monto = typeof objVal === 'object' ? objVal.monto : objVal;
-                    mapaCargos[key] = monto;
+                    mapaCargos[key] = typeof objVal === 'object' ? objVal.monto : objVal;
                 });
             });
 
@@ -716,9 +956,9 @@
                 htmlC = `<tr><td colspan="3" style="text-align: center;">No hay cargos extras registrados.</td></tr>`;
             } else {
                 keys.forEach(k => {
-                    htmlC += `<tr><td><strong>${k}</strong></td><td>Q. ${mapaCargos[k]}</td><td>
-                        <button class="btn-icon btn-edit" title="Editar monto a todos" onclick="editarCargoGlobal('${k}', '${mapaCargos[k]}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-icon btn-delete" title="Eliminar cargo de todos" onclick="eliminarCargoGlobal('${k}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    htmlC += `<tr><td><strong>${k}</strong></td><td>${formatearQuetzales(mapaCargos[k])}</td><td>
+                        <button class="btn-icon btn-edit" title="Editar" onclick="editarCargoGlobal('${k}', '${mapaCargos[k]}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarCargoGlobal('${k}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                     </td></tr>`;
                 });
             }
@@ -730,27 +970,22 @@
             if(!nuevoNombre) return;
             let nuevoMonto = prompt("Modificar monto estándar (Q):", montoActual);
             if(!nuevoMonto) return;
-
             try {
                 for(let a of listaAlumnosGlobal) {
                     let extras = a.cargosExtras || {};
                     if(extras[nombreViejo] !== undefined) {
                         let estadoActual = extras[nombreViejo];
                         delete extras[nombreViejo];
-                        extras[nuevoNombre] = {
-                            monto: nuevoMonto,
-                            pagado: typeof estadoActual === 'object' ? estadoActual.pagado : ''
-                        };
+                        extras[nuevoNombre] = { monto: nuevoMonto, pagado: typeof estadoActual === 'object' ? estadoActual.pagado : '' };
                         await updateDoc(doc(db, "alumnos", a.id), { cargosExtras: extras });
                     }
                 }
-                alert("¡Cargo actualizado con éxito!");
-                cargarDatosDirector();
-            } catch(e) { alert("Error al editar: " + e.message); }
+                alert("¡Cargo actualizado!"); cargarDatosDirector();
+            } catch(e) { alert("Error: " + e.message); }
         };
 
         window.eliminarCargoGlobal = async function(nombreCargo) {
-            if(!confirm(`¿Estás seguro de eliminar el cargo "${nombreCargo}" de todos los estudiantes?`)) return;
+            if(!confirm(`¿Eliminar cargo "${nombreCargo}" de todos?`)) return;
             try {
                 for(let a of listaAlumnosGlobal) {
                     let extras = a.cargosExtras || {};
@@ -759,9 +994,8 @@
                         await updateDoc(doc(db, "alumnos", a.id), { cargosExtras: extras });
                     }
                 }
-                alert("¡Cargo eliminado con éxito!");
-                cargarDatosDirector();
-            } catch(e) { alert("Error al eliminar: " + e.message); }
+                alert("¡Cargo eliminado!"); cargarDatosDirector();
+            } catch(e) { alert("Error: " + e.message); }
         };
 
         window.abrirModalPagos = async function(id) {
@@ -771,7 +1005,6 @@
                 let a = snap.data();
                 let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
                 let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-
                 document.getElementById('modalTituloEstudiante').innerHTML = `Pagos de: <span style="color:#fff;">${a.codigo} - ${nombreCompletoTexto}</span>`;
                 document.getElementById('modalAlumnoId').value = id;
 
@@ -798,11 +1031,7 @@
                         let objVal = eCargos[key];
                         let montoPendiente = typeof objVal === 'object' ? (objVal.monto || '') : objVal;
                         let pagadoVal = typeof objVal === 'object' ? (objVal.pagado || '') : '';
-                        
-                        htmlExtras += `<div class="pago-item" style="border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:6px; background:rgba(0,0,0,0.1);">
-                            <label style="color:#00f2fe; font-weight:bold;">${key} (Debe: Q. ${montoPendiente})</label>
-                            <input type="text" id="modal_extra_${key}" value="${pagadoVal}" placeholder="Abono / Pagado">
-                        </div>`;
+                        htmlExtras += `<div class="pago-item" style="border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:6px; background:rgba(0,0,0,0.1);"><label style="color:#00f2fe; font-weight:bold;">${key} (Debe: Q. ${montoPendiente})</label><input type="text" id="modal_extra_${key}" value="${pagadoVal}" placeholder="Abono / Pagado"></div>`;
                     });
                 }
                 document.getElementById('modalContenedorCargosExtras').innerHTML = htmlExtras;
@@ -810,15 +1039,12 @@
             } catch(e) { console.error(e); }
         };
 
-        window.cerrarModalPagos = function() {
-            document.getElementById('modalPagos').style.display = 'none';
-        };
+        window.cerrarModalPagos = function() { document.getElementById('modalPagos').style.display = 'none'; };
 
         window.guardarPagosModal = async function() {
             const id = document.getElementById('modalAlumnoId').value;
             const configSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
             let mesesActivos = configSnap.exists() ? configSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
-            
             let pagosData = {};
             mesesActivos.forEach(mId => {
                 let el = document.getElementById(`modal_p_${mId}`);
@@ -828,77 +1054,120 @@
             const alumnoRef = doc(db, "alumnos", id);
             const alumnoSnap = await getDoc(alumnoRef);
             let cargosActuales = alumnoSnap.exists() ? (alumnoSnap.data().cargosExtras || {}) : {};
-
             let nuevosCargos = {};
             Object.keys(cargosActuales).forEach(key => {
                 let objVal = cargosActuales[key];
                 let montoOriginal = typeof objVal === 'object' ? objVal.monto : objVal;
                 let inputEl = document.getElementById(`modal_extra_${key}`);
-                let pagadoIngresado = inputEl ? inputEl.value : (typeof objVal === 'object' ? objVal.pagado : '');
-
-                nuevosCargos[key] = {
-                    monto: montoOriginal,
-                    pagado: pagadoIngresado
-                };
+                nuevosCargos[key] = { monto: montoOriginal, pagado: inputEl ? inputEl.value : (typeof objVal === 'object' ? objVal.pagado : '') };
             });
 
             try {
                 await updateDoc(alumnoRef, { pagos: pagosData, cargosExtras: nuevosCargos });
-                alert("¡Pagos y cargos actualizados con éxito!");
-                cerrarModalPagos();
-                cargarDatosDirector();
-            } catch(err) { alert("Error al guardar pagos: " + err.message); }
+                alert("¡Pagos actualizados!"); cerrarModalPagos(); cargarDatosDirector();
+            } catch(err) { alert("Error: " + err.message); }
         };
 
         window.renderizarCalificacionesFinanzas = async function() {
             const bodyCalif = document.getElementById('bodyCalificacionesDir');
             const bodyMovimientos = document.getElementById('bodyMovimientos');
+            const aldeaFiltroCalif = document.getElementById('selectFiltroAldeaCalif') ? document.getElementById('selectFiltroAldeaCalif').value : 'TODOS';
+            const textoBusquedaCalif = document.getElementById('buscarCalificacionDir') ? document.getElementById('buscarCalificacionDir').value.toLowerCase() : '';
 
             let htmlCalif = "";
             let totalPagosAlumnos = 0;
+            let recaudacionPorAldea = {};
 
             listaAlumnosGlobal.forEach(a => {
                 let cicloAlumno = a.ciclo || "2026";
-                if (a.sede !== sedeSeleccionadaDirector || cicloAlumno !== cicloActual) return;
+                if (cicloAlumno !== cicloActual) return;
 
-                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
-                let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
-                let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+                let aldeaNombre = a.sede === 'COMPURED' ? (a.aldea || 'Aldea Principal') : 'COMPUCENTER (La Esperanza)';
+                if (!recaudacionPorAldea[aldeaNombre]) recaudacionPorAldea[aldeaNombre] = 0;
 
-                let notas = a.notas || { u1: 0, u2: 0, u3: 0, u4: 0 };
                 let p = a.pagos || {};
                 let extras = a.cargosExtras || {};
-                let promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+                let subtotalAlumno = 0;
 
                 mesesDisponibles.forEach(m => {
                     let val = p[m.id] || '';
-                    if(val && !isNaN(val)) totalPagosAlumnos += Number(val);
+                    if(val && !isNaN(val)) subtotalAlumno += Number(val);
                 });
-
                 Object.keys(extras).forEach(k => {
                     let ex = extras[k];
                     let valPagado = typeof ex === 'object' ? ex.pagado : '';
-                    if(valPagado && !isNaN(valPagado)) totalPagosAlumnos += Number(valPagado);
+                    if(valPagado && !isNaN(valPagado)) subtotalAlumno += Number(valPagado);
                 });
 
-                htmlCalif += `<tr><td><strong>${nombreParaMostrar}</strong></td><td>${a.curso}</td><td><input type="number" id="u1_dir_${a.id}" value="${notas.u1}" style="width:50px;"></td><td><input type="number" id="u2_dir_${a.id}" value="${notas.u2}" style="width:50px;"></td><td><input type="number" id="u3_dir_${a.id}" value="${notas.u3}" style="width:50px;"></td><td><input type="number" id="u4_dir_${a.id}" value="${notas.u4}" style="width:50px;"></td><td>${promedio}</td><td><button class="btn-icon btn-edit" onclick="guardarNotas('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td></tr>`;
+                recaudacionPorAldea[aldeaNombre] += subtotalAlumno;
+                totalPagosAlumnos += subtotalAlumno;
+
+                // Renderizado exclusivo para la sección de calificaciones con filtros
+                if (a.sede === sedeSeleccionadaDirector) {
+                    if (sedeSeleccionadaDirector === 'COMPURED' && aldeaFiltroCalif !== 'TODOS' && a.aldea !== aldeaFiltroCalif) return;
+
+                    let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                    let nombreCompletoTexto = nombresArray.filter(Boolean).join(" ");
+                    let nombreParaMostrar = `${a.codigo} - ${nombreCompletoTexto}`;
+
+                    if (textoBusquedaCalif && !nombreParaMostrar.toLowerCase().includes(textoBusquedaCalif)) return;
+
+                    let notas = a.notas || { u1: 0, u2: 0, u3: 0, u4: 0 };
+                    let promedio = ((Number(notas.u1)+Number(notas.u2)+Number(notas.u3)+Number(notas.u4))/4).toFixed(1);
+
+                    htmlCalif += `<tr>
+                        <td><strong>${nombreParaMostrar}</strong></td>
+                        <td><span style="color:#38ef7d; font-weight:bold;">${aldeaNombre}</span></td>
+                        <td>${a.curso}</td>
+                        <td><input type="number" id="u1_dir_${a.id}" value="${notas.u1}" style="width:50px;" min="0" max="100"></td>
+                        <td><input type="number" id="u2_dir_${a.id}" value="${notas.u2}" style="width:50px;" min="0" max="100"></td>
+                        <td><input type="number" id="u3_dir_${a.id}" value="${notas.u3}" style="width:50px;" min="0" max="100"></td>
+                        <td><input type="number" id="u4_dir_${a.id}" value="${notas.u4}" style="width:50px;" min="0" max="100"></td>
+                        <td>${promedio}</td>
+                        <td><button class="btn-icon btn-edit" onclick="guardarNotas('${a.id}')" style="background:#00f2fe; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; color:#0f172a;"><i class="fa-solid fa-floppy-disk"></i></button></td>
+                    </tr>`;
+                }
             });
 
-            if(bodyCalif) bodyCalif.innerHTML = htmlCalif || `<tr><td colspan="8" style="text-align: center;">No hay alumnos.</td></tr>`;
+            if(bodyCalif) bodyCalif.innerHTML = htmlCalif || `<tr><td colspan="9" style="text-align: center;">No hay alumnos.</td></tr>`;
+
+            // RENDERIZAR RESUMEN FINANCIERO DESGLOSADO POR ALDEA
+            const contenedorDesglose = document.getElementById('contenedorDesgloseAldeas');
+            let htmlDesglose = "";
+            let keysAldeas = Object.keys(recaudacionPorAldea);
+            if(keysAldeas.length === 0) {
+                htmlDesglose = `<p style="color:#94a3b8;">Sin datos de recaudación aún.</p>`;
+            } else {
+                keysAldeas.forEach(ald => {
+                    let montoAldea = recaudacionPorAldea[ald];
+                    htmlDesglose += `<div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 8px;">
+                        <span style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 5px;"><i class="fa-solid fa-map-pin"></i> ${ald}</span>
+                        <h4 style="color: #25D366; font-size: 1.3rem; margin: 0;">${formatearQuetzales(montoAldea)}</h4>
+                    </div>`;
+                });
+            }
+            if(contenedorDesglose) contenedorDesglose.innerHTML = htmlDesglose;
 
             try {
                 const finSnap = await getDocs(collection(db, "finanzas"));
                 let totalExtrasIngresos = 0, totalGastos = 0, htmlMov = "";
                 finSnap.forEach(d => {
                     let f = d.data(); let montoNum = Number(f.monto);
-                    if(f.tipo === 'ingreso') { totalExtrasIngresos += montoNum; htmlMov += `<tr><td><span style="color:#25D366">Depósito</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
-                    else { totalGastos += montoNum; htmlMov += `<tr><td><span style="color:#ff4757">Gasto</span></td><td>${f.descripcion}</td><td>Q. ${montoNum.toFixed(2)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`; }
+                    if(f.tipo === 'ingreso') {
+                        totalExtrasIngresos += montoNum;
+                        htmlMov += `<tr><td><span style="color:#25D366">Depósito</span></td><td>${f.descripcion}</td><td>${formatearQuetzales(montoNum)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    } else {
+                        totalGastos += montoNum;
+                        htmlMov += `<tr><td><span style="color:#ff4757">Gasto</span></td><td>${f.descripcion}</td><td>${formatearQuetzales(montoNum)}</td><td><button class="btn-icon btn-delete" onclick="eliminarMovimiento('${d.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    }
                 });
 
                 let granTotalIngresos = totalPagosAlumnos + totalExtrasIngresos;
-                document.getElementById('lblTotalIngresos').innerText = `Q. ${granTotalIngresos.toFixed(2)}`;
-                document.getElementById('lblTotalGastos').innerText = `Q. ${totalGastos.toFixed(2)}`;
-                document.getElementById('lblBalanceNeto').innerText = `Q. ${(granTotalIngresos - totalGastos).toFixed(2)}`;
+                document.getElementById('lblTotalIngresos').innerText = formatearQuetzales(granTotalIngresos);
+                document.getElementById('lblTotalGastos').innerText = formatearQuetzales(totalGastos);
+                document.getElementById('lblBalanceNeto').innerText = formatearQuetzales(granTotalIngresos - totalGastos);
+                document.getElementById('kpiIngresosSede').innerText = formatearQuetzales(granTotalIngresos);
+
                 if(bodyMovimientos && htmlMov !== "") bodyMovimientos.innerHTML = htmlMov;
             } catch(e) { console.error(e); }
         };
@@ -919,9 +1188,7 @@
                         await updateDoc(doc(db, "alumnos", d.id), { cargosExtras: extras });
                     }
                 });
-                alert("¡Cargo pendiente asignado con éxito!"); 
-                document.getElementById('formCargoExtra').reset(); 
-                cargarDatosDirector();
+                alert("¡Cargo pendiente asignado!"); document.getElementById('formCargoExtra').reset(); cargarDatosDirector();
             } catch(err) { alert("Error: " + err.message); }
         };
 
@@ -933,11 +1200,25 @@
         };
 
         window.eliminarMovimiento = async function(id) { await deleteDoc(doc(db, "finanzas", id)); cargarDatosDirector(); };
+        
         window.guardarNotas = async function(id) {
-            await updateDoc(doc(db, "alumnos", id), { notas: { u1: document.getElementById(`u1_dir_${id}`).value, u2: document.getElementById(`u2_dir_${id}`).value, u3: document.getElementById(`u3_dir_${id}`).value, u4: document.getElementById(`u4_dir_${id}`).value } });
-            alert("¡Notas guardadas!"); cargarDatosDirector();
+            let u1 = Number(document.getElementById(`u1_dir_${id}`).value);
+            let u2 = Number(document.getElementById(`u2_dir_${id}`).value);
+            let u3 = Number(document.getElementById(`u3_dir_${id}`).value);
+            let u4 = Number(document.getElementById(`u4_dir_${id}`).value);
+
+            if (!validarRangoNotas([u1, u2, u3, u4])) {
+                alert("⚠️ Error: Todas las calificaciones deben ser valores numéricos válidos entre 0 y 100.");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "alumnos", id), { notas: { u1, u2, u3, u4 } });
+                alert("¡Notas guardadas correctamente!"); cargarDatosDirector();
+            } catch(err) { alert("Error al guardar notas: " + err.message); }
         };
-        window.eliminarAlumno = async function(id) { if(confirm("¿Eliminar estudiante por completo?")) { await deleteDoc(doc(db, "alumnos", id)); alert("Eliminado."); cargarDatosDirector(); } };
+
+        window.eliminarAlumno = async function(id) { if(confirm("¿Eliminar estudiante?")) { await deleteDoc(doc(db, "alumnos", id)); alert("Eliminado."); cargarDatosDirector(); } };
 
         document.getElementById('destinoCargo').addEventListener('change', function() {
             document.getElementById('divAlumnoEspecifico').style.display = this.value === 'especifico' ? 'block' : 'none';
@@ -950,11 +1231,6 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
             evt.currentTarget.classList.add('active');
-        }
-        function filtrarTabla(idT, idI) {
-            const f = document.getElementById(idI).value.toLowerCase();
-            const filas = document.getElementById(idT).getElementsByTagName('tr');
-            for(let i=1; i<filas.length; i++) { let td = filas[i].getElementsByTagName('td')[0]; if(td) filas[i].style.display = td.textContent.toLowerCase().includes(f) ? "" : "none"; }
         }
     </script>
 </body>
