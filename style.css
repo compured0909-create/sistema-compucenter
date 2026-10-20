@@ -28,10 +28,19 @@ body {
     background-color: var(--dark-bg);
     color: var(--text-light);
     overflow-x: hidden;
-    /* Patrón de ciber-grilla futurista de fondo */
     background-image: linear-gradient(rgba(0, 255, 204, 0.02) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(0, 255, 204, 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(20px); }
 }
 
 /* =========================================
@@ -165,7 +174,7 @@ body {
     background: transparent;
     color: var(--primary-color);
     text-decoration: none;
-    border-radius: 4px; /* Estilo esquinas cortadas futuristas */
+    border-radius: 4px;
     font-weight: bold;
     font-size: 1.1rem;
     text-transform: uppercase;
@@ -175,6 +184,7 @@ body {
     box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.1), 0 0 15px rgba(0, 255, 204, 0.2);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .btn-primary::before {
@@ -266,7 +276,6 @@ body {
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-/* Esquinas cibernéticas decorativas */
 .card::after {
     content: '';
     position: absolute;
@@ -399,9 +408,6 @@ body {
     transform: translateX(0);
 }
 
-/* =========================================
-   FOOTER
-   ========================================= */
 footer {
     text-align: center;
     padding: 40px;
@@ -411,9 +417,6 @@ footer {
     letter-spacing: 1px;
 }
 
-/* =========================================
-   KEYFRAMES DE ANIMACIONES CIBERNÉTICAS
-   ========================================= */
 @keyframes blink-caret {
     from, to { border-color: transparent }
     50% { border-color: var(--primary-color); }
@@ -440,9 +443,6 @@ footer {
     50% { transform: scale(1.15); filter: drop-shadow(0 0 25px var(--primary-color)); }
 }
 
-/* =========================================
-   DISEÑO PARA PANTALLAS PEQUEÑAS (MÓVILES)
-   ========================================= */
 @media (max-width: 768px) {
     .typing-text { 
         font-size: 2.2rem; 
@@ -450,43 +450,15 @@ footer {
         white-space: normal; 
         animation: cyberFadeIn 1s forwards; 
     }
-    
-    .hero-content { 
-        text-align: center; 
-        margin-top: 90px;
-    }
-
-    .navbar {
-        flex-direction: column;
-        justify-content: center;
-        padding: 15px;
-        gap: 15px;
-    }
-
-    .logo {
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-    }
-
+    .hero-content { text-align: center; margin-top: 90px; }
+    .navbar { flex-direction: column; justify-content: center; padding: 15px; gap: 15px; }
+    .logo { flex-direction: column; text-align: center; gap: 8px; }
     .logo-img { width: 70px; }
     .logo-text { font-size: 1rem; line-height: 1.4; }
-
-    .nav-links {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        width: 100%;
-    }
-    
+    .nav-links { display: flex; flex-direction: row; justify-content: center; flex-wrap: wrap; gap: 20px; width: 100%; }
     .nav-links a { font-size: 0.95rem; }
 }
 
-/* =========================================
-   ESTILOS PARA EL SISTEMA Y PANELES CIBERNÉTICOS
-   ========================================= */
 .btn-login {
     background: rgba(0, 255, 204, 0.1);
     padding: 8px 18px;
@@ -496,241 +468,37 @@ footer {
 }
 .btn-login:hover { background: var(--primary-color) !important; color: #030712 !important; box-shadow: 0 0 15px var(--primary-color); }
 
-/* --- LOGIN SCREEN --- */
-.login-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: radial-gradient(circle at center, #0a192f, #030712);
-    padding: 20px;
-}
-.login-box {
-    background: rgba(3, 7, 18, 0.85);
-    padding: 40px;
-    border-radius: 12px;
-    backdrop-filter: blur(20px);
-    border: var(--cyber-border);
-    text-align: center;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 204, 0.15);
-    animation: cyberFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.login-logo { width: 85px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary-color)); }
-.login-box h2 { margin-bottom: 30px; font-weight: 600; color: #fff; letter-spacing: 1px; }
-.input-group {
-    position: relative;
-    margin-bottom: 22px;
-}
-.input-group i {
-    position: absolute;
-    left: 16px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--primary-color);
-}
-.input-group input {
-    width: 100%;
-    padding: 15px 15px 15px 45px;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(0, 255, 204, 0.25);
-    border-radius: 6px;
-    color: #fff;
-    outline: none;
-    transition: all 0.3s ease;
-}
-.input-group input:focus { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(0,255,204,0.3); }
-.back-link {
-    display: block;
-    margin-top: 25px;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-.back-link:hover { color: var(--primary-color); text-shadow: 0 0 10px var(--primary-color); }
+.dashboard-body { display: flex; min-height: 100vh; overflow-x: hidden; background: #030712; }
+.sidebar { width: 260px; background: rgba(3, 7, 18, 0.95); border-right: var(--cyber-border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 25px; font-size: 1.2rem; font-weight: bold; color: var(--primary-color); text-align: center; border-bottom: var(--cyber-border); letter-spacing: 1px; text-shadow: 0 0 10px rgba(0, 255, 204, 0.4); }
+.sidebar-nav { display: flex; flex-direction: column; padding: 20px 0; }
+.sidebar-nav a { padding: 15px 25px; color: var(--text-muted); text-decoration: none; display: flex; gap: 15px; align-items: center; transition: all 0.3s ease; letter-spacing: 0.5px; }
+.sidebar-nav a:hover { background: rgba(0,255,204,0.08); color: var(--primary-color); border-left: 4px solid var(--primary-color); padding-left: 28px; text-shadow: 0 0 10px var(--primary-color); }
+.logout { margin-top: auto; color: #ff3366 !important; }
+.logout:hover { background: rgba(255,51,102,0.1) !important; border-color: #ff3366 !important; text-shadow: 0 0 10px #ff3366 !important; }
 
-/* --- DASHBOARD Y PANELES CIBERNÉTICOS --- */
-.dashboard-body { 
-    display: flex; 
-    min-height: 100vh; 
-    overflow-x: hidden; 
-    background: #030712; 
-}
-
-.sidebar {
-    width: 260px;
-    background: rgba(3, 7, 18, 0.95);
-    border-right: var(--cyber-border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-}
-
-.sidebar-logo {
-    padding: 25px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    text-align: center;
-    border-bottom: var(--cyber-border);
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
-}
-
-.sidebar-nav { 
-    display: flex; 
-    flex-direction: column; 
-    padding: 20px 0; 
-}
-
-.sidebar-nav a {
-    padding: 15px 25px;
-    color: var(--text-muted);
-    text-decoration: none;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-}
-
-.sidebar-nav a:hover { 
-    background: rgba(0,255,204,0.08); 
-    color: var(--primary-color); 
-    border-left: 4px solid var(--primary-color); 
-    padding-left: 28px;
-    text-shadow: 0 0 10px var(--primary-color);
-}
-
-.logout { 
-    margin-top: auto; 
-    color: #ff3366 !important; 
-}
-.logout:hover { 
-    background: rgba(255,51,102,0.1) !important; 
-    border-color: #ff3366 !important; 
-    text-shadow: 0 0 10px #ff3366 !important;
-}
-
-/* Contenido Principal Adaptable */
-.dashboard-content { 
-    flex: 1; 
-    padding: 35px; 
-    overflow-x: auto; 
-    position: relative; 
-}
-
-/* Secciones de Pestañas */
+.dashboard-content { flex: 1; padding: 35px; overflow-x: auto; position: relative; }
 .panel-section { display: none; animation: cyberFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 #registro { display: block; }
 .panel-section.active { display: block !important; }
+.panel-section h2 { margin-bottom: 30px; color: var(--primary-color); border-bottom: var(--cyber-border); padding-bottom: 15px; font-size: 1.7rem; letter-spacing: 1px; text-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
 
-.panel-section h2 { 
-    margin-bottom: 30px; 
-    color: var(--primary-color); 
-    border-bottom: var(--cyber-border); 
-    padding-bottom: 15px; 
-    font-size: 1.7rem;
-    letter-spacing: 1px;
-    text-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-}
-
-/* Formularios del Sistema */
-.card-form, .card-table {
-    background: rgba(3, 7, 18, 0.7);
-    padding: 30px;
-    border-radius: 12px;
-    border: var(--cyber-border);
-    margin-bottom: 25px;
-    overflow-x: auto;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-}
-
-.grid-form { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 20px; 
-}
-
-.form-group { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 8px; 
-}
-
-.form-group label { 
-    font-size: 0.9rem; 
-    color: var(--text-muted); 
-    letter-spacing: 0.5px;
-}
-
-.form-group input, .form-group select {
-    padding: 12px 16px;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(0, 255, 204, 0.25);
-    border-radius: 6px;
-    color: #fff;
-    outline: none;
-    width: 100%;
-    transition: all 0.3s ease;
-}
-
+.card-form, .card-table { background: rgba(3, 7, 18, 0.7); padding: 30px; border-radius: 12px; border: var(--cyber-border); margin-bottom: 25px; overflow-x: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.grid-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 0.9rem; color: var(--text-muted); letter-spacing: 0.5px; }
+.form-group input, .form-group select { padding: 12px 16px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0, 255, 204, 0.25); border-radius: 6px; color: #fff; outline: none; width: 100%; transition: all 0.3s ease; }
 .form-group input:focus, .form-group select:focus { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(0,255,204,0.3); }
 .form-group select option { background: #030712; color: #fff; }
 
-/* Tablas Responsivas con Scroll Horizontal */
-.overflow-x { overflow-x: auto; }
-.data-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    text-align: left; 
-    min-width: 600px; 
-}
-.data-table th, .data-table td { 
-    padding: 15px; 
-    border-bottom: 1px solid rgba(0, 255, 204, 0.1); 
-    font-size: 0.9rem;
-}
+.data-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+.data-table th, .data-table td { padding: 15px; border-bottom: 1px solid rgba(0, 255, 204, 0.1); font-size: 0.9rem; }
 .data-table th { color: var(--primary-color); font-weight: 600; background: rgba(0, 255, 204, 0.05); letter-spacing: 0.5px; }
-.data-table tr { transition: background 0.2s ease; }
 .data-table tr:hover { background: rgba(0, 255, 204, 0.03); }
-.grade-input { width: 60px; padding: 6px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 255, 204, 0.3); color: #fff; text-align: center; border-radius: 4px; }
-.average { font-weight: bold; color: var(--primary-color); text-shadow: 0 0 8px rgba(0, 255, 204, 0.4); }
 
-/* Botones de acción en tabla */
-.btn-icon { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 5px; transition: transform 0.2s ease; }
-.btn-edit { color: var(--primary-color); }
-.btn-delete { color: #ff3366; }
-.btn-icon:hover { transform: scale(1.3); filter: drop-shadow(0 0 8px currentColor); }
-
-/* Checkboxes para pagos */
-.payments-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }
-
-/* =========================================
-   MEDIA QUERIES PARA PANTALLAS MÓVILES Y TABLETS
-   ========================================= */
 @media (max-width: 900px) {
-    .dashboard-body {
-        flex-direction: column;
-        height: auto;
-    }
-    
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-    
-    .dashboard-content {
-        padding: 20px;
-        max-width: 100%;
-    }
-    
-    .grid-form {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .form-actions {
-        grid-column: span 1 !important;
-    }
+    .dashboard-body { flex-direction: column; height: auto; }
+    .sidebar { width: 100%; height: auto; }
+    .dashboard-content { padding: 20px; max-width: 100%; }
+    .grid-form { grid-template-columns: 1fr !important; }
 }

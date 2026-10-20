@@ -27,6 +27,12 @@
         .pago-item label { font-size: 0.85rem; color: #94a3b8; }
         .pago-item input { padding: 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: #fff; width: 100%; }
         
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
+        .badge-success { background: rgba(37, 211, 102, 0.2); color: #25D366; }
+        .badge-warning { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
+        .badge-danger { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+        .badge-revision { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 1px solid #00f2fe; }
+
         .estudiante-link { color: #00f2fe; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .estudiante-link:hover { text-decoration: underline; color: #38ef7d; }
 
@@ -35,7 +41,6 @@
             #printableCredencial, #printableCredencial * { visibility: visible; }
             #printableCredencial { position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; padding: 20px; }
         }
-        
         @media (max-width: 900px) { .pago-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -65,6 +70,7 @@
                 <a href="#" onclick="mostrarSeccion('registro', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user-plus"></i> Gestionar Alumnos</a>
                 <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Calificaciones</a>
                 <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Control de Pagos</a>
+                <a href="#" onclick="mostrarSeccion('boletasRevisionDoc', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-receipt"></i> Revisión de Boletas</a>
             </nav>
         </div>
 
@@ -86,7 +92,6 @@
             </div>
             
             <div class="card-table">
-                <!-- FILTRO POR ALDEA SI EL DOCENTE ES DE COMPURED -->
                 <div id="contenedorFiltroAldeaDoc" style="margin-bottom: 15px; display: none; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <span style="font-size: 0.85rem; color: #00f2fe; font-weight: bold;"><i class="fa-solid fa-filter"></i> Filtrar por Aldea / Comunidad:</span>
                     <select id="selectFiltroAldeaDoc" onchange="renderizarTablaAlumnosDoc()" style="padding: 8px 12px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
@@ -109,6 +114,21 @@
                 <table class="data-table">
                     <thead><tr><th>Código</th><th>Nombre Completo</th><th>Ubicación / Aldea</th><th>Curso / Horario</th><th>Credenciales</th><th>Acciones</th></tr></thead>
                     <tbody id="bodyListaAlumnos"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE REVISIÓN DE BOLETAS PARA DOCENTES -->
+        <section id="boletasRevisionDoc" class="panel-section">
+            <h2 style="color: #00f2fe; margin-bottom: 20px;"><i class="fa-solid fa-receipt"></i> Revisión de Boletas de Depósito (<span class="lblAnioTxtDoc">2026</span>)</h2>
+            <div class="card-table">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Código / Estudiante</th><th>No. Boleta</th><th>Fecha Depósito</th><th>Conceptos</th><th>Monto (Q)</th><th>Comprobante</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody id="bodyListaBoletasRevisionDoc">
+                        <tr><td colspan="7" style="text-align: center;">Cargando boletas reportadas...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -153,7 +173,6 @@
                 <input type="hidden" id="editandoAlumnoIdDoc" value="">
                 <div class="grid-form" style="grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
                     
-                    <!-- SELECCIÓN O CREACIÓN DE ALDEA (SOLO SI EL DOCENTE ES DE COMPURED) -->
                     <div class="form-group" id="grupoAldeaInscripcionDoc" style="grid-column: span 3; display: none;">
                         <label style="color: #38ef7d; font-weight: bold;">Aldea o Comunidad (COMPURED) *</label>
                         <select id="selectAldeaInscripcionDoc" onchange="verificarNuevaAldeaDoc(this.value)" style="padding: 10px; width: 100%; border-radius: 6px; background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.2);"></select>
@@ -208,7 +227,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CREDENCIALES / FICHA RÁPIDA IMPRIMIBLE -->
+    <!-- MODAL DE CREDENCIALES IMPRIMIBLE -->
     <div id="modalCredencialDoc" class="modal-overlay">
         <div class="modal-container" style="max-width: 450px; background: #fff; color: #000;">
             <div id="printableCredencial" style="padding: 20px; border: 2px dashed #00f2fe; border-radius: 10px; text-align: center;">
@@ -270,6 +289,13 @@
             "Aldea la nueva Concepcion"
         ];
 
+        const mesesDisponibles = [
+            { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
+            { id: 'marzo', label: 'Marzo' }, { id: 'abril', label: 'Abril' }, { id: 'mayo', label: 'Mayo' },
+            { id: 'junio', label: 'Junio' }, { id: 'julio', label: 'Julio' }, { id: 'agosto', label: 'Agosto' },
+            { id: 'septiembre', label: 'Septiembre' }, { id: 'octubre', label: 'Octubre' }, { id: 'noviembre', label: 'Noviembre' }, { id: 'diciembre', label: 'Diciembre' }
+        ];
+
         window.addEventListener('DOMContentLoaded', async () => {
             if(localStorage.getItem('rolUsuario') !== 'docente') {
                 alert("Acceso no autorizado.");
@@ -304,7 +330,6 @@
             document.getElementById('lblTituloLogo').innerText = sedeDocente;
             document.title = `Panel Docente | ${sedeDocente}`;
 
-            // Mostrar filtro de aldeas solo si el docente pertenece a COMPURED
             if(sedeDocente === 'COMPURED') {
                 document.getElementById('contenedorFiltroAldeaDoc').style.display = 'flex';
                 document.getElementById('selectFiltroAldeaCalifDoc').style.display = 'block';
@@ -341,13 +366,6 @@
             document.getElementById('lblAnioGrandeDoc').innerText = cicloActualDoc;
             document.querySelectorAll('.lblAnioTxtDoc').forEach(el => el.innerText = cicloActualDoc);
         };
-
-        const mesesDisponibles = [
-            { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
-            { id: 'marzo', label: 'Marzo' }, { id: 'abril', label: 'Abril' }, { id: 'mayo', label: 'Mayo' },
-            { id: 'junio', label: 'Junio' }, { id: 'julio', label: 'Julio' }, { id: 'agosto', label: 'Agosto' },
-            { id: 'septiembre', label: 'Septiembre' }, { id: 'octubre', label: 'Octubre' }, { id: 'noviembre', label: 'Noviembre' }, { id: 'diciembre', label: 'Diciembre' }
-        ];
 
         window.actualizarDiasDoc = function() {
             let tipo = document.getElementById('tipoJornada').value;
@@ -544,7 +562,6 @@
             } catch(e) { console.error(e); }
         };
 
-        // GENERADOR DE TARJETA DE CREDENCIALES
         window.abrirModalCredencialDoc = function(codigo, pass, nombre, curso, sedeAldea) {
             document.getElementById('credTituloSedeDoc').innerText = sedeDocente;
             document.getElementById('credUsuarioDoc').innerText = codigo;
@@ -555,7 +572,6 @@
             document.getElementById('modalCredencialDoc').style.display = 'flex';
         };
 
-        // EXPORTAR CSV PARA DOCENTE
         window.exportarCSVDoc = function() {
             let csvContent = "data:text/csv;charset=utf-8,Codigo,Primer Nombre,Segundo Nombre,Primer Apellido,Segundo Apellido,Sede,Aldea,Curso,Grado,Jornada,Telefono Encargado\n";
             
@@ -598,9 +614,50 @@
                 renderizarTablaAlumnosDoc();
                 renderizarSeccionPagosDoc();
                 renderizarCalificacionesDoc();
+                await cargarBoletasDoc();
 
             } catch(e){console.error(e);}
         };
+
+        // CARGAR BOLETAS EN PANEL DOCENTE
+        async function cargarBoletasDoc() {
+            const bodyBoletas = document.getElementById('bodyListaBoletasRevisionDoc');
+            if(!bodyBoletas) return;
+            try {
+                const snapB = await getDocs(collection(db, "boletas"));
+                if (snapB.empty) {
+                    bodyBoletas.innerHTML = `<tr><td colspan="7" style="text-align: center;">No hay boletas reportadas.</td></tr>`;
+                    return;
+                }
+
+                let htmlB = "";
+                snapB.forEach(d => {
+                    let b = d.data();
+                    if (b.sede !== sedeDocente) return;
+
+                    let badgeEstado = `<span class="badge badge-revision">En Revisión</span>`;
+                    if (b.estado === 'aprobado') badgeEstado = `<span class="badge badge-success">Aprobado</span>`;
+                    if (b.estado === 'rechazado') badgeEstado = `<span class="badge badge-danger">Rechazado</span>`;
+
+                    let conceptosTxt = Array.isArray(b.conceptos) ? b.conceptos.join(', ') : (b.concepto || '---');
+                    
+                    let btnVerFoto = b.imagenUrl ? 
+                        `<a href="${b.imagenUrl}" target="_blank" class="btn-primary" style="background:#00f2fe; color:#0f172a; padding:5px 10px; border-radius:5px; text-decoration:none; font-weight:bold; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-eye"></i> Ver Foto</a>` : 
+                        `<span style="color:#94a3b8;">Sin foto</span>`;
+
+                    htmlB += `<tr>
+                        <td><strong>${b.codigoAlumno}</strong><br><span style="font-size:0.8rem; color:#94a3b8;">${b.nombreAlumno}</span></td>
+                        <td>${b.numeroBoleta}</td>
+                        <td>${b.fechaDeposito}</td>
+                        <td>${conceptosTxt}</td>
+                        <td>Q. ${Number(b.monto).toFixed(2)}</td>
+                        <td>${btnVerFoto}</td>
+                        <td>${badgeEstado}</td>
+                    </tr>`;
+                });
+                bodyBoletas.innerHTML = htmlB || `<tr><td colspan="7" style="text-align: center;">No hay boletas para esta sede.</td></tr>`;
+            } catch(e) { console.error(e); }
+        }
 
         window.renderizarTablaAlumnosDoc = function() {
             const bodyLista = document.getElementById('bodyListaAlumnos');
@@ -633,7 +690,7 @@
                     <td>${a.curso} <br><span style="font-size:0.75rem; color:#94a3b8;">${a.diaEstudio} | ${a.horaIngreso} - ${a.horaSalida}</span></td>
                     <td><strong>Usu:</strong> ${a.usuarioAcceso} <br> <strong>Pass:</strong> <span style="color:#00f2fe;">${a.passwordAcceso}</span></td>
                     <td>
-                        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background:#0284c7; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:4px;" title="Imprimir Credenciales" onclick="abrirModalCredencialDoc('${a.usuarioAcceso}', '${a.passwordAcceso}', '${nombreCompletoTexto}', '${a.curso}', '${a.sede === 'COMPURED' ? a.aldea : 'COMPUCENTER (La Esperanza)'}')"><i class="fa-solid id-card"></i> Ficha</button>
+                        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background:#0284c7; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:4px;" title="Imprimir Credenciales" onclick="abrirModalCredencialDoc('${a.usuarioAcceso}', '${a.passwordAcceso}', '${nombreCompletoTexto}', '${a.curso}', '${a.sede === 'COMPURED' ? a.aldea : 'COMPUCENTER (La Esperanza)'}')"><i class="fa-solid fa-id-card"></i> Ficha</button>
                         <button class="btn-icon btn-edit" title="Editar" onclick="cargarParaEditarDoc('${a.id}')" style="background:none; border:none; color:#00f2fe; cursor:pointer; margin-right:8px;"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button class="btn-icon btn-delete" title="Eliminar" onclick="eliminarAl('${a.id}')" style="background:none; border:none; color:#ff4757; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                     </td>

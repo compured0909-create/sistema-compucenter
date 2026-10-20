@@ -11,15 +11,29 @@
         .panel-section.active { display: block !important; }
         .sidebar-nav a.active { background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-left: 4px solid #00f2fe; }
         .bloqueo-notas {
-            background: rgba(255, 71, 87, 0.1);
-            border: 1px solid #ff4757;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            color: #ff4757;
-            margin-top: 15px;
-            line-height: 1.5;
+            background: rgba(255, 71, 87, 0.1); border: 1px solid #ff4757;
+            padding: 20px; border-radius: 8px; text-align: center; color: #ff4757; margin-top: 15px; line-height: 1.5;
         }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+        }
+        .modal-container {
+            background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px; width: 100%; max-width: 600px; max-height: 90vh;
+            overflow-y: auto; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; display: inline-block; }
+        .badge-success { background: rgba(37, 211, 102, 0.2); color: #25D366; }
+        .badge-danger { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+        .badge-revision { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 1px solid #00f2fe; }
+        .concepto-chk-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; cursor: pointer;
+        }
+        .concepto-chk-item:hover { border-color: #00f2fe; }
     </style>
 </head>
 <body class="dashboard-body">
@@ -38,6 +52,7 @@
                 <a href="#" onclick="mostrarSeccion('perfil', event)" class="nav-link active" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-id-card"></i> Mi Ficha y Curso</a>
                 <a href="#" onclick="mostrarSeccion('calificaciones', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</a>
                 <a href="#" onclick="mostrarSeccion('pagos', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-wave"></i> Estado de Pagos</a>
+                <a href="#" onclick="mostrarSeccion('boletas', event)" class="nav-link" style="padding: 12px 15px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-receipt"></i> Reportar Boletas</a>
             </nav>
         </div>
 
@@ -49,6 +64,7 @@
     </aside>
 
     <main class="dashboard-content">
+        <!-- PERFIL -->
         <section id="perfil" class="panel-section active">
             <h2><i class="fa-solid fa-id-card"></i> Información del Estudiante</h2>
             <div class="card-form" style="max-width: 700px; margin: 0 auto; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 12px;">
@@ -58,6 +74,7 @@
             </div>
         </section>
 
+        <!-- CALIFICACIONES -->
         <section id="calificaciones" class="panel-section">
             <h2><i class="fa-solid fa-graduation-cap"></i> Mis Calificaciones</h2>
             <div class="card-table" id="contenedorContenidoCalificaciones">
@@ -65,6 +82,7 @@
             </div>
         </section>
 
+        <!-- PAGOS -->
         <section id="pagos" class="panel-section">
             <h2><i class="fa-solid fa-money-bill-wave"></i> Estado de Cuenta y Pagos</h2>
             <div class="card-table">
@@ -74,11 +92,84 @@
                 </table>
             </div>
         </section>
+
+        <!-- REPORTAR BOLETAS -->
+        <section id="boletas" class="panel-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h2><i class="fa-solid fa-receipt"></i> Historial y Reporte de Depósitos</h2>
+                <button onclick="abrirModalReportarBoleta()" class="btn-primary" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-plus"></i> Reportar Nueva Boleta</button>
+            </div>
+
+            <div class="card-table">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>No. Boleta</th><th>Fecha Depósito</th><th>Conceptos</th><th>Monto (Q)</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody id="bodyHistorialBoletas">
+                        <tr><td colspan="5" style="text-align: center;">Cargando boletas...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
+    <!-- MODAL REPORTAR BOLETA -->
+    <div id="modalReportarBoleta" class="modal-overlay">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 style="color: #00f2fe; margin: 0;">Reportar Boleta de Depósito</h3>
+                <button onclick="cerrarModalReportarBoleta()" style="background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="formReportarBoleta">
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #38ef7d; font-weight: bold; display: block; margin-bottom: 8px;">1. Selecciona los pagos o cuotas a saldar:</label>
+                    <div id="contenedorCheckboxesConceptos"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>No. de Boleta / Transacción *</label>
+                        <input type="text" id="boletaNo" required placeholder="Ej: 12345678" style="width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                    </div>
+                    <div class="form-group">
+                        <label>Monto Total Boleta (Q) *</label>
+                        <input type="number" step="0.01" id="boletaMonto" required placeholder="0.00" style="width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Depósito *</label>
+                        <input type="date" id="boletaFecha" required style="width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                    </div>
+                    <div class="form-group">
+                        <label>Hora de Depósito *</label>
+                        <input type="time" id="boletaHora" required style="width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:#fff;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="color: #00f2fe; font-weight: bold; display: block; margin-bottom: 5px;">Foto o Captura del Comprobante *</label>
+                    <input type="file" id="boletaImagen" accept="image/*" required style="padding: 10px; border-radius: 6px; border: 1px dashed #00f2fe; background: rgba(0,0,0,0.2); color: #fff; width: 100%;">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="cerrarModalReportarBoleta()" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                    <button type="submit" id="btnEnviarBoleta" style="background: #00f2fe; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-paper-plane"></i> Enviar Boleta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const GOOGLE_DRIVE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGqIGuX96Y6wKnmeKP3dLUOaTsE5lNEvCVw9sJtmKsZ0T89ex9_s-4n74SO7n9vf0h/exec";
+
+        let alumnoIdGlobal = null;
+        let alumnoGlobal = null;
+        let mesesActivosGlobal = [];
+        let requisitosUnidadesGlobal = {};
 
         const mesesDisponibles = [
             { id: 'inscripcion', label: 'Inscripción' }, { id: 'enero', label: 'Enero' }, { id: 'feb', label: 'Febrero' },
@@ -93,57 +184,55 @@
                 window.location.href = "login.html";
                 return;
             }
-            const alumnoId = localStorage.getItem('alumnoId');
-            if(!alumnoId) { window.location.href = "login.html"; return; }
+            alumnoIdGlobal = localStorage.getItem('alumnoId');
+            if(!alumnoIdGlobal) { window.location.href = "login.html"; return; }
 
             try {
-                const snap = await getDoc(doc(db, "alumnos", alumnoId));
+                const snap = await getDoc(doc(db, "alumnos", alumnoIdGlobal));
                 if(!snap.exists()) { alert("Estudiante no encontrado."); return; }
-                const a = snap.data();
+                alumnoGlobal = snap.data();
 
                 const configPagosSnap = await getDoc(doc(db, "configuracion", "cicloPagos"));
-                let mesesActivos = configPagosSnap.exists() ? configPagosSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
+                mesesActivosGlobal = configPagosSnap.exists() ? configPagosSnap.data().mesesActivos : mesesDisponibles.map(m => m.id);
 
                 const reqSnap = await getDoc(doc(db, "configuracion", "requisitosUnidades"));
-                let requisitosUnidades = reqSnap.exists() ? reqSnap.data() : {
+                requisitosUnidadesGlobal = reqSnap.exists() ? reqSnap.data() : {
                     u1: ['inscripcion', 'feb', 'marzo', 'abril'],
                     u2: ['mayo', 'junio'],
                     u3: ['julio', 'agosto', 'septiembre'],
                     u4: ['octubre', 'noviembre', 'diciembre']
                 };
 
-                let nombresArray = [a.primerNombre, a.segundoNombre, a.tercerNombre, a.primerApellido, a.segundoApellido];
+                let nombresArray = [alumnoGlobal.primerNombre, alumnoGlobal.segundoNombre, alumnoGlobal.tercerNombre, alumnoGlobal.primerApellido, alumnoGlobal.segundoApellido];
                 let nombreCompleto = nombresArray.filter(Boolean).join(" ");
-                let cicloEst = a.ciclo || "2026";
+                let cicloEst = alumnoGlobal.ciclo || "2026";
 
                 document.getElementById('lblNombreEstudiante').innerText = nombreCompleto;
-                document.getElementById('lblSedeEstudiante').innerText = a.sede;
+                document.getElementById('lblSedeEstudiante').innerText = alumnoGlobal.sede;
                 document.getElementById('lblAnioEstudiante').innerText = cicloEst;
 
                 document.getElementById('datosPerfilEstudiante').innerHTML = `
-                    <div><strong>Código:</strong> ${a.codigo}</div>
+                    <div><strong>Código:</strong> ${alumnoGlobal.codigo}</div>
                     <div><strong>Ciclo Escolar:</strong> ${cicloEst}</div>
                     <div style="grid-column: span 2;"><strong>Nombre Completo:</strong> ${nombreCompleto}</div>
-                    <div><strong>Curso:</strong> ${a.curso}</div>
-                    <div><strong>Grado:</strong> ${a.grado}</div>
-                    <div><strong>Sede:</strong> ${a.sede}</div>
-                    <div><strong>Jornada:</strong> ${a.tipoJornada} (${a.diaEstudio})</div>
-                    <div><strong>Horario:</strong> ${a.horaIngreso} - ${a.horaSalida}</div>
-                    <div><strong>Encargado:</strong> ${a.encargado} (${a.telEncargado})</div>
+                    <div><strong>Curso:</strong> ${alumnoGlobal.curso}</div>
+                    <div><strong>Grado:</strong> ${alumnoGlobal.grado}</div>
+                    <div><strong>Sede:</strong> ${alumnoGlobal.sede}</div>
+                    <div><strong>Jornada:</strong> ${alumnoGlobal.tipoJornada} (${alumnoGlobal.diaEstudio})</div>
+                    <div><strong>Horario:</strong> ${alumnoGlobal.horaIngreso} a ${alumnoGlobal.horaSalida}</div>
+                    <div><strong>Encargado:</strong> ${alumnoGlobal.encargado} (${alumnoGlobal.telEncargado})</div>
                 `;
 
-                let n = a.notas || {u1:0,u2:0,u3:0,u4:0};
-                let p = a.pagos || {};
-
+                let n = alumnoGlobal.notas || {u1:0,u2:0,u3:0,u4:0};
+                let p = alumnoGlobal.pagos || {};
                 let mapaNombresMeses = {};
                 mesesDisponibles.forEach(m => { mapaNombresMeses[m.id] = m.label; });
 
                 function obtenerMesesFaltantesUnidad(unidadKey) {
-                    let mesesReq = requisitosUnidades[unidadKey] || [];
+                    let mesesReq = requisitosUnidadesGlobal[unidadKey] || [];
                     let faltantes = [];
-
                     for(let mId of mesesReq) {
-                        if(mesesActivos.includes(mId)) {
+                        if(mesesActivosGlobal.includes(mId)) {
                             if(!p[mId] || Number(p[mId]) <= 0) {
                                 faltantes.push(mapaNombresMeses[mId] || mId);
                             }
@@ -156,7 +245,7 @@
                     <thead><tr><th>Curso</th><th>1ra U</th><th>2da U</th><th>3ra U</th><th>4ta U</th><th>Promedio</th></tr></thead>
                     <tbody>
                     <tr>
-                        <td>${a.curso}</td>`;
+                        <td>${alumnoGlobal.curso}</td>`;
 
                 let faltantesU1 = obtenerMesesFaltantesUnidad('u1');
                 let faltantesU2 = obtenerMesesFaltantesUnidad('u2');
@@ -199,14 +288,14 @@
 
                 let htmlP = "";
                 mesesDisponibles.forEach(m => {
-                    if(mesesActivos.includes(m.id)) {
+                    if(mesesActivosGlobal.includes(m.id)) {
                         let val = p[m.id];
                         let estado = val ? `<span style="color:#25D366; font-weight:bold;">Pagado (Q. ${val})</span>` : `<span style="color:#ff4757; font-weight:bold;">Pendiente</span>`;
                         htmlP += `<tr><td>${m.label}</td><td>${estado}</td></tr>`;
                     }
                 });
 
-                let eCargos = a.cargosExtras || {};
+                let eCargos = alumnoGlobal.cargosExtras || {};
                 let keysExtras = Object.keys(eCargos);
                 if(keysExtras.length > 0) {
                     htmlP += `<tr><td colspan="2" style="background: rgba(0,242,254,0.1); color: #00f2fe; font-weight: bold; text-align: center;">Cargos Extras / Gastos Pendientes</td></tr>`;
@@ -214,7 +303,6 @@
                         let objVal = eCargos[key];
                         let montoTotal = typeof objVal === 'object' ? objVal.monto : objVal;
                         let montoPagado = typeof objVal === 'object' ? objVal.pagado : '';
-
                         let estadoExtra = "";
                         if(montoPagado && Number(montoPagado) >= Number(montoTotal)) {
                             estadoExtra = `<span style="color:#25D366; font-weight:bold;">Pagado (Q. ${montoPagado})</span>`;
@@ -223,14 +311,185 @@
                         } else {
                             estadoExtra = `<span style="color:#ff4757; font-weight:bold;">Pendiente (Debe: Q. ${montoTotal})</span>`;
                         }
-
                         htmlP += `<tr><td><i class="fa-solid fa-receipt"></i> ${key}</td><td>${estadoExtra}</td></tr>`;
                     });
                 }
 
                 document.getElementById('bodyPagosEstudiante').innerHTML = htmlP;
+                await cargarHistorialBoletas();
 
             } catch(e) { console.error(e); }
+        });
+
+        async function cargarHistorialBoletas() {
+            const body = document.getElementById('bodyHistorialBoletas');
+            try {
+                const qB = query(collection(db, "boletas"), where("alumnoId", "==", alumnoIdGlobal));
+                const snapB = await getDocs(qB);
+
+                if (snapB.empty) {
+                    body.innerHTML = `<tr><td colspan="5" style="text-align: center;">No has reportado boletas de pago.</td></tr>`;
+                    return;
+                }
+
+                let html = "";
+                snapB.forEach(d => {
+                    let b = d.data();
+                    let badgeEstado = `<span class="badge badge-revision">En Revisión</span>`;
+                    if (b.estado === 'aprobado') badgeEstado = `<span class="badge badge-success">Aprobado</span>`;
+                    if (b.estado === 'rechazado') badgeEstado = `<span class="badge badge-danger">Rechazado</span>`;
+                    let conceptosTxt = Array.isArray(b.conceptos) ? b.conceptos.join(', ') : (b.concepto || '---');
+
+                    html += `<tr>
+                        <td><strong>${b.numeroBoleta}</strong></td>
+                        <td>${b.fechaDeposito}</td>
+                        <td>${conceptosTxt}</td>
+                        <td>Q. ${Number(b.monto).toFixed(2)}</td>
+                        <td>${badgeEstado}</td>
+                    </tr>`;
+                });
+                body.innerHTML = html;
+            } catch (e) { console.error(e); }
+        }
+
+        window.abrirModalReportarBoleta = function() {
+            document.getElementById('formReportarBoleta').reset();
+            const contenedorChecks = document.getElementById('contenedorCheckboxesConceptos');
+            let p = alumnoGlobal.pagos || {};
+            let extras = alumnoGlobal.cargosExtras || {};
+            let htmlChecks = "";
+
+            mesesDisponibles.forEach(m => {
+                if (mesesActivosGlobal.includes(m.id) && (!p[m.id] || Number(p[m.id]) <= 0)) {
+                    htmlChecks += `<label class="concepto-chk-item">
+                        <span><input type="checkbox" name="chkConcepto" value="${m.label}" data-tipo="mes" data-id="${m.id}"> Cuota: ${m.label}</span>
+                    </label>`;
+                }
+            });
+
+            Object.keys(extras).forEach(k => {
+                let ex = extras[k];
+                let montoObj = typeof ex === 'object' ? ex.monto : ex;
+                let pagadoVal = typeof ex === 'object' ? ex.pagado : '';
+                if (!pagadoVal || Number(pagadoVal) <= 0) {
+                    htmlChecks += `<label class="concepto-chk-item">
+                        <span><input type="checkbox" name="chkConcepto" value="${k}" data-tipo="extra" data-id="${k}"> Extra: ${k} (Q. ${montoObj})</span>
+                    </label>`;
+                }
+            });
+
+            if (htmlChecks === "") htmlChecks = `<p style="color:#25D366; font-size:0.9rem;">¡Estás al día en todas tus cuotas y cargos extras!</p>`;
+            contenedorChecks.innerHTML = htmlChecks;
+            document.getElementById('modalReportarBoleta').style.display = 'flex';
+        };
+
+        window.cerrarModalReportarBoleta = function() {
+            document.getElementById('modalReportarBoleta').style.display = 'none';
+        };
+
+        // SUBIDA AUTOMÁTICA ENVIANDO NOMBRE Y CÓDIGO AL APPS SCRIPT
+        document.getElementById('formReportarBoleta').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const chks = document.querySelectorAll('input[name="chkConcepto"]:checked');
+            if (chks.length === 0) {
+                alert("Selecciona al menos un concepto a cancelar.");
+                return;
+            }
+
+            let conceptosSeleccionados = [];
+            let detallesItems = [];
+            chks.forEach(c => {
+                conceptosSeleccionados.push(c.value);
+                detallesItems.push({ id: c.getAttribute('data-id'), tipo: c.getAttribute('data-tipo') });
+            });
+
+            const noBoleta = document.getElementById('boletaNo').value.trim();
+            const monto = document.getElementById('boletaMonto').value.trim();
+            const fecha = document.getElementById('boletaFecha').value;
+            const hora = document.getElementById('boletaHora').value;
+            const fileInput = document.getElementById('boletaImagen');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Por favor selecciona la imagen de la boleta.");
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btnEnviarBoleta');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creando carpeta y subiendo...`;
+
+            try {
+                let nombresArray = [alumnoGlobal.primerNombre, alumnoGlobal.segundoNombre, alumnoGlobal.tercerNombre, alumnoGlobal.primerApellido, alumnoGlobal.segundoApellido];
+                let nombreCompleto = nombresArray.filter(Boolean).join(" ");
+
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onload = async function () {
+                    try {
+                        const base64Data = reader.result.split(',')[1];
+
+                        // Payload incluyendo nombre y código para organizar en subcarpetas en Drive
+                        const payload = {
+    fileName: `${alumnoGlobal.codigo}_${noBoleta}_${Date.now()}.${file.name.split('.').pop()}`,
+    mimeType: file.type,
+    base64Data: base64Data,
+    studentName: nombreCompleto,
+    studentCode: alumnoGlobal.codigo,
+    sede: alumnoGlobal.sede || 'COMPURED',
+    aldea: alumnoGlobal.aldea || 'Principal',
+    ciclo: alumnoGlobal.ciclo || '2026'
+};
+
+                        const response = await fetch(GOOGLE_DRIVE_WEB_APP_URL, {
+                            method: "POST",
+                            body: JSON.stringify(payload)
+                        });
+
+                        const resultado = await response.json();
+                        if (resultado.status !== "success") {
+                            throw new Error("Error en Google Drive: " + resultado.message);
+                        }
+
+                        const imageUrl = resultado.url; // Enlace del archivo organizado en la carpeta del estudiante
+
+                        await addDoc(collection(db, "boletas"), {
+                            alumnoId: alumnoIdGlobal,
+                            codigoAlumno: alumnoGlobal.codigo,
+                            nombreAlumno: nombreCompleto,
+                            sede: alumnoGlobal.sede,
+                            aldea: alumnoGlobal.aldea || 'Principal',
+                            ciclo: alumnoGlobal.ciclo || '2026',
+                            numeroBoleta: noBoleta,
+                            monto: monto,
+                            fechaDeposito: fecha,
+                            horaDeposito: hora,
+                            imagenUrl: imageUrl,
+                            conceptos: conceptosSeleccionados,
+                            itemsDetalle: detallesItems,
+                            estado: 'en_revision',
+                            fechaRegistro: new Date().toISOString()
+                        });
+
+                        alert("¡Boleta reportada y organizada con éxito en Google Drive!");
+                        cerrarModalReportarBoleta();
+                        await cargarHistorialBoletas();
+
+                    } catch (errInner) {
+                        alert("Error al subir: " + errInner.message);
+                    } finally {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Boleta`;
+                    }
+                };
+
+            } catch (err) {
+                alert("Error general: " + err.message);
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Boleta`;
+            }
         });
     </script>
     <script>

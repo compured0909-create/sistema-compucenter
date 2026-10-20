@@ -2,97 +2,489 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión | COMPURED</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | COMPURED & COMPUCENTER</title>
+    <!-- FontAwesome para Íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hoja de Estilos Principal -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDK (Compatibilidad para Web) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-card {
+            background: rgba(3, 7, 18, 0.85);
+            border: var(--cyber-border);
+            border-radius: 16px;
+            padding: 45px 35px;
+            width: 100%;
+            max-width: 440px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), var(--cyber-shadow);
+            position: relative;
+            overflow: hidden;
+            animation: cyberFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-logo {
+            width: 75px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px var(--primary-color));
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .login-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #fff, var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .login-subtitle strong {
+            color: var(--primary-color);
+        }
+
+        /* Campos de Entrada */
+        .input-box {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-box > i:not(.toggle-password) {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 45px 14px 45px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Ajuste específico para selects */
+        select.input-field {
+            appearance: none;
+            cursor: pointer;
+        }
+        select.input-field option {
+            background: #030712;
+            color: #fff;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.25);
+            background: rgba(0, 255, 204, 0.02);
+        }
+
+        .input-field:focus ~ i:not(.toggle-password) {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-color);
+            color: #030712;
+            box-shadow: 0 0 25px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp {
+            background: rgba(37, 211, 102, 0.08) !important;
+            color: #25D366 !important;
+            border-color: #25D366 !important;
+            box-shadow: inset 0 0 10px rgba(37, 211, 102, 0.1) !important;
+        }
+
+        .btn-whatsapp:hover {
+            background: #25D366 !important;
+            color: #030712 !important;
+            box-shadow: 0 0 25px #25D366 !important;
+        }
+
+        /* Enlaces auxiliares */
+        .auth-links {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .auth-links a {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .auth-links a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 8px var(--primary-color);
+        }
+
+        /* Alerta de Error */
+        .error-banner {
+            display: none;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid #ff3366;
+            color: #ff3366;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: cyberFadeIn 0.4s ease;
+        }
+
+        .brand-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+    </style>
 </head>
-<body class="login-body" style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0f172a; margin: 0;">
+<body>
 
-    <div class="card-form" style="width: 100%; max-width: 400px; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <img src="logo.png" alt="Logo" style="width: 50px; margin-bottom: 10px;">
-            <h2 style="color: #fff; font-size: 1.5rem;">Plataforma Educativa</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Ingrese sus credenciales de acceso</p>
-        </div>
-
-        <form id="formLogin">
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label style="display:block; margin-bottom:5px; color: #fff; font-size: 0.9rem;">Usuario / Correo o Código</label>
-                <input type="text" id="loginUsuario" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
-            </div>
-
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display:block; margin-bottom:5px; color: #fff; font-size: 0.9rem;">Contraseña</label>
-                <input type="password" id="loginPassword" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff;">
-            </div>
-
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--primary-color); color: #0f172a; font-weight: bold; cursor: pointer;">Ingresar al Sistema</button>
-        </form>
+    <!-- Fondo de Formas Neón Animadas -->
+    <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
     </div>
 
-    <script type="module">
-        import { db } from "./firebase-config.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <div class="login-wrapper">
+        <div class="login-card">
+            
+            <div class="login-header">
+                <img src="logo.png" alt="Logo COMPURED" class="login-logo">
+                <h1 class="login-title">¡Bienvenido!</h1>
+                <p class="login-subtitle">Ingresa tu <strong>código o correo</strong> y tu contraseña para acceder al sistema.</p>
+            </div>
 
-        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            <!-- Banner para Mensajes de Error -->
+            <div id="error-msg" class="error-banner"></div>
+
+            <!-- FORMULARIO DE LOGIN -->
+            <form id="login-form">
+                <div class="input-box">
+                    <input type="text" id="email" class="input-field" required placeholder="Código o Correo Electrónico" autocomplete="off">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="password" id="password" class="input-field" required placeholder="Contraseña">
+                    <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-eye-slash toggle-password" id="togglePassword"></i>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Ingresar al Sistema
+                </button>
+
+                <div class="auth-links">
+                    <a href="#" id="showRecovery">¿Olvidaste tu contraseña o código?</a>
+                </div>
+            </form>
+
+            <!-- SECCIÓN DE RECUPERACIÓN POR WHATSAPP (Oculta por defecto) -->
+            <div id="recovery-section" style="display: none;">
+                <p style="text-align: center; font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">
+                    Selecciona tu sede y escribe tus datos para solicitar soporte por WhatsApp:
+                </p>
+
+                <div class="input-box">
+                    <select id="sede-recu" class="input-field">
+                        <option value="" disabled selected>Selecciona tu Sede</option>
+                        <option value="compured">COMPURED</option>
+                        <option value="compucenter">Compucenter (La Esperanza)</option>
+                    </select>
+                    <i class="fa-solid fa-school"></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" id="nombre-recu" class="input-field" placeholder="Escribe Tu Nombre Completo">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+
+                <button type="button" id="btnSendWhatsApp" class="btn-submit btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem; margin-right: 8px;"></i> Enviar Mensaje WhatsApp
+                </button>
+
+                <div class="auth-links">
+                    <a href="#" id="showLogin">← Volver al inicio de sesión</a>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                COMPURED & COMPUCENTER &copy; 2026
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Alternar entre Formulario de Login y Sección de Recuperación
+        const loginForm = document.getElementById('login-form');
+        const recoverySection = document.getElementById('recovery-section');
+        const showRecovery = document.getElementById('showRecovery');
+        const showLogin = document.getElementById('showLogin');
+
+        showRecovery.addEventListener('click', (e) => {
             e.preventDefault();
-            const userInput = document.getElementById('loginUsuario').value.trim().toLowerCase();
-            const passInput = document.getElementById('loginPassword').value.trim();
+            loginForm.style.display = 'none';
+            recoverySection.style.display = 'block';
+            document.getElementById('error-msg').style.display = 'none';
+        });
 
-            // 1. Validar Director Maestro
-            if((userInput === 'compured0909@gmail.com' && passInput === 'CompuRed123') || (userInput === 'director' && passInput === 'director2026')) {
-                localStorage.setItem('rolUsuario', 'director');
-                window.location.href = 'director.html';
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            recoverySection.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+
+        // Lógica de Envío a WhatsApp con selección de Sede
+        document.getElementById('btnSendWhatsApp').addEventListener('click', () => {
+            const sede = document.getElementById('sede-recu').value;
+            const nombre = document.getElementById('nombre-recu').value.trim();
+
+            if (!sede) {
+                alert('Por favor selecciona tu sede.');
                 return;
             }
 
+            let telefono = '';
+            let nombreSedeTxt = '';
+
+            if (sede === 'COMPUCENTER') {
+                telefono = '50255559551';
+                nombreSedeTxt = 'COMPUCENTER (La Esperanza)';
+            } else if (sede === 'compured') {
+                telefono = '50233834646';
+                nombreSedeTxt = 'COMPURED';
+            }
+
+            // Mensaje personalizado
+            let mensaje = `Hola, necesito asistencia para recuperar mi usuario y contraseña en la plataforma educativa.\n\n` +
+                          `*Sede:* ${nombreSedeTxt}\n` +
+                          `*Mi Nombre Es:* ${nombre || 'No especificado'}`;
+
+            const urlWhatsApp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+        });
+
+        // Script para alternar la visibilidad de la contraseña
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhYUtjMpqbbWUGkf_oRE-Di__tbZD-9So",
+            authDomain: "plataforma-educativa-compured.firebaseapp.com",
+            projectId: "plataforma-educativa-compured",
+            storageBucket: "plataforma-educativa-compured.firebasestorage.app",
+            messagingSenderId: "495196813256",
+            appId: "1:495196813256:web:d1c74002e0ca46943732fd",
+            measurementId: "G-TRZ37G6SRM"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Autenticación principal Firebase
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputVal = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('error-msg');
+            
+            errorDiv.style.display = 'none';
+
             try {
-                // 2. Validar Docentes en Firestore
-                const docentesSnapshot = await getDocs(collection(db, "docentes"));
-                let docenteEncontrado = false;
+                let usuarioEncontrado = null;
+                let rolEncontrado = '';
+                let docIdEncontrado = '';
+                let sedeEncontrada = '';
 
-                docentesSnapshot.forEach((docSnap) => {
-                    let d = docSnap.data();
-                    let correoDb = (d.correo || "").trim().toLowerCase();
-                    let nombreDb = (d.nombre || "").trim().toLowerCase();
-                    let passDb = (d.password || "").trim();
+                try {
+                    const docDir = await db.collection('directores').doc('director_principal').get();
+                    if (docDir.exists) {
+                        const dataDir = docDir.data();
+                        const correoDb = (dataDir.correo || '').trim().toLowerCase();
+                        const passDb = (dataDir.password || '').trim();
 
-                    if ((correoDb === userInput || nombreDb === userInput) && passDb === passInput) {
-                        docenteEncontrado = true;
-                        localStorage.setItem('rolUsuario', 'docente');
-                        localStorage.setItem('idUsuarioDocente', docSnap.id);
-                        localStorage.setItem('nombreDocente', d.nombre);
-                        localStorage.setItem('sedeDocente', d.sede || 'COMPURED');
-                        window.location.href = 'docente.html';
+                        if (correoDb === inputVal.toLowerCase() && passDb === password) {
+                            usuarioEncontrado = dataDir;
+                            rolEncontrado = 'director';
+                            docIdEncontrado = docDir.id;
+                        }
                     }
-                });
+                } catch (eDir) {
+                    console.log("Acceso directo no disponible", eDir);
+                }
 
-                if (docenteEncontrado) return;
+                if (!usuarioEncontrado) {
+                    const directoresSnapshot = await db.collection('directores').get();
+                    directoresSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const correoDb = (data.correo || '').trim().toLowerCase();
+                        const passDb = (data.password || '').trim();
 
-                // 3. Validar Alumnos (Estudiantes) en Firestore
-                const alumnosSnapshot = await getDocs(collection(db, "alumnos"));
-                let alumnoEncontrado = false;
+                        if (correoDb === inputVal.toLowerCase() && passDb === password) {
+                            usuarioEncontrado = data;
+                            rolEncontrado = 'director';
+                            docIdEncontrado = doc.id;
+                        }
+                    });
+                }
 
-                alumnosSnapshot.forEach((docSnap) => {
-                    let a = docSnap.data();
-                    let usuarioDb = (a.usuarioAcceso || "").trim().toLowerCase();
-                    let passDb = (a.passwordAcceso || "").trim();
+                if (!usuarioEncontrado) {
+                    const docentesSnapshot = await db.collection('docentes').get();
+                    docentesSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const correoDb = (data.correo || '').trim().toLowerCase();
+                        const passDb = (data.password || '').trim();
 
-                    if (usuarioDb === userInput && passDb === passInput) {
-                        alumnoEncontrado = true;
-                        localStorage.setItem('rolUsuario', 'estudiante');
-                        localStorage.setItem('alumnoId', docSnap.id);
+                        if (correoDb === inputVal.toLowerCase() && passDb === password) {
+                            usuarioEncontrado = data;
+                            rolEncontrado = 'docente';
+                            docIdEncontrado = doc.id;
+                            sedeEncontrada = data.sede || 'COMPURED';
+                        }
+                    });
+                }
+
+                if (!usuarioEncontrado) {
+                    const alumnosSnapshot = await db.collection('alumnos').get();
+                    alumnosSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const usuarioDb = (data.usuarioAcceso || data.codigo || '').trim().toLowerCase();
+                        const passDb = (data.passwordAcceso || '').trim();
+
+                        if ((usuarioDb === inputVal.toLowerCase() || (data.correo && data.correo.toLowerCase() === inputVal.toLowerCase())) && passDb === password) {
+                            usuarioEncontrado = data;
+                            rolEncontrado = 'estudiante';
+                            docIdEncontrado = doc.id;
+                        }
+                    });
+                }
+
+                if (usuarioEncontrado) {
+                    localStorage.setItem('rolUsuario', rolEncontrado);
+
+                    if (rolEncontrado === 'director') {
+                        localStorage.setItem('nombreDirector', usuarioEncontrado.nombre || 'Brayan Isaú Romero Pérez');
+                        window.location.href = 'director.html';
+                    } else if (rolEncontrado === 'docente') {
+                        localStorage.setItem('idUsuarioDocente', docIdEncontrado);
+                        localStorage.setItem('sedeDocente', sedeEncontrada);
+                        localStorage.setItem('nombreDocente', usuarioEncontrado.nombre || 'Docente');
+                        window.location.href = 'docente.html';
+                    } else if (rolEncontrado === 'estudiante') {
+                        localStorage.setItem('alumnoId', docIdEncontrado);
                         window.location.href = 'estudiante.html';
                     }
-                });
-
-                if (alumnoEncontrado) return;
-
-                alert("❌ Usuario o contraseña incorrectos. Verifique sus datos.");
+                } else {
+                    errorDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Usuario o contraseña incorrectos. Verifique sus datos.';
+                    errorDiv.style.display = 'block';
+                }
 
             } catch (error) {
-                console.error("Error en el login:", error);
-                alert("Ocurrió un error al intentar iniciar sesión. Verifique su conexión.");
+                console.error("Error en autenticación:", error);
+                errorDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Error de conexión con Firebase: ' + error.message;
+                errorDiv.style.display = 'block';
             }
         });
     </script>

@@ -6,38 +6,19 @@
     <title>COMPURED | Academia de Mecanografía y Computación</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Enlaces para convertir la web en aplicación móvil (PWA) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00f2fe">
 
     <style>
         .editable-field { transition: all 0.3s ease; }
         .modo-edicion-activo .editable-field {
-            outline: 2px dashed #00f2fe;
-            outline-offset: 4px;
-            cursor: pointer;
-            position: relative;
+            outline: 2px dashed #00f2fe; outline-offset: 4px; cursor: pointer; position: relative;
         }
-        .modo-edicion-activo .editable-field:hover {
-            background: rgba(0, 242, 254, 0.1);
-        }
+        .modo-edicion-activo .editable-field:hover { background: rgba(0, 242, 254, 0.1); }
         #btnFlotanteDirector {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #0f172a;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,242,254,0.4);
-            cursor: pointer;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            gap: 8px;
+            position: fixed; bottom: 30px; left: 30px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0f172a; border: none; padding: 12px 20px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,242,254,0.4); cursor: pointer; z-index: 9999; display: none; align-items: center; gap: 8px;
             transition: transform 0.2s;
         }
         #btnFlotanteDirector:hover { transform: scale(1.05); }
@@ -80,7 +61,6 @@
 
     <section id="cursos" class="courses">
         <h2 class="section-title editable-field" data-id="tituloCursos">Nuestra Oferta Educativa</h2>
-        
         <div class="grid-container">
             <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=mecanografia'">
                 <div class="card-icon"><i class="fa-regular fa-keyboard"></i></div>
@@ -88,28 +68,24 @@
                 <p class="editable-field" data-id="curso1Desc">Programa especializado para estudiantes de <strong>primero, segundo y tercero básico</strong>.</p>
                 <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
-            
             <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=operador'">
                 <div class="card-icon"><i class="fa-solid fa-laptop-code"></i></div>
                 <h3 class="editable-field" data-id="curso2Titulo">Técnico Operador de Computadoras</h3>
                 <p class="editable-field" data-id="curso2Desc">Domina herramientas ofimáticas y sistemas operativos.</p>
                 <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
-            
             <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=diseno'">
                 <div class="card-icon"><i class="fa-solid fa-bezier-curve"></i></div>
                 <h3 class="editable-field" data-id="curso3Titulo">Diseño Gráfico Computarizado</h3>
                 <p class="editable-field" data-id="curso3Desc">Explota tu creatividad en edición visual y retoque fotográfico.</p>
                 <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
-
             <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=mantenimiento'">
                 <div class="card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                 <h3 class="editable-field" data-id="curso4Titulo">Mantenimiento y Reparación</h3>
                 <p class="editable-field" data-id="curso4Desc">Aprende a ensamblar y reparar equipos informáticos.</p>
                 <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver más detalles <i class="fa-solid fa-arrow-right"></i></span>
             </div>
-
             <div class="card" style="cursor: pointer;" onclick="location.href='curso-detalle.html?id=programador'">
                 <div class="card-icon"><i class="fa-solid fa-code"></i></div>
                 <h3 class="editable-field" data-id="curso5Titulo">Técnico Programador de Computadoras</h3>
@@ -121,7 +97,6 @@
 
     <section id="ubicaciones" class="locations">
         <h2 class="section-title editable-field" data-id="tituloUbicaciones">Nuestras Sedes</h2>
-        
         <div class="grid-container locations-grid">
             <div class="card" style="cursor: pointer;" onclick="location.href='sede-detalle.html?id=compured'">
                 <div class="card-icon"><i class="fa-solid fa-location-dot location-pulse"></i></div>
@@ -129,7 +104,6 @@
                 <p class="address-text editable-field" data-id="sede1Direccion"><strong>Aldea La Victoria</strong><br>San Juan Ostuncalco, Quetzaltenango</p>
                 <span style="color: #00f2fe; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 10px;">Ver instalaciones <i class="fa-solid fa-arrow-right"></i></span>
             </div>
-            
             <div class="card" style="cursor: pointer;" onclick="location.href='sede-detalle.html?id=compucenter'">
                 <div class="card-icon"><i class="fa-solid fa-map-location-dot location-pulse"></i></div>
                 <h3 class="editable-field" data-id="sede2Nombre">COMPUCENTER</h3>
@@ -151,6 +125,7 @@
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { mostrarNotificacion } from "./utils.js";
 
         async function cargarContenidoWeb() {
             try {
@@ -185,16 +160,12 @@
             if (editando) {
                 body.classList.add('modo-edicion-activo');
                 txtBtn.innerText = "Guardar Cambios";
-                alert("Modo edición activado. Haz clic en cualquier texto para modificarlo directamente.");
-                document.querySelectorAll('.editable-field').forEach(el => {
-                    el.contentEditable = "true";
-                });
+                mostrarNotificacion("Modo edición activado. Haz clic en cualquier texto para modificarlo.", "info");
+                document.querySelectorAll('.editable-field').forEach(el => { el.contentEditable = "true"; });
             } else {
                 body.classList.remove('modo-edicion-activo');
                 txtBtn.innerText = "Activar Modo Edición";
-                document.querySelectorAll('.editable-field').forEach(el => {
-                    el.contentEditable = "false";
-                });
+                document.querySelectorAll('.editable-field').forEach(el => { el.contentEditable = "false"; });
 
                 let nuevosDatos = {};
                 document.querySelectorAll('.editable-field').forEach(el => {
@@ -203,19 +174,17 @@
 
                 try {
                     await setDoc(doc(db, "configuracion", "contenidoWeb"), nuevosDatos, { merge: true });
-                    alert("¡Cambios guardados exitosamente en la nube!");
+                    mostrarNotificacion("¡Cambios guardados exitosamente en la nube!");
                 } catch(e) {
                     console.error(e);
-                    alert("Hubo un error al guardar los cambios.");
+                    mostrarNotificacion("Hubo un error al guardar los cambios.", "error");
                 }
             }
         };
     </script>
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log("Service Worker registrado con éxito"))
-          .catch((err) => console.log("Error al registrar el Service Worker", err));
+        navigator.serviceWorker.register('sw.js').catch(err => console.log("SW error", err));
       }
     </script>
 </body>

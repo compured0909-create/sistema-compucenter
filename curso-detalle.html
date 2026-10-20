@@ -45,13 +45,11 @@
 
     <section style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
         <h2 style="text-align: center; margin-bottom: 25px; color: #fff;"><i class="fa-solid fa-images"></i> Galería y Fotografías del Curso</h2>
-        
         <div class="controles-edicion">
             <button onclick="agregarFoto()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                 <i class="fa-solid fa-plus"></i> Añadir una foto a este curso
             </button>
         </div>
-
         <div id="galeriaCurso" class="editable-field" data-id="galeriaHTML" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 12px; min-height: 200px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
             <p style="color: #94a3b8; width: 100%; text-align: center;">No hay fotos agregadas todavía.</p>
         </div>
@@ -64,6 +62,7 @@
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { mostrarNotificacion } from "./utils.js";
 
         const urlParams = new URLSearchParams(window.location.search);
         const cursoId = urlParams.get('id') || 'mecanografia';
@@ -128,8 +127,8 @@
 
                 try {
                     await setDoc(doc(db, "configuracion", `curso_${cursoId}`), nuevosDatos, { merge: true });
-                    alert("¡Cambios del curso guardados correctamente en la nube!");
-                } catch(e) { console.error(e); alert("Error al guardar."); }
+                    mostrarNotificacion("¡Cambios del curso guardados correctamente!");
+                } catch(e) { console.error(e); mostrarNotificacion("Error al guardar.", "error"); }
             }
         };
 
@@ -138,7 +137,6 @@
             if (urlFoto) {
                 const galeria = document.getElementById('galeriaCurso');
                 if(galeria.innerHTML.includes("No hay fotos")) { galeria.innerHTML = ""; }
-                
                 galeria.innerHTML += `<img src="${urlFoto}" style="width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #00f2fe;">`;
             }
         };
